@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ROXX | About</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<header class="navbar">
+
+    <a href="/" class="logo">
+        ROXX
+    </a>
+
+    <nav>
+
+        <a href="/">
+            HOME
+        </a>
+
+        <a href="/products">
+            SHOP
+        </a>
+
+        <a href="/about">
+            ABOUT
+        </a>
+
+        <a href="/contact">
+            CONTACT
+        </a>
+
+    </nav>
+
+    <a href="/cart" class="cart">
+
+        🛒 CART
+
+        {% if cart_count > 0 %}
+            ({{ cart_count }})
+        {% endif %}
+
+    </a>
+
+</header>
+
+
+<!-- =========================
+     ABOUT HERO
+========================= -->
+
+<main class="about-page">
+
+
+    <section class="about-hero">
+
+        <div class="about-top">
+
+            <p>
+                ROXX / ABOUT
+            </p>
+
+            <span>
+                EST. 2026
+            </span>
+
+        </div>
+
+
+        <h1>
+            DEFINE<br>
+            YOUR STYLE.
+        </h1>
+
+
+        <div class="about-intro">
+
+            <p>
+                ROXX is a modern clothing brand
+                built around individuality,
+                comfort, and everyday style.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         BRAND STORY
+    ========================= -->
+
+    <section class="about-story">
+
+
+        <div class="about-story-number">
+            01
+        </div>
+
+
+        <div class="about-story-content">
+
+            <p class="about-label">
+                OUR PHILOSOPHY
+            </p>
+
+            <h2>
+                SIMPLE.<br>
+                BOLD.<br>
+                YOURS.
+            </h2>
+
+            <p>
+                We believe clothing should feel
+                natural and look effortless.
+                That's why ROXX focuses on clean
+                designs that can become part of
+                your everyday wardrobe.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         WHAT WE DO
+    ========================= -->
+
+    <section class="about-values">
+
+
+        <div class="about-value">
+
+            <span>
+                01
+            </span>
+
+            <h3>
+                EVERYDAY
+            </h3>
+
+            <p>
+                Pieces designed to fit naturally
+                into everyday life.
+            </p>
+
+        </div>
+
+
+        <div class="about-value">
+
+            <span>
+                02
+            </span>
+
+            <h3>
+                STREET
+            </h3>
+
+            <p>
+                Modern streetwear influences
+                with a clean visual identity.
+            </p>
+
+        </div>
+
+
+        <div class="about-value">
+
+            <span>
+                03
+            </span>
+
+            <h3>
+                ESSENTIAL
+            </h3>
+
+            <p>
+                Simple pieces that stay relevant
+                beyond a single season.
+            </p>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =========================
+         FINAL STATEMENT
+    ========================= -->
+
+    <section class="about-final">
+
+        <p>
+            ROXX / 2026
+        </p>
+
+        <h2>
+            WEAR<br>
+            YOUR<br>
+            ATTITUDE.
+        </h2>
+
+        <a href="/products">
+            EXPLORE THE COLLECTION →
+        </a>
+
+    </section>
+
+
+</main>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <div class="footer-logo">
+        ROXX
+    </div>
+
+    <p>
+        MODERN CLOTHING FOR EVERYDAY LIFE.
+    </p>
+
+    <small>
+        © 2026 ROXX. ALL RIGHTS RESERVED.
+    </small>
+
+</footer>
+
+
+</body>
+
+</html>

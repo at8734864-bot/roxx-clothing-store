@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ROXX | Clothing Store</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     ANNOUNCEMENT BAR
+========================= -->
+
+<div class="announcement-bar">
+
+    <div class="announcement-track">
+
+        <span>FREE SHIPPING</span>
+        <span>•</span>
+
+        <span>NEW COLLECTION 2026</span>
+        <span>•</span>
+
+        <span>SHOP ROXX</span>
+        <span>•</span>
+
+        <span>EVERYDAY STREETWEAR</span>
+        <span>•</span>
+
+        <span>FREE SHIPPING</span>
+        <span>•</span>
+
+        <span>NEW COLLECTION 2026</span>
+        <span>•</span>
+
+        <span>SHOP ROXX</span>
+        <span>•</span>
+
+        <span>EVERYDAY STREETWEAR</span>
+        <span>•</span>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     ANIMATED ROXX LOGO VIDEO
+========================= -->
+
+<div class="roxx-logo-animation">
+
+    <video
+        autoplay
+        muted
+        loop
+        playsinline>
+
+        <source
+            src="{{ url_for('static', filename='images/logo.mp4') }}"
+            type="video/mp4">
+
+    </video>
+
+</div>
+
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<header class="navbar">
+
+    <a href="/" class="logo">
+        ROXX
+    </a>
+
+
+    <nav>
+
+        <a href="/">
+            HOME
+        </a>
+
+        <a href="/products">
+            SHOP
+        </a>
+
+        <a href="/about">
+            ABOUT
+        </a>
+
+        <a href="/contact">
+            CONTACT
+        </a>
+
+    </nav>
+
+
+    <a href="/cart" class="cart">
+
+        🛒 CART
+
+        {% if cart_count > 0 %}
+            ({{ cart_count }})
+        {% endif %}
+
+    </a>
+
+</header>
+
+
+
+<!-- =========================
+     HERO
+========================= -->
+
+<main>
+
+<section class="hero">
+
+
+    <div class="hero-content">
+
+        <p class="hero-label">
+            ROXX — NEW SEASON
+        </p>
+
+
+        <h1>
+            WEAR<br>
+            YOUR<br>
+            ATTITUDE.
+        </h1>
+
+
+        <p class="hero-description">
+            Modern streetwear made for everyday movement.
+        </p>
+
+
+        <div class="hero-buttons">
+
+            <a
+                href="/products"
+                class="hero-btn">
+
+                SHOP NOW →
+
+            </a>
+
+
+            <a
+                href="/about"
+                class="hero-link">
+
+                DISCOVER ROXX
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="hero-side">
+
+        <div class="hero-side-text">
+            EST. 2026
+        </div>
+
+
+        <div class="hero-side-logo">
+            ROXX
+        </div>
+
+
+        <div class="hero-side-text">
+            EVERYDAY / STREET / ESSENTIAL
+        </div>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =========================
+     CATEGORIES
+========================= -->
+
+<section class="categories">
+
+    <h2>
+        SHOP BY CATEGORY
+    </h2>
+
+
+    <div class="category-grid">
+
+
+        <a
+            href="/products"
+            class="category-card">
+
+            <span>
+                01
+            </span>
+
+            <h3>
+                T-SHIRTS
+            </h3>
+
+        </a>
+
+
+        <a
+            href="/products"
+            class="category-card">
+
+            <span>
+                02
+            </span>
+
+            <h3>
+                HOODIES
+            </h3>
+
+        </a>
+
+
+        <a
+            href="/products"
+            class="category-card">
+
+            <span>
+                03
+            </span>
+
+            <h3>
+                JEANS
+            </h3>
+
+        </a>
+
+
+        <a
+            href="/products"
+            class="category-card">
+
+            <span>
+                04
+            </span>
+
+            <h3>
+                JACKETS
+            </h3>
+
+        </a>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     FEATURED PRODUCTS
+========================= -->
+
+<section class="featured">
+
+
+    <div class="section-title">
+
+        <div>
+
+            <p>
+                OUR COLLECTION
+            </p>
+
+            <h2>
+                FEATURED PIECES
+            </h2>
+
+        </div>
+
+
+        <a href="/products">
+            VIEW ALL →
+        </a>
+
+    </div>
+
+
+
+    <div class="products-grid">
+
+
+        {% for product in products %}
+
+
+        <a
+            href="{{ url_for('product_page', product_id=product.id) }}"
+            class="product-card">
+
+
+            <div class="product-image">
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='images/' + product.image
+                    ) }}"
+                    alt="{{ product.name }}"
+                >
+
+            </div>
+
+
+            <div class="product-info">
+
+                <p>
+                    {{ product.category }}
+                </p>
+
+
+                <h3>
+                    {{ product.name }}
+                </h3>
+
+
+                <strong>
+                    {{ product.price }} EGP
+                </strong>
+
+            </div>
+
+
+        </a>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+</section>
+
+
+</main>
+
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <div class="footer-logo">
+        ROXX
+    </div>
+
+
+    <p>
+        MODERN CLOTHING FOR EVERYDAY LIFE.
+    </p>
+
+
+    <small>
+        © 2026 ROXX. ALL RIGHTS RESERVED.
+    </small>
+
+</footer>
+<div class="roxx-logo-animation">
+
+    <video
+        src="{{ url_for('static', filename='images/logo.mp4') }}"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto">
+    </video>
+
+</div>
+
+</body>
+
+</html>

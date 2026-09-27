@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ROXX | Shop</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<header class="navbar">
+
+    <a href="/" class="logo">
+        ROXX
+    </a>
+
+    <nav>
+
+        <a href="/">
+            HOME
+        </a>
+
+        <a href="/products">
+            SHOP
+        </a>
+
+        <a href="/about">
+            ABOUT
+        </a>
+
+        <a href="/contact">
+            CONTACT
+        </a>
+
+    </nav>
+
+    <a href="/cart" class="cart">
+
+        🛒 CART
+
+        {% if cart_count > 0 %}
+            ({{ cart_count }})
+        {% endif %}
+
+    </a>
+
+</header>
+
+
+<!-- =========================
+     SHOP HERO
+========================= -->
+
+<section class="shop-heading">
+
+    <p>
+        ROXX / COLLECTION 01
+    </p>
+
+    <h1>
+        SHOP<br>
+        EVERYTHING.
+    </h1>
+
+    <span>
+        EVERYDAY ESSENTIALS / STREETWEAR / 2026
+    </span>
+
+</section>
+
+
+<!-- =========================
+     SHOP CONTROLS
+========================= -->
+
+<section class="shop-section">
+
+    <div class="shop-top">
+
+        <div class="shop-search">
+
+            <input
+                type="text"
+                id="productSearch"
+                placeholder="SEARCH PRODUCTS..."
+                onkeyup="applyFilters()"
+            >
+
+        </div>
+
+
+        <div class="shop-filters">
+
+            <button
+                class="filter-btn active"
+                onclick="filterProducts('all', this)"
+            >
+                ALL
+            </button>
+
+            <button
+                class="filter-btn"
+                onclick="filterProducts('T-Shirts', this)"
+            >
+                T-SHIRTS
+            </button>
+
+            <button
+                class="filter-btn"
+                onclick="filterProducts('Hoodies', this)"
+            >
+                HOODIES
+            </button>
+
+            <button
+                class="filter-btn"
+                onclick="filterProducts('Jeans', this)"
+            >
+                JEANS
+            </button>
+
+            <button
+                class="filter-btn"
+                onclick="filterProducts('Jackets', this)"
+            >
+                JACKETS
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         PRODUCTS
+    ========================= -->
+
+    <div class="products-grid">
+
+        {% for product in products %}
+
+        <article
+            class="product-card"
+            data-category="{{ product.category }}"
+        >
+
+            <a
+                href="{{ url_for(
+                    'product_page',
+                    product_id=product.id
+                ) }}"
+                class="product-link"
+            >
+
+                <div class="product-image">
+
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='images/' + product.image
+                        ) }}"
+                        alt="{{ product.name }}"
+                    >
+
+                </div>
+
+
+                <div class="product-info">
+
+                    <p>
+                        {{ product.category }}
+                    </p>
+
+                    <h3>
+                        {{ product.name }}
+                    </h3>
+
+                    <strong>
+                        {{ product.price }} EGP
+                    </strong>
+
+                    <span class="view-product">
+                        VIEW PRODUCT →
+                    </span>
+
+                </div>
+
+            </a>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <div class="footer-logo">
+        ROXX
+    </div>
+
+    <p>
+        MODERN CLOTHING FOR EVERYDAY LIFE.
+    </p>
+
+    <small>
+        © 2026 ROXX. ALL RIGHTS RESERVED.
+    </small>
+
+</footer>
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+let currentCategory = "all";
+
+
+function filterProducts(category, button) {
+
+    currentCategory = category;
+
+
+    const buttons =
+        document.querySelectorAll(".filter-btn");
+
+
+    buttons.forEach(function(btn) {
+
+        btn.classList.remove("active");
+
+    });
+
+
+    button.classList.add("active");
+
+
+    applyFilters();
+
+}
+
+
+function applyFilters() {
+
+    const searchInput =
+        document.getElementById("productSearch");
+
+
+    const searchValue =
+        searchInput.value.toLowerCase().trim();
+
+
+    const products =
+        document.querySelectorAll(".product-card");
+
+
+    products.forEach(function(product) {
+
+
+        const productName =
+            product
+                .querySelector("h3")
+                .textContent
+                .toLowerCase();
+
+
+        const productCategory =
+            product.dataset.category;
+
+
+        const matchesSearch =
+            productName.includes(searchValue);
+
+
+        const matchesCategory =
+            currentCategory === "all" ||
+            productCategory === currentCategory;
+
+
+        if (
+            matchesSearch &&
+            matchesCategory
+        ) {
+
+            product.style.display = "";
+
+        } else {
+
+            product.style.display = "none";
+
+        }
+
+    });
+
+}
+
+</script>
+
+
+</body>
+
+</html>

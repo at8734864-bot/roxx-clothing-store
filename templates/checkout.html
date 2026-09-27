@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ROXX | Checkout</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<header class="navbar">
+
+    <a href="/" class="logo">
+        ROXX
+    </a>
+
+    <nav>
+
+        <a href="/">
+            HOME
+        </a>
+
+        <a href="/products">
+            SHOP
+        </a>
+
+        <a href="/about">
+            ABOUT
+        </a>
+
+        <a href="/contact">
+            CONTACT
+        </a>
+
+    </nav>
+
+    <a href="/cart" class="cart">
+
+        🛒 CART
+
+        {% if cart_count > 0 %}
+            ({{ cart_count }})
+        {% endif %}
+
+    </a>
+
+</header>
+
+
+<!-- =========================
+     CHECKOUT
+========================= -->
+
+<main class="checkout-page">
+
+
+    <!-- HEADER -->
+
+    <section class="checkout-header">
+
+        <p>
+            ROXX / ORDER
+        </p>
+
+        <h1>
+            CHECKOUT.
+        </h1>
+
+        <span>
+            COMPLETE YOUR ORDER
+        </span>
+
+    </section>
+
+
+    <div class="checkout-layout">
+
+
+        <!-- =========================
+             ORDER SUMMARY
+        ========================= -->
+
+        <section class="order-summary">
+
+            <div class="checkout-section-title">
+
+                <p>
+                    01 / YOUR ORDER
+                </p>
+
+                <h2>
+                    ORDER SUMMARY
+                </h2>
+
+            </div>
+
+
+            <div class="order-items">
+
+                {% for item in cart_products %}
+
+                <article class="order-item">
+
+
+                    <div class="order-item-image">
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='images/' + item.image
+                            ) }}"
+                            alt="{{ item.name }}"
+                        >
+
+                    </div>
+
+
+                    <div class="order-item-info">
+
+                        <p>
+                            {{ item.category }}
+                        </p>
+
+                        <h3>
+                            {{ item.name }}
+                        </h3>
+
+                        <span>
+                            SIZE: {{ item.size }}
+                            &nbsp; / &nbsp;
+                            QTY: {{ item.quantity }}
+                        </span>
+
+                    </div>
+
+
+                    <strong>
+                        {{ item.subtotal }} EGP
+                    </strong>
+
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+
+            <div class="checkout-total">
+
+                <span>
+                    TOTAL
+                </span>
+
+                <strong>
+                    {{ total }} EGP
+                </strong>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             CUSTOMER INFORMATION
+        ========================= -->
+
+        <section class="checkout-form-section">
+
+            <div class="checkout-section-title">
+
+                <p>
+                    02 / DELIVERY
+                </p>
+
+                <h2>
+                    YOUR DETAILS
+                </h2>
+
+            </div>
+
+
+            <form
+                method="POST"
+                class="checkout-form"
+            >
+
+
+                <div class="form-group">
+
+                    <label for="name">
+                        FULL NAME
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="YOUR FULL NAME"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        PHONE NUMBER
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        placeholder="YOUR PHONE NUMBER"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="address">
+                        DELIVERY ADDRESS
+                    </label>
+
+                    <textarea
+                        id="address"
+                        name="address"
+                        rows="5"
+                        placeholder="YOUR DELIVERY ADDRESS"
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="payment">
+                        PAYMENT METHOD
+                    </label>
+
+                    <select
+                        id="payment"
+                        name="payment"
+                        required
+                    >
+
+                        <option value="">
+                            SELECT PAYMENT
+                        </option>
+
+                        <option value="cash">
+                            CASH ON DELIVERY
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="place-order-btn"
+                >
+                    PLACE ORDER →
+                </button>
+
+
+                <p class="checkout-note">
+                    PAYMENT IS CURRENTLY AVAILABLE
+                    BY CASH ON DELIVERY.
+                </p>
+
+            </form>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <div class="footer-logo">
+        ROXX
+    </div>
+
+    <p>
+        MODERN CLOTHING FOR EVERYDAY LIFE.
+    </p>
+
+    <small>
+        © 2026 ROXX. ALL RIGHTS RESERVED.
+    </small>
+
+</footer>
+
+
+</body>
+
+</html>

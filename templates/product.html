@@ -1,0 +1,316 @@
+
+    <!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>{{ product.name }} | ROXX</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<header class="navbar">
+
+    <a href="/" class="logo">
+        ROXX
+    </a>
+
+    <nav>
+
+        <a href="/">
+            HOME
+        </a>
+
+        <a href="/products">
+            SHOP
+        </a>
+
+        <a href="/about">
+            ABOUT
+        </a>
+
+        <a href="/contact">
+            CONTACT
+        </a>
+
+    </nav>
+
+    <a href="/cart" class="cart">
+    🛒 CART
+    {% if cart_count > 0 %}
+        ({{ cart_count }})
+    {% endif %}
+</a>
+
+</header>
+
+
+<main class="product-page">
+
+
+    <div class="product-detail-image">
+
+        <img
+            src="{{ url_for(
+                'static',
+                filename='images/' + product.image
+            ) }}"
+            alt="{{ product.name }}"
+        >
+
+    </div>
+
+
+    <div class="product-details">
+
+        <p class="product-category">
+            {{ product.category }}
+        </p>
+
+        <h1>
+            {{ product.name }}
+        </h1>
+
+        <h2>
+            {{ product.price }} EGP
+        </h2>
+
+        <p class="product-description">
+    Premium quality clothing designed for
+    modern everyday style. Comfortable,
+    durable, and made for everyday wear.
+</p>
+
+<div class="product-features">
+
+    <div>
+        <strong>MATERIAL</strong>
+        <span>Premium Cotton</span>
+    </div>
+
+    <div>
+        <strong>FIT</strong>
+        <span>Regular Fit</span>
+    </div>
+
+    <div>
+        <strong>SHIPPING</strong>
+        <span>Fast Delivery</span>
+    </div>
+
+    <div>
+        <strong>RETURNS</strong>
+        <span>Easy Returns</span>
+    </div>
+
+</div>
+
+
+        <div class="size-section">
+
+            <p>
+                SELECT SIZE
+            </p>
+
+            <div class="sizes">
+
+                <button
+                    type="button"
+                    class="size-btn"
+                    onclick="selectSize(this)"
+                >
+                    S
+                </button>
+
+                <button
+                    type="button"
+                    class="size-btn"
+                    onclick="selectSize(this)"
+                >
+                    M
+                </button>
+
+                <button
+                    type="button"
+                    class="size-btn"
+                    onclick="selectSize(this)"
+                >
+                    L
+                </button>
+
+                <button
+                    type="button"
+                    class="size-btn"
+                    onclick="selectSize(this)"
+                >
+                    XL
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="quantity-selector">
+
+    <p>QUANTITY</p>
+
+    <div class="quantity-controls">
+
+        <button
+            type="button"
+            onclick="changeQuantity(-1)"
+        >
+            −
+        </button>
+
+        <span id="quantity">
+            1
+        </span>
+
+        <button
+            type="button"
+            onclick="changeQuantity(1)"
+        >
+            +
+        </button>
+
+    </div>
+
+</div>
+
+        <a
+            href="{{ url_for(
+                'add_to_cart',
+                product_id=product.id
+            ) }}"
+            class="add-cart"
+            onclick="return addToCart()"
+        >
+            ADD TO CART
+        </a>
+
+
+        <a
+            href="/products"
+            class="back-shop"
+        >
+            ← BACK TO SHOP
+        </a>
+
+    </div>
+
+</main>
+
+
+<footer>
+
+    <div class="footer-logo">
+        ROXX
+    </div>
+
+    <p>
+        MODERN CLOTHING FOR EVERYDAY LIFE.
+    </p>
+
+    <small>
+        © 2026 ROXX. ALL RIGHTS RESERVED.
+    </small>
+
+</footer>
+
+
+<script>
+
+let selectedSize = null;
+
+
+function selectSize(button) {
+
+    const buttons =
+        document.querySelectorAll(".size-btn");
+
+    buttons.forEach(function(btn) {
+
+        btn.classList.remove("selected");
+
+    });
+
+    button.classList.add("selected");
+
+    selectedSize =
+        button.textContent.trim();
+}
+
+
+function addToCart() {
+
+    if (!selectedSize) {
+
+        alert("PLEASE SELECT A SIZE");
+
+        return false;
+    }
+
+    const quantityElement =
+        document.getElementById("quantity");
+
+    const quantity =
+        parseInt(quantityElement.textContent);
+
+    const productLink =
+        document.querySelector(".add-cart");
+
+    const url =
+        new URL(productLink.href);
+
+    url.searchParams.set(
+        "size",
+        selectedSize
+    );
+
+    url.searchParams.set(
+        "quantity",
+        quantity
+    );
+
+    window.location.href =
+        url.toString();
+
+    return false;
+}
+
+
+function changeQuantity(amount) {
+
+    const quantityElement =
+        document.getElementById("quantity");
+
+    let quantity =
+        parseInt(quantityElement.textContent);
+
+    quantity += amount;
+
+    if (quantity < 1) {
+        quantity = 1;
+    }
+
+    quantityElement.textContent = quantity;
+}
+
+</script>
+
+
+</body>
+
+</html>

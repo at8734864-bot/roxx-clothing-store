@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ROXX | Cart</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<header class="navbar">
+
+    <a href="/" class="logo">
+        ROXX
+    </a>
+
+    <nav>
+
+        <a href="/">
+            HOME
+        </a>
+
+        <a href="/products">
+            SHOP
+        </a>
+
+        <a href="/about">
+            ABOUT
+        </a>
+
+        <a href="/contact">
+            CONTACT
+        </a>
+
+    </nav>
+
+    <a href="/cart" class="cart">
+
+        🛒 CART
+
+        {% if cart_count > 0 %}
+            ({{ cart_count }})
+        {% endif %}
+
+    </a>
+
+</header>
+
+
+<!-- =========================
+     CART PAGE
+========================= -->
+
+<main class="cart-page">
+
+    <div class="cart-header">
+
+        <p class="cart-label">
+            ROXX / YOUR SELECTION
+        </p>
+
+        <h1>
+            CART.
+        </h1>
+
+    </div>
+
+
+    {% if cart_products %}
+
+
+    <!-- =========================
+         CART ITEMS
+    ========================= -->
+
+    <div class="cart-items">
+
+        {% for item in cart_products %}
+
+        <article class="cart-item">
+
+
+            <!-- PRODUCT IMAGE -->
+
+            <div class="cart-image">
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='images/' + item.image
+                    ) }}"
+                    alt="{{ item.name }}"
+                >
+
+            </div>
+
+
+            <!-- PRODUCT INFO -->
+
+            <div class="cart-info">
+
+                <p class="cart-category">
+                    {{ item.category }}
+                </p>
+
+                <h2>
+                    {{ item.name }}
+                </h2>
+
+                <p class="cart-size">
+                    SIZE:
+                    <strong>
+                        {{ item.size }}
+                    </strong>
+                </p>
+
+                <p class="cart-price">
+                    {{ item.price }} EGP
+                </p>
+
+
+                <!-- QUANTITY -->
+
+                <div class="cart-quantity">
+
+                    <span class="quantity-label">
+                        QUANTITY
+                    </span>
+
+                    <div class="quantity-controls">
+
+                        <a
+                            href="{{ url_for(
+                                'decrease',
+                                product_id=item.id,
+                                size=item.size
+                            ) }}"
+                        >
+                            −
+                        </a>
+
+                        <span>
+                            {{ item.quantity }}
+                        </span>
+
+                        <a
+                            href="{{ url_for(
+                                'increase',
+                                product_id=item.id,
+                                size=item.size
+                            ) }}"
+                        >
+                            +
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SUBTOTAL -->
+
+                <div class="cart-subtotal">
+
+                    <span>
+                        SUBTOTAL
+                    </span>
+
+                    <strong>
+                        {{ item.subtotal }} EGP
+                    </strong>
+
+                </div>
+
+
+                <!-- REMOVE -->
+
+                <a
+                    href="{{ url_for(
+                        'remove_from_cart',
+                        product_id=item.id,
+                        size=item.size
+                    ) }}"
+                    class="remove-btn"
+                >
+                    REMOVE ITEM ×
+                </a>
+
+            </div>
+
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- =========================
+         CART SUMMARY
+    ========================= -->
+
+    <section class="cart-summary">
+
+        <div class="cart-total-row">
+
+            <span>
+                TOTAL
+            </span>
+
+            <strong>
+                {{ total }} EGP
+            </strong>
+
+        </div>
+
+
+        <div class="cart-actions">
+
+            <a
+                href="/products"
+                class="continue-shopping"
+            >
+                ← CONTINUE SHOPPING
+            </a>
+
+
+            <a
+                href="/checkout"
+                class="checkout-btn"
+            >
+                PROCEED TO CHECKOUT →
+            </a>
+
+        </div>
+
+    </section>
+
+
+    {% else %}
+
+
+    <!-- =========================
+         EMPTY CART
+    ========================= -->
+
+    <section class="empty-cart">
+
+        <p>
+            ROXX / CART
+        </p>
+
+        <h2>
+            YOUR CART<br>
+            IS EMPTY.
+        </h2>
+
+        <a href="/products">
+            START SHOPPING →
+        </a>
+
+    </section>
+
+
+    {% endif %}
+
+</main>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <div class="footer-logo">
+        ROXX
+    </div>
+
+    <p>
+        MODERN CLOTHING FOR EVERYDAY LIFE.
+    </p>
+
+    <small>
+        © 2026 ROXX. ALL RIGHTS RESERVED.
+    </small>
+
+</footer>
+
+
+</body>
+
+</html>

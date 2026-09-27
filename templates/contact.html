@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ROXX | Contact</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<header class="navbar">
+
+    <a href="/" class="logo">ROXX</a>
+
+    <nav>
+        <a href="/">HOME</a>
+        <a href="/products">SHOP</a>
+        <a href="/about">ABOUT</a>
+        <a href="/contact">CONTACT</a>
+    </nav>
+
+   <a href="/cart" class="cart">
+    🛒 CART
+    {% if cart_count > 0 %}
+        ({{ cart_count }})
+    {% endif %}
+</a>
+</header>
+
+
+<!-- =========================
+     CONTACT
+========================= -->
+
+<main class="contact-page">
+
+    <p class="cart-label">GET IN TOUCH</p>
+
+    <h1>
+        CONTACT<br>
+        ROXX.
+    </h1>
+
+    {% if sent %}
+
+        <div class="contact-success">
+
+            <h2>MESSAGE SENT.</h2>
+
+            <p>
+                Thank you for contacting ROXX.
+                We will get back to you soon.
+            </p>
+
+            <a href="/" class="checkout-btn">
+                BACK TO HOME
+            </a>
+
+        </div>
+
+    {% else %}
+
+        <p class="contact-text">
+            Have a question about our products or your order?
+            Send us a message and we will get back to you.
+        </p>
+
+
+        <form class="contact-form"
+              method="POST"
+              action="/contact">
+
+            <label for="name">NAME</label>
+
+            <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Your name"
+                required
+            >
+
+
+            <label for="email">EMAIL</label>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Your email"
+                required
+            >
+
+
+            <label for="message">MESSAGE</label>
+
+            <textarea
+                id="message"
+                name="message"
+                rows="6"
+                placeholder="Write your message"
+                required
+            ></textarea>
+
+
+            <button type="submit" class="checkout-btn">
+                SEND MESSAGE
+            </button>
+
+        </form>
+
+    {% endif %}
+
+</main>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <div class="footer-logo">
+        ROXX
+    </div>
+
+    <p>
+        MODERN CLOTHING FOR EVERYDAY LIFE.
+    </p>
+
+    <small>
+        © 2026 ROXX. ALL RIGHTS RESERVED.
+    </small>
+
+</footer>
+
+</body>
+</html>

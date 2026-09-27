@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ROXX | Order Confirmed</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<header class="navbar">
+
+    <a href="/" class="logo">
+        ROXX
+    </a>
+
+    <nav>
+
+        <a href="/">
+            HOME
+        </a>
+
+        <a href="/products">
+            SHOP
+        </a>
+
+        <a href="/about">
+            ABOUT
+        </a>
+
+        <a href="/contact">
+            CONTACT
+        </a>
+
+    </nav>
+
+    <a href="/cart" class="cart">
+
+        🛒 CART
+
+        {% if cart_count > 0 %}
+            ({{ cart_count }})
+        {% endif %}
+
+    </a>
+
+</header>
+
+
+<!-- =========================
+     SUCCESS
+========================= -->
+
+<main class="success-page">
+
+
+    <div class="success-number">
+        01
+    </div>
+
+
+    <div class="success-content">
+
+        <p class="success-label">
+            ROXX / ORDER COMPLETE
+        </p>
+
+
+        <h1>
+            ORDER<br>
+            CONFIRMED.
+        </h1>
+
+
+        <div class="success-line"></div>
+
+
+        <h2>
+            THANK YOU FOR SHOPPING WITH ROXX.
+        </h2>
+
+
+        <p class="success-description">
+            Your order has been successfully placed.
+            We will contact you soon to confirm
+            your delivery details.
+        </p>
+
+
+        <div class="success-actions">
+
+            <a
+                href="/products"
+                class="shop-btn"
+            >
+                CONTINUE SHOPPING →
+            </a>
+
+
+            <a
+                href="/"
+                class="home-link"
+            >
+                BACK TO HOME
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="success-brand">
+        ROXX
+    </div>
+
+</main>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <div class="footer-logo">
+        ROXX
+    </div>
+
+    <p>
+        MODERN CLOTHING FOR EVERYDAY LIFE.
+    </p>
+
+    <small>
+        © 2026 ROXX. ALL RIGHTS RESERVED.
+    </small>
+
+</footer>
+
+
+</body>
+
+</html>
