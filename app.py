@@ -40,21 +40,38 @@ BASE_DIR = os.path.dirname(
     os.path.abspath(__file__)
 )
 
-DATABASE = os.path.join(
-    BASE_DIR,
-    "roxx.db"
+# Vercel has a temporary writable directory: /tmp
+IS_VERCEL = bool(
+    os.environ.get("VERCEL")
 )
 
-UPLOAD_FOLDER = os.path.join(
-    BASE_DIR,
-    "static",
-    "images",
-    "uploads"
-)
+if IS_VERCEL:
+
+    DATABASE = "/tmp/roxx.db"
+
+    UPLOAD_FOLDER = "/tmp/roxx_uploads"
+
+else:
+
+    DATABASE = os.path.join(
+        BASE_DIR,
+        "roxx.db"
+    )
+
+    UPLOAD_FOLDER = os.path.join(
+        BASE_DIR,
+        "static",
+        "images",
+        "uploads"
+    )
+
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
+app.config["MAX_CONTENT_LENGTH"] = (
+    5 * 1024 * 1024
+)
+
 
 os.makedirs(
     UPLOAD_FOLDER,
@@ -106,9 +123,9 @@ def init_db():
     db = get_db()
 
 
-    # ----------------------------------------------
+    # ==================================================
     # PRODUCTS TABLE
-    # ----------------------------------------------
+    # ==================================================
 
     db.execute("""
         CREATE TABLE IF NOT EXISTS products (
@@ -127,9 +144,9 @@ def init_db():
     """)
 
 
-    # ----------------------------------------------
+    # ==================================================
     # ORDERS TABLE
-    # ----------------------------------------------
+    # ==================================================
 
     db.execute("""
         CREATE TABLE IF NOT EXISTS orders (
@@ -154,9 +171,9 @@ def init_db():
     """)
 
 
-    # ----------------------------------------------
+    # ==================================================
     # ORDER ITEMS TABLE
-    # ----------------------------------------------
+    # ==================================================
 
     db.execute("""
         CREATE TABLE IF NOT EXISTS order_items (
@@ -184,9 +201,9 @@ def init_db():
     """)
 
 
-    # ----------------------------------------------
+    # ==================================================
     # DEFAULT PRODUCTS
-    # ----------------------------------------------
+    # ==================================================
 
     count = db.execute(
         "SELECT COUNT(*) AS count FROM products"
@@ -252,7 +269,7 @@ init_db()
 
 
 # ==================================================
-# PRODUCTS
+# PRODUCT FUNCTIONS
 # ==================================================
 
 def get_all_products():
@@ -290,9 +307,11 @@ def get_product(product_id):
 
     db.close()
 
+
     if product is None:
 
         return None
+
 
     return dict(product)
 
@@ -332,7 +351,9 @@ def cart_count():
 
         try:
 
-            count += int(quantity)
+            count += int(
+                quantity
+            )
 
         except (
             ValueError,
@@ -364,7 +385,7 @@ def home():
 
 
 # ==================================================
-# PRODUCTS PAGE
+# PRODUCTS
 # ==================================================
 
 @app.route("/products")
@@ -383,7 +404,9 @@ def products_page():
 # PRODUCT PAGE
 # ==================================================
 
-@app.route("/product/<int:product_id>")
+@app.route(
+    "/product/<int:product_id>"
+)
 def product_page(product_id):
 
     product = get_product(
@@ -633,7 +656,7 @@ def remove_from_cart(product_id):
 
 
 # ==================================================
-# CART PAGE
+# CART
 # ==================================================
 
 @app.route("/cart")
@@ -682,6 +705,7 @@ def cart():
 
 
         item = product.copy()
+
 
         item["quantity"] = quantity
 
@@ -736,31 +760,39 @@ def checkout():
 
     if request.method == "POST":
 
-        name = request.form.get(
-            "name",
-            ""
+        name = (
+            request.form.get("name")
+            or request.form.get("full_name")
+            or request.form.get("fullName")
+            or ""
         ).strip()
 
 
-        phone = request.form.get(
-            "phone",
-            ""
+        phone = (
+            request.form.get("phone")
+            or request.form.get("phone_number")
+            or request.form.get("phoneNumber")
+            or ""
         ).strip()
 
 
-        address = request.form.get(
-            "address",
-            ""
+        address = (
+            request.form.get("address")
+            or ""
         ).strip()
 
 
-        payment = request.form.get(
-            "payment",
-            "Cash on Delivery"
+        payment = (
+            request.form.get("payment")
+            or "Cash on Delivery"
         ).strip()
 
 
-        if not name or not phone or not address:
+        if (
+            not name
+            or not phone
+            or not address
+        ):
 
             flash(
                 "Please fill in all checkout fields.",
@@ -774,9 +806,9 @@ def checkout():
             )
 
 
-        # ------------------------------------------
-        # Build order items
-        # ------------------------------------------
+        # ==================================================
+        # ORDER ITEMS
+        # ==================================================
 
         order_items = []
 
@@ -826,17 +858,23 @@ def checkout():
 
             order_items.append({
 
-                "product_id": product_id,
+                "product_id":
+                    product_id,
 
-                "product_name": product["name"],
+                "product_name":
+                    product["name"],
 
-                "size": size,
+                "size":
+                    size,
 
-                "quantity": quantity,
+                "quantity":
+                    quantity,
 
-                "price": product["price"],
+                "price":
+                    product["price"],
 
-                "subtotal": subtotal
+                "subtotal":
+                    subtotal
 
             })
 
@@ -853,9 +891,9 @@ def checkout():
             )
 
 
-        # ------------------------------------------
-        # Save order
-        # ------------------------------------------
+        # ==================================================
+        # SAVE ORDER
+        # ==================================================
 
         db = get_db()
 
@@ -887,9 +925,9 @@ def checkout():
         order_id = cursor.lastrowid
 
 
-        # ------------------------------------------
-        # Save order items
-        # ------------------------------------------
+        # ==================================================
+        # SAVE ORDER ITEMS
+        # ==================================================
 
         for item in order_items:
 
@@ -924,9 +962,9 @@ def checkout():
         db.close()
 
 
-        # ------------------------------------------
-        # Clear cart
-        # ------------------------------------------
+        # ==================================================
+        # CLEAR CART
+        # ==================================================
 
         session["cart"] = {}
 
@@ -988,6 +1026,7 @@ def checkout():
 
         item = product.copy()
 
+
         item["quantity"] = quantity
 
         item["size"] = size
@@ -1041,9 +1080,11 @@ def contact():
             "name"
         )
 
+
         email = request.form.get(
             "email"
         )
+
 
         message = request.form.get(
             "message"
@@ -1054,15 +1095,18 @@ def contact():
             "NEW CONTACT MESSAGE"
         )
 
+
         print(
             "Name:",
             name
         )
 
+
         print(
             "Email:",
             email
         )
+
 
         print(
             "Message:",
@@ -1166,16 +1210,16 @@ def admin_dashboard():
         )
 
 
-    # ----------------------------------------------
+    # ==================================================
     # PRODUCTS
-    # ----------------------------------------------
+    # ==================================================
 
     products = get_all_products()
 
 
-    # ----------------------------------------------
+    # ==================================================
     # ORDERS
-    # ----------------------------------------------
+    # ==================================================
 
     db = get_db()
 
@@ -1490,10 +1534,10 @@ def admin_delete_product(product_id):
     ):
 
         image_path = os.path.join(
-            BASE_DIR,
-            "static",
-            "images",
-            product["image"]
+            UPLOAD_FOLDER,
+            os.path.basename(
+                product["image"]
+            )
         )
 
 
@@ -1526,7 +1570,7 @@ def admin_delete_product(product_id):
 
 
 # ==================================================
-# ADMIN UPDATE ORDER STATUS
+# ADMIN UPDATE ORDER
 # ==================================================
 
 @app.route(
@@ -1630,7 +1674,7 @@ def admin_logout():
 
 
 # ==================================================
-# RUN
+# RUN LOCAL
 # ==================================================
 
 if __name__ == "__main__":
