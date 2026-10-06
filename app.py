@@ -1,81 +1,361 @@
-from flask import Flask, render_template, redirect, url_for, session, request
+import os
+import sqlite3
+import uuid
+
+from flask import (
+    Flask,
+    render_template,
+    redirect,
+    url_for,
+    session,
+    request,
+    flash
+)
+
+from werkzeug.utils import secure_filename
+
+
+# ==================================================
+# APP
+# ==================================================
 
 app = Flask(__name__)
-app.secret_key = "roxx-secret-key"
+
+app.secret_key = "roxx-secret-key-2026"
 
 
-# =========================
+# ==================================================
+# ADMIN LOGIN
+# ==================================================
+
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "a01556464880A12"
+
+
+# ==================================================
+# PATHS
+# ==================================================
+
+BASE_DIR = os.path.dirname(
+    os.path.abspath(__file__)
+)
+
+DATABASE = os.path.join(
+    BASE_DIR,
+    "roxx.db"
+)
+
+UPLOAD_FOLDER = os.path.join(
+    BASE_DIR,
+    "static",
+    "images",
+    "uploads"
+)
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
+
+os.makedirs(
+    UPLOAD_FOLDER,
+    exist_ok=True
+)
+
+
+# ==================================================
+# ALLOWED IMAGE TYPES
+# ==================================================
+
+ALLOWED_EXTENSIONS = {
+    "jpg",
+    "jpeg",
+    "png",
+    "webp",
+    "gif"
+}
+
+
+def allowed_file(filename):
+
+    return (
+        "." in filename
+        and filename.rsplit(
+            ".",
+            1
+        )[1].lower() in ALLOWED_EXTENSIONS
+    )
+
+
+# ==================================================
+# DATABASE
+# ==================================================
+
+def get_db():
+
+    db = sqlite3.connect(
+        DATABASE
+    )
+
+    db.row_factory = sqlite3.Row
+
+    return db
+
+
+def init_db():
+
+    db = get_db()
+
+
+    # ----------------------------------------------
+    # PRODUCTS TABLE
+    # ----------------------------------------------
+
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS products (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            name TEXT NOT NULL,
+
+            price REAL NOT NULL,
+
+            category TEXT NOT NULL,
+
+            image TEXT NOT NULL
+
+        )
+    """)
+
+
+    # ----------------------------------------------
+    # ORDERS TABLE
+    # ----------------------------------------------
+
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS orders (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            customer_name TEXT NOT NULL,
+
+            phone TEXT NOT NULL,
+
+            address TEXT NOT NULL,
+
+            payment TEXT NOT NULL,
+
+            total REAL NOT NULL,
+
+            status TEXT NOT NULL DEFAULT 'New',
+
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+
+        )
+    """)
+
+
+    # ----------------------------------------------
+    # ORDER ITEMS TABLE
+    # ----------------------------------------------
+
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS order_items (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            order_id INTEGER NOT NULL,
+
+            product_id INTEGER NOT NULL,
+
+            product_name TEXT NOT NULL,
+
+            size TEXT NOT NULL,
+
+            quantity INTEGER NOT NULL,
+
+            price REAL NOT NULL,
+
+            subtotal REAL NOT NULL,
+
+            FOREIGN KEY(order_id)
+                REFERENCES orders(id)
+
+        )
+    """)
+
+
+    # ----------------------------------------------
+    # DEFAULT PRODUCTS
+    # ----------------------------------------------
+
+    count = db.execute(
+        "SELECT COUNT(*) AS count FROM products"
+    ).fetchone()["count"]
+
+
+    if count == 0:
+
+        default_products = [
+
+            (
+                "Classic Black T-Shirt",
+                299,
+                "T-Shirts",
+                "tshirt.jpg"
+            ),
+
+            (
+                "Oversized Hoodie",
+                699,
+                "Hoodies",
+                "hoodie.jpg"
+            ),
+
+            (
+                "Blue Jeans",
+                799,
+                "Jeans",
+                "jeans.jpg"
+            ),
+
+            (
+                "Street Jacket",
+                999,
+                "Jackets",
+                "jacket.jpg"
+            )
+
+        ]
+
+
+        db.executemany(
+            """
+            INSERT INTO products
+            (
+                name,
+                price,
+                category,
+                image
+            )
+            VALUES (?, ?, ?, ?)
+            """,
+            default_products
+        )
+
+
+    db.commit()
+
+    db.close()
+
+
+init_db()
+
+
+# ==================================================
 # PRODUCTS
-# =========================
+# ==================================================
 
-products = [
-    {
-        "id": 1,
-        "name": "Classic Black T-Shirt",
-        "price": 299,
-        "category": "T-Shirts",
-        "image": "tshirt.jpg"
-    },
-    {
-        "id": 2,
-        "name": "Oversized Hoodie",
-        "price": 699,
-        "category": "Hoodies",
-        "image": "hoodie.jpg"
-    },
-    {
-        "id": 3,
-        "name": "Blue Jeans",
-        "price": 799,
-        "category": "Jeans",
-        "image": "jeans.jpg"
-    },
-    {
-        "id": 4,
-        "name": "Street Jacket",
-        "price": 999,
-        "category": "Jackets",
-        "image": "jacket.jpg"
-    }
-]
+def get_all_products():
+
+    db = get_db()
+
+    products = db.execute(
+        """
+        SELECT *
+        FROM products
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    db.close()
+
+    return [
+        dict(product)
+        for product in products
+    ]
 
 
-# =========================
-# CART HELPER
-# =========================
+def get_product(product_id):
+
+    db = get_db()
+
+    product = db.execute(
+        """
+        SELECT *
+        FROM products
+        WHERE id = ?
+        """,
+        (product_id,)
+    ).fetchone()
+
+    db.close()
+
+    if product is None:
+
+        return None
+
+    return dict(product)
+
+
+# ==================================================
+# CART
+# ==================================================
 
 def get_cart():
 
-    cart = session.get("cart", {})
+    cart = session.get(
+        "cart",
+        {}
+    )
 
-    if not isinstance(cart, dict):
+
+    if not isinstance(
+        cart,
+        dict
+    ):
+
         cart = {}
+
 
     return cart
 
-
-# =========================
-# CART COUNT
-# =========================
 
 @app.context_processor
 def cart_count():
 
     cart = get_cart()
 
-    count = sum(cart.values())
+    count = 0
+
+
+    for quantity in cart.values():
+
+        try:
+
+            count += int(quantity)
+
+        except (
+            ValueError,
+            TypeError
+        ):
+
+            pass
+
 
     return {
         "cart_count": count
     }
 
 
-# =========================
+# ==================================================
 # HOME
-# =========================
+# ==================================================
 
 @app.route("/")
 def home():
+
+    products = get_all_products()
+
 
     return render_template(
         "index.html",
@@ -83,12 +363,15 @@ def home():
     )
 
 
-# =========================
-# PRODUCTS
-# =========================
+# ==================================================
+# PRODUCTS PAGE
+# ==================================================
 
 @app.route("/products")
 def products_page():
+
+    products = get_all_products()
+
 
     return render_template(
         "products.html",
@@ -96,20 +379,25 @@ def products_page():
     )
 
 
-# =========================
-# PRODUCT DETAILS
-# =========================
+# ==================================================
+# PRODUCT PAGE
+# ==================================================
 
 @app.route("/product/<int:product_id>")
 def product_page(product_id):
 
-    product = next(
-        (p for p in products if p["id"] == product_id),
-        None
+    product = get_product(
+        product_id
     )
 
+
     if product is None:
-        return "Product not found", 404
+
+        return (
+            "Product not found",
+            404
+        )
+
 
     return render_template(
         "product.html",
@@ -117,18 +405,38 @@ def product_page(product_id):
     )
 
 
-# =========================
+# ==================================================
 # ADD TO CART
-# =========================
+# ==================================================
 
-@app.route("/add-to-cart/<int:product_id>")
+@app.route(
+    "/add-to-cart/<int:product_id>"
+)
 def add_to_cart(product_id):
+
+    product = get_product(
+        product_id
+    )
+
+
+    if product is None:
+
+        return (
+            "Product not found",
+            404
+        )
+
 
     cart = get_cart()
 
-    size = request.args.get("size")
+
+    size = request.args.get(
+        "size"
+    )
+
 
     if not size:
+
         return redirect(
             url_for(
                 "product_page",
@@ -136,7 +444,6 @@ def add_to_cart(product_id):
             )
         )
 
-    # GET QUANTITY
 
     quantity = request.args.get(
         "quantity",
@@ -144,110 +451,190 @@ def add_to_cart(product_id):
         type=int
     )
 
+
     if quantity < 1:
+
         quantity = 1
 
-    product_id = str(product_id)
 
-    cart_key = product_id + "_" + size
+    cart_key = (
+        str(product_id)
+        + "_"
+        + size
+    )
 
-    # ADD SELECTED QUANTITY
 
-    cart[cart_key] = cart.get(
-        cart_key,
-        0
-    ) + quantity
+    cart[cart_key] = (
+        cart.get(
+            cart_key,
+            0
+        )
+        + quantity
+    )
+
 
     session["cart"] = cart
 
-    return redirect(url_for("cart"))
+
+    return redirect(
+        url_for(
+            "cart"
+        )
+    )
 
 
-# =========================
+# ==================================================
 # INCREASE
-# =========================
+# ==================================================
 
-@app.route("/increase/<int:product_id>")
+@app.route(
+    "/increase/<int:product_id>"
+)
 def increase(product_id):
 
     cart = get_cart()
 
-    size = request.args.get("size")
+
+    size = request.args.get(
+        "size"
+    )
+
 
     if not size:
-        return redirect(url_for("cart"))
 
-    product_id = str(product_id)
+        return redirect(
+            url_for(
+                "cart"
+            )
+        )
 
-    cart_key = product_id + "_" + size
+
+    cart_key = (
+        str(product_id)
+        + "_"
+        + size
+    )
+
 
     if cart_key in cart:
+
         cart[cart_key] += 1
+
 
     session["cart"] = cart
 
-    return redirect(url_for("cart"))
+
+    return redirect(
+        url_for(
+            "cart"
+        )
+    )
 
 
-# =========================
+# ==================================================
 # DECREASE
-# =========================
+# ==================================================
 
-@app.route("/decrease/<int:product_id>")
+@app.route(
+    "/decrease/<int:product_id>"
+)
 def decrease(product_id):
 
     cart = get_cart()
 
-    size = request.args.get("size")
+
+    size = request.args.get(
+        "size"
+    )
+
 
     if not size:
-        return redirect(url_for("cart"))
 
-    product_id = str(product_id)
+        return redirect(
+            url_for(
+                "cart"
+            )
+        )
 
-    cart_key = product_id + "_" + size
+
+    cart_key = (
+        str(product_id)
+        + "_"
+        + size
+    )
+
 
     if cart_key in cart:
 
         cart[cart_key] -= 1
 
+
         if cart[cart_key] <= 0:
+
             del cart[cart_key]
+
 
     session["cart"] = cart
 
-    return redirect(url_for("cart"))
+
+    return redirect(
+        url_for(
+            "cart"
+        )
+    )
 
 
-# =========================
-# REMOVE
-# =========================
+# ==================================================
+# REMOVE FROM CART
+# ==================================================
 
-@app.route("/remove-from-cart/<int:product_id>")
+@app.route(
+    "/remove-from-cart/<int:product_id>"
+)
 def remove_from_cart(product_id):
 
     cart = get_cart()
 
-    size = request.args.get("size")
+
+    size = request.args.get(
+        "size"
+    )
+
 
     if not size:
-        return redirect(url_for("cart"))
 
-    product_id = str(product_id)
+        return redirect(
+            url_for(
+                "cart"
+            )
+        )
 
-    cart_key = product_id + "_" + size
+
+    cart_key = (
+        str(product_id)
+        + "_"
+        + size
+    )
+
 
     if cart_key in cart:
+
         del cart[cart_key]
+
 
     session["cart"] = cart
 
-    return redirect(url_for("cart"))
+
+    return redirect(
+        url_for(
+            "cart"
+        )
+    )
 
 
-# =========================
+# ==================================================
 # CART PAGE
-# =========================
+# ==================================================
 
 @app.route("/cart")
 def cart():
@@ -258,37 +645,61 @@ def cart():
 
     total = 0
 
+
     for cart_key, quantity in cart.items():
 
         try:
-            product_id, size = cart_key.split("_", 1)
 
-            product_id = int(product_id)
-            quantity = int(quantity)
+            product_id, size = cart_key.split(
+                "_",
+                1
+            )
 
-        except (ValueError, TypeError):
+            product_id = int(
+                product_id
+            )
+
+            quantity = int(
+                quantity
+            )
+
+        except (
+            ValueError,
+            TypeError
+        ):
+
             continue
 
-        product = next(
-            (
-                p for p in products
-                if p["id"] == product_id
-            ),
-            None
+
+        product = get_product(
+            product_id
         )
 
+
         if product is None:
+
             continue
+
 
         item = product.copy()
 
         item["quantity"] = quantity
-        item["size"] = size
-        item["subtotal"] = product["price"] * quantity
 
-        cart_products.append(item)
+        item["size"] = size
+
+        item["subtotal"] = (
+            product["price"]
+            * quantity
+        )
+
+
+        cart_products.append(
+            item
+        )
+
 
         total += item["subtotal"]
+
 
     return render_template(
         "cart.html",
@@ -297,74 +708,303 @@ def cart():
     )
 
 
-# =========================
+# ==================================================
 # CHECKOUT
-# =========================
+# ==================================================
 
-@app.route("/checkout", methods=["GET", "POST"])
+@app.route(
+    "/checkout",
+    methods=["GET", "POST"]
+)
 def checkout():
 
     cart = get_cart()
 
-    if not cart:
-        return redirect(url_for("cart"))
 
-    # PLACE ORDER
+    if not cart:
+
+        return redirect(
+            url_for(
+                "cart"
+            )
+        )
+
+
+    # ==================================================
+    # CREATE ORDER
+    # ==================================================
 
     if request.method == "POST":
 
-        name = request.form.get("name")
-        phone = request.form.get("phone")
-        address = request.form.get("address")
-        payment = request.form.get("payment")
+        name = request.form.get(
+            "name",
+            ""
+        ).strip()
 
-        print("NEW ORDER")
-        print("Name:", name)
-        print("Phone:", phone)
-        print("Address:", address)
-        print("Payment:", payment)
+
+        phone = request.form.get(
+            "phone",
+            ""
+        ).strip()
+
+
+        address = request.form.get(
+            "address",
+            ""
+        ).strip()
+
+
+        payment = request.form.get(
+            "payment",
+            "Cash on Delivery"
+        ).strip()
+
+
+        if not name or not phone or not address:
+
+            flash(
+                "Please fill in all checkout fields.",
+                "error"
+            )
+
+            return redirect(
+                url_for(
+                    "checkout"
+                )
+            )
+
+
+        # ------------------------------------------
+        # Build order items
+        # ------------------------------------------
+
+        order_items = []
+
+        total = 0
+
+
+        for cart_key, quantity in cart.items():
+
+            try:
+
+                product_id, size = cart_key.split(
+                    "_",
+                    1
+                )
+
+                product_id = int(
+                    product_id
+                )
+
+                quantity = int(
+                    quantity
+                )
+
+            except (
+                ValueError,
+                TypeError
+            ):
+
+                continue
+
+
+            product = get_product(
+                product_id
+            )
+
+
+            if product is None:
+
+                continue
+
+
+            subtotal = (
+                product["price"]
+                * quantity
+            )
+
+
+            order_items.append({
+
+                "product_id": product_id,
+
+                "product_name": product["name"],
+
+                "size": size,
+
+                "quantity": quantity,
+
+                "price": product["price"],
+
+                "subtotal": subtotal
+
+            })
+
+
+            total += subtotal
+
+
+        if not order_items:
+
+            return redirect(
+                url_for(
+                    "cart"
+                )
+            )
+
+
+        # ------------------------------------------
+        # Save order
+        # ------------------------------------------
+
+        db = get_db()
+
+
+        cursor = db.execute(
+            """
+            INSERT INTO orders
+            (
+                customer_name,
+                phone,
+                address,
+                payment,
+                total,
+                status
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                name,
+                phone,
+                address,
+                payment,
+                total,
+                "New"
+            )
+        )
+
+
+        order_id = cursor.lastrowid
+
+
+        # ------------------------------------------
+        # Save order items
+        # ------------------------------------------
+
+        for item in order_items:
+
+            db.execute(
+                """
+                INSERT INTO order_items
+                (
+                    order_id,
+                    product_id,
+                    product_name,
+                    size,
+                    quantity,
+                    price,
+                    subtotal
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    order_id,
+                    item["product_id"],
+                    item["product_name"],
+                    item["size"],
+                    item["quantity"],
+                    item["price"],
+                    item["subtotal"]
+                )
+            )
+
+
+        db.commit()
+
+        db.close()
+
+
+        # ------------------------------------------
+        # Clear cart
+        # ------------------------------------------
 
         session["cart"] = {}
 
-        return render_template("success.html")
 
-    # ORDER SUMMARY
+        print(
+            "NEW ORDER:",
+            order_id
+        )
+
+
+        return render_template(
+            "success.html"
+        )
+
+
+    # ==================================================
+    # CHECKOUT PAGE
+    # ==================================================
 
     cart_products = []
 
     total = 0
 
+
     for cart_key, quantity in cart.items():
 
         try:
-            product_id, size = cart_key.split("_", 1)
 
-            product_id = int(product_id)
-            quantity = int(quantity)
+            product_id, size = cart_key.split(
+                "_",
+                1
+            )
 
-        except (ValueError, TypeError):
+            product_id = int(
+                product_id
+            )
+
+            quantity = int(
+                quantity
+            )
+
+        except (
+            ValueError,
+            TypeError
+        ):
+
             continue
 
-        product = next(
-            (
-                p for p in products
-                if p["id"] == product_id
-            ),
-            None
+
+        product = get_product(
+            product_id
         )
 
+
         if product is None:
+
             continue
+
 
         item = product.copy()
 
         item["quantity"] = quantity
-        item["size"] = size
-        item["subtotal"] = product["price"] * quantity
 
-        cart_products.append(item)
+        item["size"] = size
+
+        item["subtotal"] = (
+            product["price"]
+            * quantity
+        )
+
+
+        cart_products.append(
+            item
+        )
+
 
         total += item["subtotal"]
+
 
     return render_template(
         "checkout.html",
@@ -373,46 +1013,628 @@ def checkout():
     )
 
 
-# =========================
+# ==================================================
 # ABOUT
-# =========================
+# ==================================================
 
 @app.route("/about")
 def about():
 
-    return render_template("about.html")
+    return render_template(
+        "about.html"
+    )
 
 
-# =========================
+# ==================================================
 # CONTACT
-# =========================
+# ==================================================
 
-@app.route("/contact", methods=["GET", "POST"])
+@app.route(
+    "/contact",
+    methods=["GET", "POST"]
+)
 def contact():
 
     if request.method == "POST":
 
-        name = request.form.get("name")
-        email = request.form.get("email")
-        message = request.form.get("message")
+        name = request.form.get(
+            "name"
+        )
 
-        print("NEW CONTACT MESSAGE")
-        print("Name:", name)
-        print("Email:", email)
-        print("Message:", message)
+        email = request.form.get(
+            "email"
+        )
+
+        message = request.form.get(
+            "message"
+        )
+
+
+        print(
+            "NEW CONTACT MESSAGE"
+        )
+
+        print(
+            "Name:",
+            name
+        )
+
+        print(
+            "Email:",
+            email
+        )
+
+        print(
+            "Message:",
+            message
+        )
+
 
         return render_template(
             "contact.html",
             sent=True
         )
 
-    return render_template("contact.html")
+
+    return render_template(
+        "contact.html"
+    )
 
 
-# =========================
-# RUN SERVER
-# =========================
+# ==================================================
+# ADMIN LOGIN
+# ==================================================
+
+def admin_logged_in():
+
+    return session.get(
+        "admin_logged_in",
+        False
+    )
+
+
+@app.route(
+    "/admin/login",
+    methods=["GET", "POST"]
+)
+def admin_login():
+
+    if admin_logged_in():
+
+        return redirect(
+            url_for(
+                "admin_dashboard"
+            )
+        )
+
+
+    if request.method == "POST":
+
+        username = request.form.get(
+            "username",
+            ""
+        ).strip()
+
+
+        password = request.form.get(
+            "password",
+            ""
+        )
+
+
+        if (
+            username == ADMIN_USERNAME
+            and password == ADMIN_PASSWORD
+        ):
+
+            session[
+                "admin_logged_in"
+            ] = True
+
+
+            return redirect(
+                url_for(
+                    "admin_dashboard"
+                )
+            )
+
+
+        flash(
+            "Wrong username or password.",
+            "error"
+        )
+
+
+    return render_template(
+        "admin_login.html"
+    )
+
+
+# ==================================================
+# ADMIN DASHBOARD
+# ==================================================
+
+@app.route("/admin")
+def admin_dashboard():
+
+    if not admin_logged_in():
+
+        return redirect(
+            url_for(
+                "admin_login"
+            )
+        )
+
+
+    # ----------------------------------------------
+    # PRODUCTS
+    # ----------------------------------------------
+
+    products = get_all_products()
+
+
+    # ----------------------------------------------
+    # ORDERS
+    # ----------------------------------------------
+
+    db = get_db()
+
+
+    orders_rows = db.execute(
+        """
+        SELECT *
+        FROM orders
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+
+    orders = []
+
+
+    for order_row in orders_rows:
+
+        order = dict(
+            order_row
+        )
+
+
+        items_rows = db.execute(
+            """
+            SELECT *
+            FROM order_items
+            WHERE order_id = ?
+            ORDER BY id ASC
+            """,
+            (
+                order["id"],
+            )
+        ).fetchall()
+
+
+        order["items"] = [
+            dict(item)
+            for item in items_rows
+        ]
+
+
+        orders.append(
+            order
+        )
+
+
+    db.close()
+
+
+    return render_template(
+        "admin.html",
+        products=products,
+        orders=orders
+    )
+
+
+# ==================================================
+# ADMIN ADD PRODUCT
+# ==================================================
+
+@app.route(
+    "/admin/add-product",
+    methods=["POST"]
+)
+def admin_add_product():
+
+    if not admin_logged_in():
+
+        return redirect(
+            url_for(
+                "admin_login"
+            )
+        )
+
+
+    name = request.form.get(
+        "name",
+        ""
+    ).strip()
+
+
+    category = request.form.get(
+        "category",
+        ""
+    ).strip()
+
+
+    price_text = request.form.get(
+        "price",
+        ""
+    ).strip()
+
+
+    image = request.files.get(
+        "image"
+    )
+
+
+    if (
+        not name
+        or not category
+        or not price_text
+    ):
+
+        flash(
+            "Please fill in all product fields.",
+            "error"
+        )
+
+        return redirect(
+            url_for(
+                "admin_dashboard"
+            )
+        )
+
+
+    try:
+
+        price = float(
+            price_text
+        )
+
+
+        if price < 0:
+
+            raise ValueError
+
+
+    except ValueError:
+
+        flash(
+            "Please enter a valid price.",
+            "error"
+        )
+
+        return redirect(
+            url_for(
+                "admin_dashboard"
+            )
+        )
+
+
+    if (
+        image is None
+        or image.filename == ""
+    ):
+
+        flash(
+            "Please choose a product image.",
+            "error"
+        )
+
+        return redirect(
+            url_for(
+                "admin_dashboard"
+            )
+        )
+
+
+    if not allowed_file(
+        image.filename
+    ):
+
+        flash(
+            "Only JPG, JPEG, PNG, WEBP and GIF images are allowed.",
+            "error"
+        )
+
+        return redirect(
+            url_for(
+                "admin_dashboard"
+            )
+        )
+
+
+    original_name = secure_filename(
+        image.filename
+    )
+
+
+    extension = original_name.rsplit(
+        ".",
+        1
+    )[1].lower()
+
+
+    unique_name = (
+        uuid.uuid4().hex
+        + "."
+        + extension
+    )
+
+
+    save_path = os.path.join(
+        UPLOAD_FOLDER,
+        unique_name
+    )
+
+
+    image.save(
+        save_path
+    )
+
+
+    image_path = (
+        "uploads/"
+        + unique_name
+    )
+
+
+    db = get_db()
+
+
+    db.execute(
+        """
+        INSERT INTO products
+        (
+            name,
+            price,
+            category,
+            image
+        )
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            name,
+            price,
+            category,
+            image_path
+        )
+    )
+
+
+    db.commit()
+
+    db.close()
+
+
+    flash(
+        "Product added successfully.",
+        "success"
+    )
+
+
+    return redirect(
+        url_for(
+            "admin_dashboard"
+        )
+    )
+
+
+# ==================================================
+# ADMIN DELETE PRODUCT
+# ==================================================
+
+@app.route(
+    "/admin/delete-product/<int:product_id>",
+    methods=["POST"]
+)
+def admin_delete_product(product_id):
+
+    if not admin_logged_in():
+
+        return redirect(
+            url_for(
+                "admin_login"
+            )
+        )
+
+
+    product = get_product(
+        product_id
+    )
+
+
+    if product is None:
+
+        flash(
+            "Product not found.",
+            "error"
+        )
+
+        return redirect(
+            url_for(
+                "admin_dashboard"
+            )
+        )
+
+
+    db = get_db()
+
+
+    db.execute(
+        """
+        DELETE FROM products
+        WHERE id = ?
+        """,
+        (
+            product_id,
+        )
+    )
+
+
+    db.commit()
+
+    db.close()
+
+
+    if product["image"].startswith(
+        "uploads/"
+    ):
+
+        image_path = os.path.join(
+            BASE_DIR,
+            "static",
+            "images",
+            product["image"]
+        )
+
+
+        if os.path.exists(
+            image_path
+        ):
+
+            try:
+
+                os.remove(
+                    image_path
+                )
+
+            except OSError:
+
+                pass
+
+
+    flash(
+        "Product deleted successfully.",
+        "success"
+    )
+
+
+    return redirect(
+        url_for(
+            "admin_dashboard"
+        )
+    )
+
+
+# ==================================================
+# ADMIN UPDATE ORDER STATUS
+# ==================================================
+
+@app.route(
+    "/admin/update-order/<int:order_id>",
+    methods=["POST"]
+)
+def admin_update_order(order_id):
+
+    if not admin_logged_in():
+
+        return redirect(
+            url_for(
+                "admin_login"
+            )
+        )
+
+
+    status = request.form.get(
+        "status",
+        "New"
+    ).strip()
+
+
+    allowed_statuses = {
+        "New",
+        "Processing",
+        "Shipped",
+        "Completed",
+        "Cancelled"
+    }
+
+
+    if status not in allowed_statuses:
+
+        flash(
+            "Invalid order status.",
+            "error"
+        )
+
+        return redirect(
+            url_for(
+                "admin_dashboard"
+            )
+        )
+
+
+    db = get_db()
+
+
+    db.execute(
+        """
+        UPDATE orders
+        SET status = ?
+        WHERE id = ?
+        """,
+        (
+            status,
+            order_id
+        )
+    )
+
+
+    db.commit()
+
+    db.close()
+
+
+    flash(
+        "Order status updated.",
+        "success"
+    )
+
+
+    return redirect(
+        url_for(
+            "admin_dashboard"
+        )
+    )
+
+
+# ==================================================
+# ADMIN LOGOUT
+# ==================================================
+
+@app.route(
+    "/admin/logout"
+)
+def admin_logout():
+
+    session.pop(
+        "admin_logged_in",
+        None
+    )
+
+
+    return redirect(
+        url_for(
+            "admin_login"
+        )
+    )
+
+
+# ==================================================
+# RUN
+# ==================================================
 
 if __name__ == "__main__":
 
-    app.run(debug=True)
+    app.run(
+        debug=True
+    )
