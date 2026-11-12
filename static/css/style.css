@@ -1,2382 +1,5141 @@
+/* =========================================
+   ROXX — MINIMAL STREETWEAR DESIGN
+========================================= */
+
+:root {
+    --black: #585656;
+    --white: #ffffff;
+    --gray: #888888;
+    --border: #252525;
+    --font: Arial, Helvetica, sans-serif;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f5f5f3;
-    color: #111;
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font);
+    overflow-x: hidden;
 }
 
 a {
-    text-decoration: none;
     color: inherit;
+    text-decoration: none;
 }
 
-/* NAVBAR */
-
-.navbar {
-    height: 80px;
-    padding: 0 6%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #f5f5f3;
-    border-bottom: 1px solid #ddd;
+button,
+input,
+select {
+    font: inherit;
 }
 
-.logo {
-    font-size: 32px;
-    font-weight: 900;
-    letter-spacing: -2px;
-}
-
-.navbar nav {
-    display: flex;
-    gap: 35px;
-}
-
-.navbar nav a {
-    font-size: 13px;
-    font-weight: bold;
-    letter-spacing: 1px;
-}
-
-.navbar nav a:hover {
-    opacity: 0.5;
-}
-
-.cart {
-    font-size: 13px;
-    font-weight: bold;
-}
-
-
-/* HERO */
-
-.hero {
-    min-height: 650px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 50px 6%;
-    gap: 50px;
-    align-items: center;
-}
-
-.hero-text > p:first-child {
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 3px;
-    margin-bottom: 25px;
-}
-
-.hero h1 {
-    font-size: clamp(55px, 8vw, 110px);
-    line-height: 0.85;
-    letter-spacing: -6px;
-    font-weight: 900;
-}
-
-.description {
-    max-width: 400px;
-    margin: 35px 0;
-    font-size: 16px;
-    line-height: 1.6;
-    color: #555;
-}
-
-.shop-btn {
-    display: inline-block;
-    background: #111;
-    color: white;
-    padding: 18px 30px;
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    transition: 0.3s;
-}
-
-.shop-btn:hover {
-    background: #444;
-}
-
-
-/* HERO IMAGE */
-
-.hero-image {
-    height: 550px;
-    background: #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.fashion-placeholder {
-    font-size: 80px;
-    font-weight: 900;
-    letter-spacing: -5px;
-}
-
-
-/* CATEGORIES */
-
-.categories {
-    padding: 100px 6%;
-    background: #111;
-    color: white;
-}
-
-.categories h2 {
-    font-size: 14px;
-    letter-spacing: 3px;
-    margin-bottom: 50px;
-}
-
-.category-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-}
-
-.category-card {
-    min-height: 220px;
-    padding: 25px;
-    border: 1px solid #444;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: 0.3s;
-}
-
-.category-card:hover {
-    background: white;
-    color: #111;
-}
-
-.category-card span {
-    font-size: 12px;
-}
-
-.category-card h3 {
-    font-size: 25px;
-}
-
-
-/* FEATURED */
-
-.featured {
-    padding: 100px 6%;
-}
-
-.section-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-    margin-bottom: 50px;
-}
-
-.section-title p {
-    font-size: 12px;
-    letter-spacing: 3px;
-    margin-bottom: 10px;
-}
-
-.section-title h2 {
-    font-size: 45px;
-    letter-spacing: -2px;
-}
-
-.section-title a {
-    font-size: 12px;
-    font-weight: bold;
-}
-
-
-/* PRODUCTS */
-
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-}
-
-.product-card {
-    background: white;
-}
-
-.product-image {
-    height: 380px;
-    background: #e5e5e5;
-    overflow: hidden;
-}
-
-.product-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.product-info {
-    padding: 20px;
-}
-
-.product-info p {
-    font-size: 11px;
-    color: #777;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-}
-
-.product-info h3 {
-    font-size: 17px;
-    margin-bottom: 12px;
-}
-
-.product-info strong {
-    font-size: 15px;
-}
-
-
-/* FOOTER */
-
-footer {
-    background: #111;
-    color: white;
-    padding: 70px 6%;
-    text-align: center;
-}
-
-.footer-logo {
-    font-size: 60px;
-    font-weight: 900;
-    letter-spacing: -5px;
-    margin-bottom: 20px;
-}
-
-footer p {
-    font-size: 12px;
-    letter-spacing: 2px;
-    margin-bottom: 30px;
-}
-
-footer small {
-    color: #777;
-}
-
-
-/* MOBILE */
-
-@media (max-width: 800px) {
-
-    .navbar {
-        padding: 0 20px;
-    }
-
-    .navbar nav {
-        display: none;
-    }
-
-    .hero {
-        grid-template-columns: 1fr;
-        padding: 40px 20px;
-    }
-
-    .hero-image {
-        height: 400px;
-    }
-
-    .category-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .products-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .section-title h2 {
-        font-size: 30px;
-    }
-}
-/* CART */
-
-.cart-page {
-    min-height: 650px;
-    padding: 80px 6%;
-}
-
-.cart-page > h1 {
-    font-size: 70px;
-    letter-spacing: -4px;
-    margin-bottom: 50px;
-}
-
-.cart-label {
-    font-size: 12px;
-    letter-spacing: 3px;
-    margin-bottom: 15px;
-}
-
-.cart-item {
-    display: flex;
-    gap: 30px;
-    padding: 25px 0;
-    border-bottom: 1px solid #ddd;
-}
-
-.cart-item img {
-    width: 150px;
-    height: 170px;
-    object-fit: cover;
-    background: #ddd;
-}
-
-.cart-item h2 {
-    margin: 10px 0;
-}
-
-.cart-item p {
-    color: #777;
-    font-size: 12px;
-    text-transform: uppercase;
-}
-
-.cart-total {
-    display: flex;
-    justify-content: space-between;
-    padding: 30px 0;
-    font-size: 18px;
-}
-
-.checkout-btn {
-    width: 100%;
-    padding: 20px;
-    background: #111;
-    color: white;
-    border: none;
-    font-weight: bold;
-    letter-spacing: 2px;
+button {
     cursor: pointer;
 }
 
-.empty-cart {
-    padding: 80px 0;
-    text-align: center;
-}
-
-.empty-cart h2 {
-    margin-bottom: 25px;
-}
-
-.empty-cart a {
-    font-weight: bold;
-}
-.quantity {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin: 20px 0;
-}
-
-.quantity a {
-    width: 35px;
-    height: 35px;
-    border: 1px solid #111;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-}
-
-.quantity a:hover {
-    background: #111;
-    color: white;
-}
-
-.quantity span {
-    font-weight: bold;
-}
-/* PRODUCT IMAGE IMPROVEMENT */
-
-.product-image {
-    width: 100%;
-    height: 450px;
-    overflow: hidden;
-    background: #eeeeec;
-}
-
-.product-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+img {
     display: block;
-    transition: transform 0.5s ease;
+    max-width: 100%;
 }
 
-.product-card:hover .product-image img {
-    transform: scale(1.05);
-}
-.product-card {
-    background: #ffffff;
-    overflow: hidden;
-    transition: transform 0.3s ease;
-}
+/* =========================================
+   INTRO
+========================================= */
 
-.product-card:hover {
-    transform: translateY(-6px);
-}
-
-.product-info {
-    padding: 20px;
-}
-
-.product-info p {
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-}
-
-.product-info h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-.product-info strong {
-    font-size: 16px;
-}
-/* ROXX NAVBAR */
-
-.navbar {
-    height: 80px;
-    padding: 0 6%;
+.roxx-intro {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #000;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #ffffff;
-    border-bottom: 1px solid #dddddd;
-}
-
-.logo {
-    font-size: 32px;
-    font-weight: 900;
-    letter-spacing: -2px;
-    color: #111;
-    text-decoration: none;
-}
-
-.navbar nav {
-    display: flex;
-    gap: 35px;
-}
-
-.navbar nav a,
-.cart {
-    color: #111;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-
-.navbar nav a:hover,
-.cart:hover {
-    text-decoration: underline;
-}
-
-.cart {
-    border: 1px solid #111;
-    padding: 12px 18px;
-}
-.add-cart {
-    display: block;
-    width: 100%;
-    padding: 18px;
-    margin-top: 30px;
-    background: #111;
-    color: #fff;
-    text-align: center;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    border: 1px solid #111;
-    transition: 0.3s ease;
-}
-
-.add-cart:hover {
-    background: #fff;
-    color: #111;
-} 
-/* ROXX CART */
-
-.cart-page {
-    padding: 80px 6%;
-    min-height: 70vh;
-}
-
-.cart-page h1 {
-    font-size: 60px;
-    letter-spacing: -3px;
-    margin-bottom: 50px;
-}
-
-.cart-label {
-    font-size: 11px;
-    letter-spacing: 3px;
-    margin-bottom: 10px;
-}
-
-.cart-items {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    max-width: 900px;
-}
-
-.cart-item {
-    display: flex;
-    gap: 30px;
-    padding-bottom: 25px;
-    border-bottom: 1px solid #ddd;
-}
-
-.cart-item img {
-    width: 180px;
-    height: 220px;
-    object-fit: cover;
-    background: #eee;
-}
-
-.cart-item h2 {
-    margin: 8px 0;
-}
-
-.cart-total {
-    max-width: 900px;
-    margin-top: 40px;
-    padding-top: 25px;
-    border-top: 2px solid #111;
-}
-
-.cart-total h2 {
-    margin-bottom: 25px;
-}
-
-.checkout-btn {
-    display: inline-block;
-    padding: 16px 30px;
-    background: #111;
-    color: white;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    border: 1px solid #111;
-    transition: 0.3s ease;
-}
-
-.checkout-btn:hover {
-    background: white;
-    color: #111;
-}
-/* ROXX CHECKOUT */
-
-.checkout-page {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 80px 6%;
-    min-height: 70vh;
-}
-
-.checkout-page h1 {
-    font-size: 60px;
-    letter-spacing: -3px;
-    margin-bottom: 45px;
-}
-
-.checkout-form {
-    display: flex;
-    flex-direction: column;
-}
-
-.checkout-form label {
-    font-size: 11px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    margin-bottom: 8px;
-    margin-top: 20px;
-}
-
-.checkout-form input,
-.checkout-form textarea,
-.checkout-form select {
-    width: 100%;
-    padding: 15px;
-    border: 1px solid #ccc;
-    background: white;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    outline: none;
-}
-
-.checkout-form input:focus,
-.checkout-form textarea:focus,
-.checkout-form select:focus {
-    border-color: #111;
-}
-
-.checkout-total {
-    margin: 35px 0 20px;
-    padding: 20px 0;
-    border-top: 2px solid #111;
-    border-bottom: 1px solid #ddd;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.checkout-form .checkout-btn {
-    width: 100%;
-    cursor: pointer;
-    font-family: Arial, sans-serif;
-}
-/* ROXX SUCCESS PAGE */
-
-.success-page {
-    min-height: 70vh;
-    padding: 120px 6%;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    transition: opacity .7s ease, visibility .7s ease;
 }
 
-.success-page > p {
-    font-size: 12px;
-    letter-spacing: 4px;
-    margin-bottom: 20px;
+.roxx-intro.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
-.success-page h1 {
-    font-size: 65px;
-    letter-spacing: -3px;
-    margin-bottom: 20px;
+.roxx-intro-content {
+    text-align: center;
 }
 
-.success-page h2 {
-    font-size: 18px;
-    margin-bottom: 15px;
+.roxx-intro-logo {
+    color: #fff;
+    font-size: clamp(70px, 15vw, 180px);
+    font-weight: 900;
+    letter-spacing: -10px;
+    line-height: 1;
 }
 
-.success-page p:not(:first-child) {
-    margin-bottom: 35px;
-}
-
-.success-page .shop-btn {
+.roxx-intro-button {
     display: inline-block;
-}
-/* =========================
-   CONTACT PAGE
-========================= */
-
-.contact-page {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 100px 6%;
-    min-height: 70vh;
-}
-
-.contact-page h1 {
-    font-size: 70px;
-    line-height: 0.95;
-    letter-spacing: -4px;
-    margin-bottom: 30px;
-}
-
-.contact-text {
-    max-width: 600px;
-    line-height: 1.7;
-    color: #555;
-    margin-bottom: 45px;
-}
-
-.contact-form {
-    max-width: 700px;
-    display: flex;
-    flex-direction: column;
-}
-
-.contact-form label {
+    margin-top: 35px;
+    padding: 15px 35px;
+    background: #fff;
+    color: #000;
+    border: 1px solid #fff;
     font-size: 11px;
-    font-weight: bold;
+    font-weight: 700;
     letter-spacing: 2px;
-    margin-bottom: 8px;
-    margin-top: 20px;
+    transition: .3s ease;
 }
 
-.contact-form input,
-.contact-form textarea {
+.roxx-intro-button:hover {
+    background: transparent;
+    color: #fff;
+}
+
+/* =========================================
+   ANNOUNCEMENT TICKER
+========================================= */
+
+.announcement-bar {
     width: 100%;
-    padding: 16px;
-    border: 1px solid #ccc;
+    height: 32px;
+    overflow: hidden;
     background: #fff;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    outline: none;
-    resize: vertical;
-}
-
-.contact-form input:focus,
-.contact-form textarea:focus {
-    border-color: #111;
-}
-
-.contact-form .checkout-btn {
-    margin-top: 30px;
-    cursor: pointer;
-}
-/* =========================
-   SIZE BUTTONS
-========================= */
-
-.sizes {
+    color: #000;
     display: flex;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.size-btn {
-    width: 55px;
-    height: 50px;
-    background: #fff;
-    border: 1px solid #111;
-    color: #111;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.size-btn:hover {
-    background: #111;
-    color: #fff;
-}
-
-.size-btn.selected {
-    background: #111;
-    color: #fff;
-}
-/* =========================
-   CHECKOUT ORDER SUMMARY
-========================= */
-
-.order-summary {
-    margin-bottom: 45px;
-    padding: 25px 0;
-    border-top: 2px solid #111;
-    border-bottom: 1px solid #ddd;
-}
-
-.order-summary h2 {
-    font-size: 18px;
-    margin-bottom: 25px;
-}
-
-.order-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 30px;
-    padding: 18px 0;
-    border-bottom: 1px solid #ddd;
-}
-
-.order-item strong {
-    font-size: 15px;
-}
-
-.order-item p {
-    margin-top: 8px;
-    font-size: 11px;
-    letter-spacing: 1px;
-    color: #555;
-}
-
-.order-item > strong {
+    align-items: center;
     white-space: nowrap;
 }
 
-.checkout-total {
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 2px solid #111;
-    font-size: 20px;
-    font-weight: bold;
-}
-/* =========================
-   HERO IMAGE
-========================= */
-
-.hero-image {
-    width: 50%;
-    height: 650px;
-    overflow: hidden;
+.announcement-track {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    width: max-content;
+    animation: ticker 25s linear infinite;
 }
 
-.hero-image img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: contain;
-    object-position: center;
-}
-/* =========================
-   CATEGORY SECTION
-========================= */
-
-.categories {
-    padding: 100px 6%;
-    background: #111;
-    color: #fff;
-}
-
-.categories h2 {
-    font-size: 14px;
-    letter-spacing: 3px;
-    margin-bottom: 50px;
-}
-
-.category-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    background: #444;
-}
-
-.category-card {
-    min-height: 250px;
-    padding: 30px;
-    background: #111;
-    color: #fff;
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: 0.3s ease;
-}
-
-.category-card span {
-    font-size: 12px;
+.announcement-track span {
+    padding: 0 35px;
+    font-size: 10px;
+    font-weight: 700;
     letter-spacing: 2px;
-}
-
-.category-card h3 {
-    font-size: 28px;
-    letter-spacing: -1px;
-}
-
-.category-card:hover {
-    background: #fff;
-    color: #111;
-    transform: translateY(-5px);
-}
-/* =========================
-   MOBILE RESPONSIVE
-========================= */
-
-@media (max-width: 768px) {
-
-    .navbar {
-        height: auto;
-        min-height: 70px;
-        padding: 18px 5%;
-        flex-wrap: wrap;
-        gap: 15px;
-    }
-
-    .navbar nav {
-        order: 3;
-        width: 100%;
-        justify-content: center;
-        gap: 18px;
-    }
-
-    .navbar nav a,
-    .cart {
-        font-size: 10px;
-        letter-spacing: 1px;
-    }
-
-    .logo {
-        font-size: 28px;
-    }
-
-    .hero {
-        flex-direction: column;
-    }
-
-    .hero-text {
-        width: 100%;
-        padding: 70px 6%;
-    }
-
-    .hero-image {
-        width: 100%;
-        min-height: 350px;
-    }
-
-    .hero-brand {
-        font-size: 70px;
-    }
-
-    .category-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .products-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .product-image {
-        height: 420px;
-    }
-
-    .cart-item {
-        flex-direction: column;
-    }
-
-    .cart-item img {
-        width: 100%;
-        height: 400px;
-    }
-
-    .checkout-page h1,
-    .cart-page h1 {
-        font-size: 45px;
-    }
-
-} 
-/* =========================
-   SHOP FILTERS
-========================= */
-
-.shop-filters {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 45px;
-}
-
-.filter-btn {
-    padding: 13px 22px;
-    background: #fff;
-    color: #111;
-    border: 1px solid #111;
-    font-size: 11px;
-    font-weight: bold;
-    letter-spacing: 1.5px;
-    cursor: pointer;
-    transition: 0.25s ease;
-}
-
-.filter-btn:hover,
-.filter-btn.active {
-    background: #111;
-    color: #fff;
-}
-
-@media (max-width: 768px) {
-
-    .shop-filters {
-        gap: 8px;
-    }
-
-    .filter-btn {
-        padding: 11px 15px;
-        font-size: 10px;
-    }
-
-}
-/* SEARCH BAR */
-
-.shop-search {
-    max-width: 700px;
-    margin: 0 6% 30px;
-}
-
-.shop-search input {
-    width: 100%;
-    padding: 18px 20px;
-    border: 1px solid #111;
-    background: #fff;
-    font-size: 12px;
-    letter-spacing: 1px;
-    outline: none;
-    box-sizing: border-box;
-}
-
-.shop-search input:focus {
-    border-width: 2px;
-}
-
-@media (max-width: 768px) {
-
-    .shop-search {
-        margin: 0 5% 30px;
-    }
-
-}
-/* PRODUCT DETAILS */
-
-.product-page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 100px 6%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 70px;
-    align-items: center;
-}
-
-.product-detail-image {
-    width: 100%;
-    height: 600px;
-    background: #eeeeec;
-    overflow: hidden;
-}
-
-.product-detail-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.product-details {
-    padding: 20px 0;
-}
-
-.product-category {
-    font-size: 11px;
-    letter-spacing: 3px;
-    margin-bottom: 15px;
     text-transform: uppercase;
 }
 
-.product-details h1 {
-    font-size: 55px;
-    line-height: 0.95;
-    letter-spacing: -3px;
-    margin-bottom: 20px;
-}
-
-.product-details h2 {
-    font-size: 24px;
-    margin-bottom: 25px;
-}
-
-.product-description {
-    max-width: 500px;
-    color: #555;
-    line-height: 1.7;
-    margin-bottom: 35px;
-}
-
-.size-section > p {
-    font-size: 11px;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-
-.back-shop {
-    display: block;
-    margin-top: 25px;
-    color: #111;
-    font-size: 11px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    text-decoration: none;
-}
-
-.back-shop:hover {
-    text-decoration: underline;
-}
-
-
-/* PRODUCT MOBILE */
-
-@media (max-width: 768px) {
-
-    .product-page {
-        grid-template-columns: 1fr;
-        gap: 40px;
-        padding: 60px 5%;
+@keyframes ticker {
+    from {
+        transform: translateX(0);
     }
 
-    .product-detail-image {
-        height: 450px;
+    to {
+        transform: translateX(-50%);
     }
-
-    .product-details h1 {
-        font-size: 42px;
-    }
-
-} 
-/* CLICKABLE PRODUCT CARDS */
-
-.product-card {
-    color: #111;
-    text-decoration: none;
-    display: block;
-} 
-/* VIEW PRODUCT BUTTON */
-
-.view-product {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 12px 18px;
-    border: 1px solid #111;
-    color: #111;
-    text-decoration: none;
-    font-size: 10px;
-    font-weight: bold;
-    letter-spacing: 1.5px;
-    transition: 0.25s ease;
 }
 
-.view-product:hover {
-    background: #111;
-    color: #fff;
-}
-/* QUANTITY SELECTOR */
+/* =========================================
+   HEADER
+========================================= */
 
-.quantity-selector {
-    margin-top: 30px;
-}
-
-.quantity-selector > p {
-    font-size: 11px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    margin-bottom: 15px;
-}
-
-.quantity-controls {
-    display: flex;
-    align-items: center;
-    width: fit-content;
-    border: 1px solid #111;
-}
-
-.quantity-controls button {
-    width: 50px;
-    height: 45px;
-    border: none;
-    background: #fff;
-    font-size: 22px;
-    cursor: pointer;
-}
-
-.quantity-controls button:hover {
-    background: #111;
-    color: #fff;
-}
-
-.quantity-controls span {
-    width: 50px;
-    text-align: center;
-    font-weight: bold;
-}
-/* PRODUCT FEATURES */
-
-.product-features {
-    margin: 35px 0;
-    border-top: 1px solid #ddd;
-}
-
-.product-features div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid #ddd;
-    gap: 20px;
-}
-
-.product-features strong {
-    font-size: 10px;
-    letter-spacing: 2px;
-}
-
-.product-features span {
-    font-size: 12px;
-    color: #555;
-    text-align: right;
-}
-/* =========================
-   ROXX NEW HERO
-========================= */
-
-.hero {
-    min-height: 720px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    background: #111;
-    color: #fff;
-}
-
-.hero-content {
-    padding: 100px 8%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.hero-label {
-    font-size: 11px;
-    letter-spacing: 4px;
-    margin-bottom: 35px;
-}
-
-.hero-content h1 {
-    font-size: clamp(65px, 8vw, 125px);
-    line-height: 0.82;
-    letter-spacing: -7px;
-    margin: 0 0 40px;
-    font-weight: 900;
-}
-
-.hero-description {
-    max-width: 430px;
-    color: #aaa;
-    font-size: 15px;
-    line-height: 1.7;
-    margin-bottom: 40px;
-}
-
-.hero-buttons {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-}
-
-.hero-btn {
-    display: inline-block;
-    padding: 17px 28px;
-    background: #fff;
-    color: #111;
-    text-decoration: none;
-    font-size: 11px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    transition: 0.25s ease;
-}
-
-.hero-btn:hover {
-    background: #ddd;
-}
-
-.hero-link {
-    color: #fff;
-    text-decoration: none;
-    font-size: 11px;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-
-.hero-link:hover {
-    text-decoration: underline;
-}
-
-.hero-side {
-    min-height: 720px;
-    padding: 50px;
-    background: #eeeeec;
-    color: #111;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.hero-side-text {
+.roxx-header {
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-
-.hero-side-logo {
-    font-size: clamp(80px, 10vw, 160px);
-    font-weight: 900;
-    letter-spacing: -10px;
-}
-
-
-/* HERO MOBILE */
-
-@media (max-width: 768px) {
-
-    .hero {
-        grid-template-columns: 1fr;
-        min-height: auto;
-    }
-
-    .hero-content {
-        min-height: 600px;
-        padding: 80px 6%;
-    }
-
-    .hero-content h1 {
-        font-size: 70px;
-        letter-spacing: -5px;
-    }
-
-    .hero-side {
-        min-height: 350px;
-        padding: 30px;
-    }
-
-    .hero-side-logo {
-        font-size: 80px;
-        letter-spacing: -6px;
-    }
-
-    .hero-buttons {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 20px;
-    }
-
-}
-/* =========================
-   FINAL ROXX NAVBAR
-========================= */
-
-.navbar {
     height: 76px;
     padding: 0 5%;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
-    justify-content: space-between;
-    background: #fff;
-    border-bottom: 1px solid #ddd;
-
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    background: #000;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    z-index: 100;
 }
 
-.logo {
-    font-size: 30px;
+.roxx-header-left {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.roxx-header-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.roxx-header-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 25px;
+}
+
+.roxx-logo {
+    color: #fff;
+    font-size: 32px;
     font-weight: 900;
     letter-spacing: -2px;
-    color: #111;
-    text-decoration: none;
 }
 
-.navbar nav {
-    display: flex;
-    gap: 40px;
-}
-
-.navbar nav a,
-.cart {
-    color: #111;
-    text-decoration: none;
-    font-size: 10px;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-
-.navbar nav a:hover,
-.cart:hover {
-    text-decoration: underline;
-}
-
-.cart {
-    border: 1px solid #111;
-    padding: 11px 16px;
-}
-/* =========================
-   ROXX PRODUCT CARD HOVER
-========================= */
-
-.product-card {
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s ease;
-}
-
-.product-card:hover {
-    transform: translateY(-6px);
-}
-
-.product-card .product-image {
-    overflow: hidden;
-}
-
-.product-card .product-image img {
-    width: 100%;
-    display: block;
-    transition: transform 0.5s ease;
-}
-
-.product-card:hover .product-image img {
-    transform: scale(1.05);
-}
-
-.product-card .product-info h3 {
-    transition: transform 0.3s ease;
-}
-
-.product-card:hover .product-info h3 {
-    transform: translateX(5px);
-}
-/* =========================
-   ROXX IMAGE OVERLAY
-========================= */
-
-.product-card .product-image {
-    position: relative;
-    background: #eeeeee;
-}
-
-.product-card .product-image::after {
-    content: "VIEW PRODUCT →";
-    position: absolute;
-    left: 20px;
-    bottom: 20px;
-
-    padding: 12px 16px;
-
-    background: #111;
+.roxx-menu-button,
+.roxx-search-button,
+.roxx-cart-button {
+    background: none;
+    border: none;
     color: #fff;
-
-    font-size: 9px;
-    font-weight: bold;
-    letter-spacing: 1.5px;
-
-    opacity: 0;
-    transform: translateY(10px);
-
-    transition: all 0.3s ease;
-}
-
-.product-card:hover .product-image::after {
-    opacity: 1;
-    transform: translateY(0);
-}
-/* =========================
-   ROXX SHOP PAGE
-========================= */
-
-.shop-section {
-    padding: 60px 6%;
-}
-
-.shop-top {
-    margin-bottom: 50px;
-}
-
-.product-link {
-    display: block;
-    color: inherit;
-    text-decoration: none;
-}
-
-.shop-search {
-    margin-bottom: 30px;
-}
-
-.shop-search input {
-    width: 100%;
-    max-width: 500px;
-    padding: 18px 20px;
-    border: 1px solid #111;
-    outline: none;
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    box-sizing: border-box;
-}
-
-.shop-search input:focus {
-    background: #f5f5f5;
-}
-
-.shop-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.filter-btn {
-    padding: 12px 20px;
-    background: #fff;
-    color: #111;
-    border: 1px solid #111;
-    font-size: 10px;
-    font-weight: bold;
-    letter-spacing: 1.5px;
-    cursor: pointer;
-    transition: 0.25s ease;
-}
-
-.filter-btn:hover,
-.filter-btn.active {
-    background: #111;
-    color: #fff;
-}
-
-
-/* =========================
-   MOBILE SHOP
-========================= */
-
-@media (max-width: 768px) {
-
-    .shop-heading {
-        padding: 70px 6% 50px;
-    }
-
-    .shop-heading h1 {
-        font-size: 65px;
-        letter-spacing: -5px;
-    }
-
-    .shop-section {
-        padding: 40px 6%;
-    }
-
-    .shop-filters {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .filter-btn {
-        width: 100%;
-    }
-
-}
-/* =========================
-   ROXX ADD TO CART
-========================= */
-
-.add-cart {
+    padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    width: 100%;
-    min-height: 58px;
-
-    margin-top: 25px;
-
-    background: #111;
-    color: #fff;
-
-    border: 1px solid #111;
-
-    text-decoration: none;
-
-    font-size: 11px;
-    font-weight: bold;
-    letter-spacing: 2px;
-
-    transition: all 0.25s ease;
 }
 
-.add-cart:hover {
+.roxx-menu-button {
+    width: 30px;
+    height: 30px;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.roxx-menu-button span {
+    width: 22px;
+    height: 1px;
     background: #fff;
-    color: #111;
-}
-/* =========================
-   ROXX SIZE SELECTOR
-========================= */
-
-.size-section {
-    margin-top: 30px;
-}
-
-.size-section > p {
-    margin-bottom: 15px;
-    font-size: 10px;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-
-.size-options {
-    display: flex;
-    gap: 8px;
-}
-
-.size-btn {
-    width: 55px;
-    height: 45px;
-
-    background: #fff;
-    color: #111;
-
-    border: 1px solid #ccc;
-
-    font-size: 11px;
-    font-weight: bold;
-
-    cursor: pointer;
-
-    transition: all 0.2s ease;
-}
-
-.size-btn:hover {
-    border-color: #111;
-    background: #f2f2f2;
-}
-
-.size-btn.selected {
-    background: #111;
-    color: #fff;
-    border-color: #111;
-}
-/* =========================
-   ROXX PRODUCT PAGE
-========================= */
-
-.product-page {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 80px 6%;
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 80px;
-    align-items: start;
-}
-
-.product-page .product-image {
-    background: #f1f1ef;
-    overflow: hidden;
-}
-
-.product-page .product-image img {
-    width: 100%;
-    height: auto;
     display: block;
-    transition: transform 0.5s ease;
+    transition: .3s ease;
 }
 
-.product-page .product-image:hover img {
-    transform: scale(1.03);
+.roxx-menu-button:hover span:first-child {
+    transform: translateY(2px);
 }
 
-.product-details {
-    padding-top: 10px;
+.roxx-menu-button:hover span:last-child {
+    transform: translateY(-2px);
 }
 
-.product-details > p:first-child {
-    font-size: 10px;
-    font-weight: bold;
-    letter-spacing: 3px;
+.roxx-search-button svg,
+.roxx-cart-button svg {
+    width: 21px;
+    height: 21px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.5;
+}
+
+.roxx-search-button:hover,
+.roxx-cart-button:hover {
+    opacity: .6;
+}
+
+/* =========================================
+   MENU PANEL
+========================================= */
+
+.roxx-menu-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #000;
+    border-bottom: 1px solid var(--border);
+    padding: 35px 5%;
+    display: none;
+    z-index: 99;
+}
+
+.roxx-menu-panel.active {
+    display: block;
+}
+
+.roxx-menu-panel a {
+    display: block;
+    width: fit-content;
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 22px;
+    transition: .2s ease;
+}
+
+.roxx-menu-panel a:hover {
+    color: var(--gray);
+}
+
+/* =========================================
+   SEARCH PANEL
+========================================= */
+
+.roxx-search-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 100%;
+    background: #000;
+    padding: 25px 5%;
+    border-bottom: 1px solid var(--border);
+    display: none;
+    z-index: 99;
+}
+
+.roxx-search-panel.active {
+    display: block;
+}
+
+.roxx-search-panel form {
+    display: flex;
+    width: 100%;
+    border-bottom: 1px solid #555;
+}
+
+.roxx-search-panel input {
+    flex: 1;
+    padding: 15px 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-size: 15px;
+}
+
+.roxx-search-panel input::placeholder {
     color: #777;
-    margin-bottom: 20px;
 }
 
-.product-details h1 {
-    font-size: clamp(42px, 5vw, 75px);
-    line-height: 0.9;
-    letter-spacing: -4px;
-    margin: 0 0 25px;
+.roxx-search-panel button {
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 0 15px;
 }
 
-.product-details .price {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 30px;
+/* =========================================
+   SHOP
+========================================= */
+
+.roxx-shop {
+    width: 100%;
+    background: #000;
+    padding: 45px 5% 80px;
 }
 
-
-/* =========================
-   MOBILE PRODUCT PAGE
-========================= */
-
-@media (max-width: 768px) {
-
-    .product-page {
-        grid-template-columns: 1fr;
-        gap: 45px;
-        padding: 50px 6%;
-    }
-
-    .product-details h1 {
-        font-size: 48px;
-        letter-spacing: -3px;
-    }
-
-}
-/* =========================
-   ROXX CART PAGE
-========================= */
-
-.cart-page {
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 80px 6%;
+.roxx-shop-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 35px;
+    text-transform: uppercase;
 }
 
-.cart-page h1 {
-    font-size: clamp(55px, 8vw, 110px);
-    line-height: 0.85;
-    letter-spacing: -6px;
-    margin: 0 0 60px;
+.roxx-shop-products {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
-.cart-item {
-    border-top: 1px solid #ddd;
-    padding: 25px 0;
+.roxx-shop-product {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 7%;
+    padding: 35px 0;
+    border-bottom: 1px solid var(--border);
 }
 
-.cart-item:last-child {
-    border-bottom: 1px solid #ddd;
+.roxx-shop-product:first-child {
+    border-top: 1px solid var(--border);
 }
 
-.cart-item img {
-    width: 130px;
-    height: 160px;
+.roxx-shop-product-image {
+    width: 100%;
+    overflow: hidden;
+    background: #111;
+}
+
+.roxx-shop-product-image img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    transition: transform .6s ease;
+}
+
+.roxx-shop-product-image:hover img {
+    transform: scale(1.035);
+}
+
+.roxx-shop-product-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.roxx-shop-product-info h2,
+.roxx-shop-product-info h3 {
+    font-size: clamp(22px, 3vw, 42px);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1.1;
+}
+
+.roxx-shop-product-info p {
+    color: #aaa;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.roxx-shop-product-price {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.roxx-shop-product-info a {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 14px 28px;
+    border: 1px solid #fff;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    transition: .3s ease;
+}
+
+.roxx-shop-product-info a:hover {
+    background: #fff;
+    color: #000;
+}
+
+/* =========================================
+   GENERAL PRODUCT IMAGES
+========================================= */
+
+.product-image,
+.product-card img {
+    width: 100%;
     object-fit: cover;
 }
 
-.cart-item h3 {
-    font-size: 16px;
-    margin: 5px 0;
+.product-card {
+    background: #080808;
+    border: 1px solid var(--border);
 }
 
-.cart-item p {
-    font-size: 10px;
-    letter-spacing: 1px;
-    color: #777;
+.product-card h3,
+.product-card p {
+    color: #fff;
 }
 
-.cart-total {
-    margin-top: 50px;
+/* =========================================
+   PRODUCT DETAILS
+========================================= */
+
+.product-page {
+    background: #000;
+    color: #fff;
+    padding: 60px 5%;
+}
+
+.product-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7%;
+    max-width: 1400px;
+    margin: auto;
+}
+
+.product-gallery {
+    width: 100%;
+}
+
+.product-gallery img {
+    width: 100%;
+    object-fit: cover;
+}
+
+.product-details {
     padding-top: 25px;
-    border-top: 2px solid #111;
 }
 
-.cart-total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    letter-spacing: 2px;
+.product-details h1 {
+    font-size: clamp(28px, 4vw, 50px);
+    line-height: 1.1;
+    margin-bottom: 20px;
+    text-transform: uppercase;
 }
 
-.cart-total-row strong {
-    font-size: 24px;
-    letter-spacing: 0;
+.product-details p {
+    color: #aaa;
+    line-height: 1.8;
+    margin-bottom: 20px;
 }
 
-.checkout-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.product-price {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
 
-    margin-top: 25px;
-    padding: 17px 28px;
+.product-details label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
 
+.product-details select,
+.product-details input {
+    width: 100%;
+    padding: 15px;
     background: #111;
     color: #fff;
+    border: 1px solid #444;
+    outline: none;
+    margin-bottom: 20px;
+}
 
-    text-decoration: none;
-
-    font-size: 10px;
-    font-weight: bold;
+.product-details button,
+.add-to-cart-button {
+    width: 100%;
+    padding: 17px;
+    background: #fff;
+    color: #000;
+    border: 1px solid #fff;
+    font-size: 11px;
+    font-weight: 700;
     letter-spacing: 2px;
-
-    transition: 0.25s ease;
+    transition: .3s ease;
 }
 
-.checkout-btn:hover {
-    background: #333;
+.product-details button:hover,
+.add-to-cart-button:hover {
+    background: transparent;
+    color: #fff;
 }
 
+/* =========================================
+   CART
+========================================= */
 
-/* =========================
-   MOBILE CART
-========================= */
-
-@media (max-width: 768px) {
-
-    .cart-page {
-        padding: 50px 6%;
-    }
-
-    .cart-page h1 {
-        font-size: 60px;
-        letter-spacing: -4px;
-    }
-
-    .cart-item img {
-        width: 100px;
-        height: 125px;
-    }
-
+/* =========================================
+   ROXX — PREMIUM CART & CHECKOUT
+========================================= */
+.cart-page,
+.checkout-page {
+    min-height: 80vh;
+    padding: 90px 7%;
+    background: #0A0A0A;
+    color: #fff;
+    position: relative;
 }
-/* =========================
-   ROXX CART FINAL
-========================= */
-
-.cart-page {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 90px 6%;
-}
+/* PAGE HEADER */
 
 .cart-header {
-    margin-bottom: 60px;
+    margin-bottom: 65px;
+    border-bottom: 1px solid #252525;
+    padding-bottom: 35px;
 }
 
 .cart-label {
+    color: #39FF14;
     font-size: 10px;
-    font-weight: bold;
+    font-weight: 800;
     letter-spacing: 4px;
-    color: #777;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
 }
 
-.cart-page h1 {
-    margin: 0;
-    font-size: clamp(70px, 10vw, 140px);
-    line-height: 0.8;
-    letter-spacing: -8px;
+.cart-page h1,
+.checkout-page h1 {
+    font-family: Arial, sans-serif;
+    font-size: clamp(55px, 10vw, 120px);
     font-weight: 900;
+    line-height: .9;
+    letter-spacing: -6px;
+    margin: 0;
+    text-transform: uppercase;
 }
 
-
-/* CART ITEM */
+/* CART ITEMS */
 
 .cart-items {
-    border-top: 1px solid #111;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
 .cart-item {
     display: grid;
-    grid-template-columns: 260px 1fr;
+    grid-template-columns: 230px 1fr;
     gap: 45px;
     padding: 35px 0;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #252525;
+    transition: .3s ease;
 }
 
+.cart-item:hover {
+    border-bottom-color: #39FF14;
+}
+
+/* PRODUCT IMAGE */
+
 .cart-image {
-    background: #eeeeec;
+    width: 100%;
+    height: 280px;
     overflow: hidden;
+    background: #151515;
 }
 
 .cart-image img {
     width: 100%;
-    display: block;
-    transition: transform 0.5s ease;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .6s ease;
 }
 
 .cart-item:hover .cart-image img {
-    transform: scale(1.04);
+    transform: scale(1.06);
 }
 
-
-/* INFO */
+/* PRODUCT INFO */
 
 .cart-info {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    justify-content: center;
 }
 
 .cart-category {
-    margin: 0 0 10px;
-    font-size: 9px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    color: #777;
+    color: #39FF14 !important;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
 }
 
 .cart-info h2 {
-    margin: 0 0 15px;
-    font-size: 28px;
-    letter-spacing: -1px;
+    font-size: clamp(25px, 4vw, 42px);
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    text-transform: uppercase;
+    margin: 12px 0;
 }
 
-.cart-size,
-.cart-price {
-    margin: 5px 0;
-    font-size: 11px;
-    letter-spacing: 1px;
+.cart-size {
+    color: #888;
+    font-size: 12px;
+    letter-spacing: 2px;
 }
 
 .cart-size strong {
-    margin-left: 5px;
+    color: #fff;
 }
 
+.cart-price {
+    color: #fff !important;
+    font-size: 20px;
+    font-weight: 800;
+}
 
 /* QUANTITY */
 
 .cart-quantity {
+    display: flex;
+    align-items: center;
+    gap: 25px;
     margin-top: 25px;
 }
 
 .quantity-label {
-    display: block;
-    margin-bottom: 10px;
-    font-size: 9px;
-    font-weight: bold;
+    color: #777;
+    font-size: 10px;
+    font-weight: 800;
     letter-spacing: 2px;
 }
 
-.cart-quantity .quantity-controls {
+.quantity-controls {
     display: flex;
     align-items: center;
-    border: 1px solid #111;
+    gap: 20px;
+    border: 1px solid #333;
+    padding: 8px 15px;
 }
 
-.cart-quantity .quantity-controls a {
-    width: 42px;
-    height: 40px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: #111;
-    text-decoration: none;
-
-    font-size: 18px;
-
-    transition: 0.2s ease;
-}
-
-.cart-quantity .quantity-controls a:hover {
-    background: #111;
+.quantity-controls a {
     color: #fff;
+    text-decoration: none;
+    font-size: 20px;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    transition: color .2s ease;
 }
 
-.cart-quantity .quantity-controls span {
-    width: 42px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: bold;
+.quantity-controls a:hover {
+    color: #39FF14;
 }
 
+.quantity-controls span {
+    font-size: 14px;
+    font-weight: 800;
+}
 
 /* SUBTOTAL */
 
 .cart-subtotal {
-    width: 100%;
-    max-width: 450px;
-
     display: flex;
-    justify-content: space-between;
-
-    margin-top: 30px;
-    padding-top: 15px;
-
-    border-top: 1px solid #ddd;
+    align-items: center;
+    gap: 20px;
+    margin-top: 25px;
 }
 
 .cart-subtotal span {
-    font-size: 9px;
-    font-weight: bold;
+    color: #777;
+    font-size: 10px;
     letter-spacing: 2px;
 }
 
 .cart-subtotal strong {
-    font-size: 15px;
+    color: #39FF14;
+    font-size: 20px;
 }
 
-
-/* REMOVE */
+/* REMOVE BUTTON */
 
 .remove-btn {
-    margin-top: 20px;
-
-    color: #777;
+    color: #777 !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-top: 25px !important;
+    font-size: 10px !important;
+    letter-spacing: 2px;
     text-decoration: none;
-
-    font-size: 9px;
-    font-weight: bold;
-    letter-spacing: 1.5px;
-
-    transition: 0.2s ease;
+    transition: .3s ease;
 }
 
 .remove-btn:hover {
-    color: #111;
-    text-decoration: underline;
+    color: #ff4545 !important;
 }
 
-
-/* SUMMARY */
+/* CART SUMMARY */
 
 .cart-summary {
-    margin-top: 60px;
-    padding-top: 25px;
-    border-top: 2px solid #111;
+    margin-top: 65px;
+    margin-left: auto;
+    max-width: 500px;
+    padding: 35px;
+    background: #111;
+    border: 1px solid #252525;
 }
 
 .cart-total-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #333;
 }
 
 .cart-total-row span {
-    font-size: 11px;
-    font-weight: bold;
+    color: #888;
+    font-size: 12px;
+    font-weight: 800;
     letter-spacing: 3px;
 }
 
 .cart-total-row strong {
-    font-size: 28px;
+    font-size: 35px;
+    font-weight: 900;
 }
-
 
 /* ACTIONS */
 
 .cart-actions {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    margin-top: 30px;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.cart-actions a {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    padding: 18px 20px;
+    margin: 0;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    transition: .3s ease;
 }
 
 .continue-shopping {
-    color: #111;
-    text-decoration: none;
-
-    font-size: 10px;
-    font-weight: bold;
-    letter-spacing: 1.5px;
+    background: transparent !important;
+    color: #fff !important;
+    border: 1px solid #333 !important;
 }
 
 .continue-shopping:hover {
-    text-decoration: underline;
+    border-color: #fff !important;
 }
 
+.checkout-btn {
+    background: #39FF14 !important;
+    color: #000 !important;
+    border: 1px solid #39FF14 !important;
+}
+
+.checkout-btn:hover {
+    background: transparent !important;
+    color: #39FF14 !important;
+    transform: translateY(-3px);
+}
 
 /* EMPTY CART */
 
 .empty-cart {
-    padding: 100px 0;
-    border-top: 1px solid #111;
+    padding: 100px 20px;
+    text-align: center;
+    background: #101010;
+    border: 1px solid #252525;
 }
 
 .empty-cart p {
-    font-size: 9px;
-    font-weight: bold;
-    letter-spacing: 3px;
-    color: #777;
+    color: #39FF14;
+    font-size: 11px;
+    letter-spacing: 4px;
+    font-weight: 800;
 }
 
 .empty-cart h2 {
-    margin: 25px 0 35px;
-
-    font-size: clamp(50px, 8vw, 100px);
-    line-height: 0.85;
-    letter-spacing: -5px;
+    font-size: clamp(45px, 8vw, 85px);
+    font-weight: 900;
+    letter-spacing: -4px;
+    line-height: .95;
+    margin: 25px 0 40px;
 }
 
 .empty-cart a {
     display: inline-block;
-
-    padding: 16px 25px;
-
-    background: #111;
-    color: #fff;
-
+    background: #39FF14;
+    color: #000;
     text-decoration: none;
-
-    font-size: 10px;
-    font-weight: bold;
+    padding: 18px 35px;
+    font-size: 11px;
+    font-weight: 900;
     letter-spacing: 2px;
+    transition: .3s ease;
 }
 
 .empty-cart a:hover {
-    background: #333;
+    background: #fff;
+    transform: translateY(-3px);
 }
 
+/* CHECKOUT BUTTONS */
 
-/* =========================
-   CART MOBILE
-========================= */
+.checkout-page button {
+    background: #39FF14;
+    color: #000;
+    border: 1px solid #39FF14;
+    font-weight: 900;
+    cursor: pointer;
+    transition: .3s ease;
+}
+
+.checkout-page button:hover {
+    background: transparent;
+    color: #39FF14;
+}
+
+/* RESPONSIVE */
 
 @media (max-width: 768px) {
 
-    .cart-page {
-        padding: 60px 6%;
+    .cart-page,
+    .checkout-page {
+        padding: 60px 5%;
     }
 
-    .cart-page h1 {
-        font-size: 75px;
-        letter-spacing: -5px;
+    .cart-page h1,
+    .checkout-page h1 {
+        letter-spacing: -3px;
     }
 
     .cart-item {
-        grid-template-columns: 1fr;
-        gap: 25px;
+        grid-template-columns: 125px 1fr;
+        gap: 20px;
+        padding: 25px 0;
     }
 
     .cart-image {
-        max-width: 100%;
+        height: 190px;
     }
 
     .cart-info h2 {
-        font-size: 24px;
+        font-size: 20px;
     }
 
-    .cart-actions {
-        flex-direction: column;
-        align-items: stretch;
+    .cart-price {
+        font-size: 16px;
     }
 
-    .continue-shopping {
-        text-align: center;
-        padding: 15px;
+    .cart-quantity {
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
-    .checkout-btn {
-        width: 100%;
-        box-sizing: border-box;
+    .cart-summary {
+        padding: 25px 18px;
     }
 
+    .cart-total-row strong {
+        font-size: 27px;
+    }
 }
-/* =========================
-   ROXX ANNOUNCEMENT BAR
-========================= */
 
-.announcement-bar {
+@media (max-width: 420px) {
+
+    .cart-item {
+        grid-template-columns: 1fr;
+    }
+
+    .cart-image {
+        height: 320px;
+    }
+
+    .cart-info h2 {
+        font-size: 27px;
+    }
+
+    .cart-actions a {
+        font-size: 10px;
+    }
+}
+/* =========================================
+   FORMS
+========================================= */
+
+.contact-page,
+.about-page {
+    background: #000;
+    color: #fff;
+    padding: 70px 5%;
+    min-height: 70vh;
+}
+
+.contact-page h1,
+.about-page h1 {
+    font-size: 40px;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+}
+
+.contact-page form,
+.checkout-page form {
+    max-width: 650px;
+}
+
+.contact-page input,
+.contact-page textarea,
+.checkout-page input,
+.checkout-page textarea {
+    display: block;
     width: 100%;
-    overflow: hidden;
-
+    padding: 16px;
+    margin-bottom: 18px;
     background: #111;
     color: #fff;
-
-    border-bottom: 1px solid #333;
+    border: 1px solid #333;
+    outline: none;
 }
 
-.announcement-track {
+.contact-page textarea,
+.checkout-page textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+.contact-page button {
+    padding: 16px 30px;
+    background: #fff;
+    color: #000;
+    border: 1px solid #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.roxx-footer,
+footer {
+    background: #000;
+    color: #fff;
+    border-top: 1px solid var(--border);
+    padding: 35px 5%;
+}
+
+.roxx-footer a,
+footer a {
+    color: #aaa;
+    transition: .2s ease;
+}
+
+.roxx-footer a:hover,
+footer a:hover {
+    color: #fff;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 768px) {
+
+    .roxx-header {
+        height: 65px;
+        padding: 0 18px;
+    }
+
+    .roxx-logo {
+        font-size: 26px;
+    }
+
+    .roxx-header-right {
+        gap: 10px;
+    }
+
+    .roxx-shop {
+        padding: 30px 18px 55px;
+    }
+
+    .roxx-shop-product {
+        grid-template-columns: 1fr;
+        gap: 22px;
+        padding: 25px 0;
+    }
+
+    .roxx-shop-product-image img {
+        aspect-ratio: 4 / 5;
+    }
+
+    .roxx-shop-product-info h2,
+    .roxx-shop-product-info h3 {
+        font-size: 28px;
+    }
+
+    .product-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .product-page {
+        padding: 30px 18px;
+    }
+
+    .product-details {
+        padding-top: 0;
+    }
+
+    .cart-page,
+    .checkout-page,
+    .contact-page,
+    .about-page {
+        padding: 35px 18px;
+    }
+
+    .cart-item {
+        flex-wrap: wrap;
+    }
+
+    .roxx-intro-logo {
+        letter-spacing: -5px;
+    }
+}
+
+@media (max-width: 420px) {
+
+    .roxx-header {
+        padding: 0 12px;
+    }
+
+    .roxx-header-right {
+        gap: 5px;
+    }
+
+    .roxx-logo {
+        font-size: 23px;
+    }
+
+    .announcement-track span {
+        font-size: 9px;
+        padding: 0 20px;
+    }
+}
+/* =========================================
+   ROXX — SHOP GRID
+========================================= */
+
+.roxx-shop-products {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 35px 18px;
+}
+
+.roxx-shop-product {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    animation: productEnter .8s ease both;
+}
+
+.roxx-shop-product:nth-child(2) {
+    animation-delay: .1s;
+}
+
+.roxx-shop-product:nth-child(3) {
+    animation-delay: .2s;
+}
+
+.roxx-shop-product:nth-child(4) {
+    animation-delay: .3s;
+}
+
+.roxx-shop-product-image img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+}
+
+.roxx-shop-product-info {
     display: flex;
-    align-items: center;
-
-    width: max-content;
-
-    padding: 12px 0;
-
-    animation: roxxMarquee 22s linear infinite;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 15px;
 }
 
-.announcement-track span {
-    margin: 0 22px;
-
-    font-size: 9px;
-    font-weight: bold;
-
-    letter-spacing: 2.5px;
-
-    white-space: nowrap;
+.roxx-shop-product-info h2 {
+    font-size: 15px;
+    font-weight: 600;
 }
 
+.roxx-shop-product-info span {
+    font-size: 13px;
+    color: #aaa;
+}
 
-/* MOVING ANIMATION */
+/* PRODUCT ENTRANCE */
 
-@keyframes roxxMarquee {
+.roxx-shop {
+    opacity: 0;
+    transform: translateY(25px);
+}
 
+body.shop-entered .roxx-shop {
+    animation: shopEnter 1s ease forwards;
+}
+
+@keyframes shopEnter {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes productEnter {
     from {
-        transform: translateX(0);
+        opacity: 0;
+        transform: translateY(30px);
     }
 
     to {
-        transform: translateX(-50%);
+        opacity: 1;
+        transform: translateY(0);
     }
-
 }
-
 
 /* MOBILE */
 
 @media (max-width: 768px) {
 
-    .announcement-track {
-        animation-duration: 18s;
+    .roxx-shop-products {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 25px 12px;
     }
 
-    .announcement-track span {
-        margin: 0 15px;
+    .roxx-shop-product-info h2 {
+        font-size: 13px;
+    }
 
-        font-size: 8px;
-        letter-spacing: 2px;
+    .roxx-shop-product-info span {
+        font-size: 12px;
     }
 
 }
-/* =========================
-   ROXX ANNOUNCEMENT BAR
-========================= */
+/* =========================================
+   ROXX — CINEMATIC INTRO
+========================================= */
 
-.announcement-bar {
-    width: 100%;
-    overflow: hidden;
-
-    background: #111;
-    color: #fff;
-
-    border-bottom: 1px solid #333;
-}
-
-.announcement-track {
+.roxx-intro {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background:
+        radial-gradient(ellipse at center, #191919 0%, #080808 45%, #000 80%);
     display: flex;
+    justify-content: center;
     align-items: center;
-
-    width: max-content;
-
-    padding: 12px 0;
-
-    animation: roxxMarquee 22s linear infinite;
+    overflow: hidden;
+    transition:
+        opacity 1s ease,
+        transform 1.1s cubic-bezier(.7, 0, .2, 1),
+        filter 1s ease;
 }
 
-.announcement-track span {
-    margin: 0 22px;
-
-    font-size: 9px;
-    font-weight: bold;
-
-    letter-spacing: 2.5px;
-
-    white-space: nowrap;
+.roxx-intro::before {
+    content: "";
+    position: absolute;
+    width: 450px;
+    height: 450px;
+    background: rgba(255,255,255,.07);
+    filter: blur(120px);
+    border-radius: 50%;
+    animation: introGlow 4s ease-in-out infinite alternate;
 }
 
-@keyframes roxxMarquee {
+.roxx-intro-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
 
+.roxx-intro-logo {
+    font-family: Anton, sans-serif;
+    font-size: clamp(100px, 19vw, 260px);
+    font-weight: 400;
+    letter-spacing: -8px;
+    line-height: .9;
+    color: #fff;
+    animation: logoReveal 1.4s cubic-bezier(.16,1,.3,1) both;
+    text-shadow: 0 0 60px rgba(255,255,255,.12);
+}
+
+.roxx-intro-button {
+    margin-top: 55px;
+    padding: 16px 42px;
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.55);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    cursor: pointer;
+    opacity: 0;
+    animation: buttonReveal .8s ease 1s forwards;
+    transition: .4s ease;
+}
+
+.roxx-intro-button:hover {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+    letter-spacing: 6px;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.roxx-intro.intro-exit {
+    opacity: 0;
+    transform: scale(1.12);
+    filter: blur(12px);
+    pointer-events: none;
+}
+
+@keyframes logoReveal {
     from {
-        transform: translateX(0);
+        opacity: 0;
+        transform: translateY(45px) scale(.92);
+        filter: blur(15px);
     }
 
     to {
-        transform: translateX(-50%);
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes buttonReveal {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
     }
 
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
+@keyframes introGlow {
+    from {
+        transform: scale(.8);
+        opacity: .4;
+    }
 
-/* =========================
-   ANIMATED ROXX LOGO
-========================= */
-
-.roxx-logo-animation {
-    width: 100%;
-    height: 80px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: #fff;
-
-    overflow: hidden;
+    to {
+        transform: scale(1.3);
+        opacity: .9;
+    }
 }
-
-.roxx-logo-animation img {
-    width: 55px;
-    height: 55px;
-
-    object-fit: contain;
-
-    display: block;
-}
-
-
-/* =========================
-   MOBILE
-========================= */
 
 @media (max-width: 768px) {
 
-    .announcement-track {
-        animation-duration: 18s;
+    .roxx-intro-logo {
+        font-size: 27vw;
+        letter-spacing: -4px;
     }
 
-    .announcement-track span {
-        margin: 0 15px;
+    .roxx-intro-button {
+        margin-top: 35px;
+    }
 
+}
+/* =========================================
+   ROXX — PRODUCT INTERACTIONS
+========================================= */
+
+.roxx-shop-product {
+    overflow: hidden;
+    transition: transform .4s ease;
+}
+
+.roxx-shop-product-image {
+    overflow: hidden;
+    background: #111;
+}
+
+.roxx-shop-product-image img {
+    transition: transform .8s cubic-bezier(.2,.7,.2,1);
+}
+
+@media (hover: hover) {
+
+    .roxx-shop-product:hover .roxx-shop-product-image img {
+        transform: scale(1.07);
+    }
+
+    .roxx-shop-product:hover {
+        transform: translateY(-5px);
+    }
+
+}
+
+/* SCROLL REVEAL */
+
+.roxx-shop-product.reveal-pending {
+    opacity: 0;
+    transform: translateY(35px);
+    transition:
+        opacity .8s ease,
+        transform .8s ease;
+}
+
+.roxx-shop-product.reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .roxx-shop-product,
+    .roxx-shop-product-image img {
+        transition: none !important;
+        animation: none !important;
+    }
+
+}
+/* ROXX 3D HEADER LOGO */
+
+.roxx-logo.roxx-3d-logo {
+    width: 170px;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    overflow: hidden;
+    font-size: 0;
+    background: transparent;
+}
+
+.roxx-logo.roxx-3d-logo iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: none;
+    background: transparent;
+    pointer-events: none;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+    .roxx-logo.roxx-3d-logo {
+        width: 115px;
+        height: 65px;
+    }
+}
+
+/* ROXX 3D HEADER LOGO */
+
+.roxx-3d-logo {
+    width: 150px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.roxx-3d-logo iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+    display: block;
+}
+/* =========================================
+   ROXX — FUTURE LAB PRODUCT CARDS
+========================================= */
+
+.roxx-shop-products {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 45px 18px;
+    padding: 35px 5%;
+}
+
+/* PRODUCT CARD */
+
+.roxx-shop-product {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    color: #fff;
+    overflow: hidden;
+    transition: transform .4s ease;
+}
+
+/* IMAGE */
+
+.roxx-shop-product-image {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #111;
+    aspect-ratio: 3 / 4;
+}
+
+.roxx-shop-product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .8s cubic-bezier(.2,.7,.2,1);
+}
+
+/* VIEW PRODUCT */
+
+.product-view {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    padding: 10px 13px;
+    background: #fff;
+    color: #000;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: .35s ease;
+}
+
+/* HOVER */
+
+@media (hover: hover) {
+
+    .roxx-shop-product:hover
+    .roxx-shop-product-image img {
+        transform: scale(1.06);
+    }
+
+    .roxx-shop-product:hover .product-view {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .roxx-shop-product:hover {
+        transform: translateY(-4px);
+    }
+
+}
+
+/* PRODUCT INFO */
+
+.roxx-shop-product-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 9px;
+    padding-top: 16px;
+}
+
+/* PRODUCT NUMBER */
+
+.product-number {
+    color: #777;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+/* PRODUCT NAME */
+
+.roxx-shop-product-info h2 {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    line-height: 1.4;
+}
+
+/* PRICE */
+
+.roxx-shop-product-info .product-price {
+    color: #999;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .5px;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .roxx-shop-products {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 30px 12px;
+        padding: 25px 18px;
+    }
+
+    .roxx-shop-product-info {
+        gap: 7px;
+        padding-top: 12px;
+    }
+
+    .roxx-shop-product-info h2 {
+        font-size: 12px;
+    }
+
+    .product-number {
+        font-size: 8px;
+    }
+
+    .roxx-shop-product-info .product-price {
+        font-size: 11px;
+    }
+
+    .product-view {
+        display: none;
+    }
+
+}
+/* =========================================
+   ROXX — FUTURE LAB PRODUCT PAGE
+========================================= */
+
+.roxx-product-page {
+    background: #000;
+    color: #fff;
+    font-family: "DM Sans", Arial, sans-serif;
+}
+
+/* HEADER */
+
+.roxx-product-page .roxx-header {
+    position: relative;
+    z-index: 100;
+    background: #000;
+}
+
+.roxx-product-page .roxx-header-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.roxx-product-page .roxx-logo.roxx-3d-logo {
+    width: 170px;
+    height: 76px;
+}
+
+/* BREADCRUMB */
+
+.roxx-product-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 25px 5%;
+    border-bottom: 1px solid #252525;
+    color: #777;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+}
+
+.roxx-product-breadcrumb a {
+    transition: color .3s ease;
+}
+
+.roxx-product-breadcrumb a:hover {
+    color: #fff;
+}
+
+.roxx-product-breadcrumb span:last-child {
+    color: #fff;
+}
+
+/* MAIN PRODUCT LAYOUT */
+
+.roxx-product-page .roxx-product-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(350px, .85fr);
+    gap: 7%;
+    padding: 45px 5% 100px;
+    max-width: 1700px;
+    margin: auto;
+    align-items: start;
+}
+
+/* PRODUCT IMAGE */
+
+.roxx-product-visual {
+    width: 100%;
+    min-width: 0;
+}
+
+.roxx-product-main-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: #151515;
+}
+
+.roxx-product-main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .8s cubic-bezier(.2,.7,.2,1);
+}
+
+.roxx-product-main-image:hover img {
+    transform: scale(1.025);
+}
+
+.roxx-image-label,
+.roxx-image-index {
+    position: absolute;
+    z-index: 2;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.roxx-image-label {
+    top: 22px;
+    left: 22px;
+}
+
+.roxx-image-index {
+    bottom: 22px;
+    right: 22px;
+    color: #aaa;
+}
+
+/* THUMBNAILS */
+
+.roxx-image-thumbs {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.roxx-image-thumbs .thumb {
+    width: 85px;
+    height: 105px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: #151515;
+    border: 1px solid #292929;
+}
+
+.roxx-image-thumbs button {
+    padding: 0;
+    cursor: pointer;
+}
+
+.roxx-image-thumbs .thumb.active {
+    border-color: #fff;
+}
+
+.roxx-image-thumbs .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.roxx-image-thumbs .thumb-note {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+    color: #777;
+    text-align: left;
+}
+
+.roxx-image-thumbs .thumb-note span {
+    font-size: 9px;
+}
+
+.roxx-image-thumbs .thumb-note small {
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 1.5;
+}
+
+/* PRODUCT INFORMATION */
+
+.roxx-product-info-panel {
+    width: 100%;
+    padding-top: 20px;
+}
+
+.roxx-product-page .product-overline {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #252525;
+    color: #888;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.roxx-product-number {
+    display: block;
+    margin-top: 40px;
+    margin-bottom: 15px;
+    color: #777;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.roxx-product-info-panel h1 {
+    max-width: 650px;
+    color: #fff;
+    font-family: Anton, sans-serif;
+    font-size: clamp(38px, 5vw, 76px);
+    font-weight: 400;
+    line-height: .98;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+.roxx-product-page .roxx-product-price {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 25px;
+    color: #fff;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.roxx-product-page .roxx-product-price span {
+    color: #777;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+.roxx-product-copy {
+    max-width: 440px;
+    margin-top: 25px;
+    color: #999;
+    font-size: 13px;
+    line-height: 1.9;
+}
+
+.roxx-product-divider {
+    width: 100%;
+    height: 1px;
+    margin: 30px 0;
+    background: #252525;
+}
+
+/* SIZE SELECTOR */
+
+.roxx-product-page .selector-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.roxx-product-page .selector-heading > span,
+.roxx-product-page .quantity-row > span {
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.roxx-product-page .size-guide-trigger {
+    padding: 5px 0;
+    background: transparent;
+    border: none;
+    color: #999;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: color .3s ease;
+}
+
+.roxx-product-page .size-guide-trigger:hover {
+    color: #fff;
+}
+
+.roxx-product-page .roxx-size-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 9px;
+    margin-bottom: 30px;
+}
+
+.roxx-product-page .roxx-size-btn {
+    min-height: 52px;
+    background: #0b0b0b;
+    border: 1px solid #333;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    transition: .25s ease;
+}
+
+.roxx-product-page .roxx-size-btn:hover {
+    border-color: #fff;
+}
+
+.roxx-product-page .roxx-size-btn.selected {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+}
+
+/* QUANTITY */
+
+.roxx-product-page .quantity-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.roxx-product-page .roxx-quantity {
+    display: flex;
+    align-items: center;
+    height: 42px;
+    border: 1px solid #333;
+}
+
+.roxx-product-page .roxx-quantity button {
+    width: 42px;
+    height: 100%;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    transition: background .2s ease;
+}
+
+.roxx-product-page .roxx-quantity button:hover {
+    background: #222;
+}
+
+.roxx-product-page .roxx-quantity output {
+    min-width: 35px;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* ADD TO BAG */
+
+.roxx-product-page .roxx-add-button {
+    width: 100%;
+    min-height: 58px;
+    padding: 0 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid #fff;
+    color: #000;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    transition: .3s ease;
+}
+
+.roxx-product-page .roxx-add-button:hover {
+    background: transparent;
+    color: #fff;
+}
+
+.roxx-product-page .roxx-add-button span:last-child {
+    font-size: 17px;
+}
+
+/* PRODUCT PERKS */
+
+.roxx-product-perks {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 28px 0;
+    margin-top: 25px;
+    border-top: 1px solid #252525;
+    border-bottom: 1px solid #252525;
+}
+
+.roxx-product-perks div {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.roxx-product-perks b {
+    color: #666;
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+.roxx-product-perks span {
+    color: #aaa;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.roxx-back-link {
+    display: inline-block;
+    margin-top: 28px;
+    color: #888;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    transition: color .3s ease;
+}
+
+.roxx-back-link:hover {
+    color: #fff;
+}
+
+/* RELATED PRODUCTS */
+
+.roxx-product-page .roxx-related {
+    padding: 75px 5% 100px;
+    border-top: 1px solid #252525;
+}
+
+.roxx-related-heading {
+    margin-bottom: 35px;
+}
+
+.roxx-related-heading p {
+    margin-bottom: 15px;
+    color: #777;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.roxx-related-heading h2 {
+    color: #fff;
+    font-family: Anton, sans-serif;
+    font-size: clamp(35px, 5vw, 65px);
+    font-weight: 400;
+    line-height: 1;
+}
+
+.roxx-related-heading h2 span {
+    color: #777;
+}
+
+.roxx-related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 30px 18px;
+}
+
+.roxx-related-card {
+    display: block;
+    min-width: 0;
+    color: #fff;
+}
+
+.roxx-related-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: #111;
+}
+
+.roxx-related-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform .8s cubic-bezier(.2,.7,.2,1);
+}
+
+.roxx-related-image > span {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    padding: 10px 13px;
+    background: #fff;
+    color: #000;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: .3s ease;
+}
+
+@media (hover: hover) {
+    .roxx-related-card:hover .roxx-related-image img {
+        transform: scale(1.06);
+    }
+
+    .roxx-related-card:hover .roxx-related-image > span {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.roxx-related-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 9px;
+    padding-top: 15px;
+}
+
+.roxx-related-meta small {
+    color: #777;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.roxx-related-meta strong {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.roxx-related-meta b {
+    color: #999;
+    font-size: 12px;
+    font-weight: 500;
+}
+/* FOOTER */
+
+.roxx-product-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 45px 5%;
+    border-top: 1px solid #252525;
+    background: #000;
+    text-align: center;
+}
+
+.roxx-product-footer .footer-logo {
+    color: #fff;
+    font-family: Anton, sans-serif;
+    font-size: 38px;
+    letter-spacing: 1px;
+}
+
+.roxx-product-footer p {
+    color: #aaa;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.roxx-product-footer small {
+    color: #666;
+    font-size: 8px;
+    letter-spacing: 1px;
+}
+
+/* SIZE GUIDE MODAL */
+
+.roxx-product-page .size-guide-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, .85);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    transition: .3s ease;
+}
+
+.roxx-product-page .size-guide-modal.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.roxx-product-page .size-guide-card {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    padding: 45px;
+    background: #111;
+    border: 1px solid #333;
+    transform: translateY(20px);
+    transition: .3s ease;
+}
+
+.roxx-product-page .size-guide-modal.open .size-guide-card {
+    transform: translateY(0);
+}
+
+.roxx-product-page .size-guide-close {
+    position: absolute;
+    top: 15px;
+    right: 18px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 28px;
+}
+
+.roxx-product-page .size-guide-card > p {
+    color: #777;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.roxx-product-page .size-guide-card h2 {
+    margin: 15px 0 30px;
+    color: #fff;
+    font-family: Anton, sans-serif;
+    font-size: 38px;
+    font-weight: 400;
+}
+
+.roxx-product-page .size-guide-card h2 span {
+    color: #777;
+}
+
+.roxx-product-page .size-guide-card table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.roxx-product-page .size-guide-card th,
+.roxx-product-page .size-guide-card td {
+    padding: 15px 8px;
+    border-bottom: 1px solid #333;
+    font-size: 11px;
+}
+
+.roxx-product-page .size-guide-card th {
+    color: #777;
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+.roxx-product-page .size-guide-card td {
+    color: #fff;
+}
+
+.roxx-product-page .size-guide-card > small {
+    display: block;
+    margin-top: 25px;
+    color: #777;
+    font-size: 10px;
+    line-height: 1.7;
+}
+
+/* =========================================
+   MOBILE PRODUCT PAGE
+========================================= */
+
+@media (max-width: 768px) {
+
+    .roxx-product-page .roxx-header {
+        height: 65px;
+        padding: 0 18px;
+    }
+
+    .roxx-product-page .roxx-logo.roxx-3d-logo {
+        width: 115px;
+        height: 65px;
+    }
+
+    .roxx-product-breadcrumb {
+        padding: 18px;
+        gap: 8px;
+        font-size: 8px;
+    }
+
+    .roxx-product-page .roxx-product-layout {
+        grid-template-columns: 1fr;
+        gap: 35px;
+        padding: 20px 18px 65px;
+    }
+
+    .roxx-product-main-image {
+        aspect-ratio: 4 / 5;
+    }
+
+    .roxx-image-thumbs .thumb {
+        width: 70px;
+        height: 85px;
+    }
+
+    .roxx-product-info-panel {
+        padding-top: 5px;
+    }
+
+    .roxx-product-number {
+        margin-top: 25px;
+    }
+
+    .roxx-product-info-panel h1 {
+        font-size: clamp(38px, 11vw, 58px);
+    }
+
+    .roxx-product-copy {
+        font-size: 12px;
+    }
+
+    .roxx-product-page .roxx-related {
+        padding: 55px 18px 65px;
+    }
+
+    .roxx-related-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 28px 12px;
+    }
+
+    .roxx-related-heading h2 {
+        font-size: 40px;
+    }
+
+    .roxx-related-meta strong {
+        font-size: 11px;
+    }
+
+    .roxx-product-page .size-guide-card {
+        padding: 35px 20px;
+    }
+
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 420px) {
+
+    .roxx-product-page .roxx-product-layout {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .roxx-product-page .roxx-product-info-panel h1 {
+        font-size: 38px;
+    }
+
+    .roxx-product-page .roxx-size-options {
+        gap: 6px;
+    }
+
+    .roxx-product-page .roxx-size-btn {
+        min-height: 48px;
+    }
+
+    .roxx-product-page .roxx-related {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+}
+/* =========================================
+   ROXX INTRO — FULL SCREEN
+========================================= */
+
+.roxx-intro {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    height: 100svh !important;
+    z-index: 99999 !important;
+    background: #000 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+body:not(.shop-entered) {
+    overflow: hidden;
+}
+
+.roxx-intro-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ENTER BUTTON */
+
+.roxx-intro-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 35px;
+    padding: 15px 28px;
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.4);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    cursor: pointer;
+    transition: all .35s ease;
+}
+
+.enter-arrow {
+    font-size: 17px;
+    transition: transform .35s ease;
+}
+
+.roxx-intro-button:hover {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+}
+
+.roxx-intro-button:hover .enter-arrow {
+    transform: translate(4px, -4px);
+}
+
+/* INTRO EXIT */
+
+.roxx-intro.intro-exit {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .8s ease, visibility .8s ease;
+    pointer-events: none;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+    .roxx-intro {
+        height: 100svh !important;
+    }
+
+    .roxx-intro-button {
+        padding: 13px 23px;
+        font-size: 10px;
+    }
+}
+/* =========================================
+   ROXX — PRODUCT PAGE REFINED
+   DESKTOP + MOBILE
+========================================= */
+
+.roxx-product-page {
+    background: #000;
+    color: #fff;
+    font-family: "DM Sans", sans-serif;
+}
+
+/* MAIN LAYOUT */
+
+.roxx-product-page .roxx-product-layout {
+    width: min(1380px, 92%);
+    margin: 55px auto 120px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+    gap: clamp(40px, 6vw, 100px);
+    align-items: start;
+}
+
+/* PRODUCT IMAGE */
+
+.roxx-product-page .roxx-product-visual {
+    width: 100%;
+    min-width: 0;
+}
+
+.roxx-product-page .roxx-product-main-image {
+    position: relative;
+    width: 100%;
+    height: clamp(420px, 48vw, 650px);
+    max-height: 650px;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.roxx-product-page .roxx-product-main-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    padding: 25px;
+    transition: transform .7s cubic-bezier(.2,.7,.2,1);
+}
+
+.roxx-product-page .roxx-product-main-image:hover img {
+    transform: scale(1.035);
+}
+
+.roxx-product-page .roxx-image-label,
+.roxx-product-page .roxx-image-index {
+    position: absolute;
+    z-index: 2;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #999;
+    pointer-events: none;
+}
+
+.roxx-product-page .roxx-image-label {
+    top: 22px;
+    left: 22px;
+}
+
+.roxx-product-page .roxx-image-index {
+    bottom: 22px;
+    right: 22px;
+}
+
+/* THUMBNAILS */
+
+.roxx-product-page .roxx-image-thumbs {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.roxx-product-page .roxx-image-thumbs .thumb {
+    width: 85px;
+    height: 100px;
+    flex-shrink: 0;
+    background: #111;
+    border: 1px solid #292929;
+    overflow: hidden;
+}
+
+.roxx-product-page .roxx-image-thumbs button.thumb {
+    padding: 0;
+    cursor: pointer;
+}
+
+.roxx-product-page .roxx-image-thumbs .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 5px;
+}
+
+.roxx-product-page .roxx-image-thumbs .thumb.active {
+    border-color: #fff;
+}
+
+.roxx-product-page .thumb-note {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 12px;
+}
+
+.roxx-product-page .thumb-note span {
+    font-size: 10px;
+    color: #888;
+}
+
+.roxx-product-page .thumb-note small {
+    font-size: 9px;
+    line-height: 1.5;
+    letter-spacing: 1px;
+}
+
+/* PRODUCT INFORMATION */
+
+.roxx-product-page .roxx-product-info-panel {
+    width: 100%;
+    max-width: 490px;
+    padding-top: 12px;
+}
+
+.roxx-product-page .product-overline {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: #888;
+    margin-bottom: 38px;
+}
+
+.roxx-product-page .roxx-product-number {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #777;
+}
+
+.roxx-product-page .roxx-product-info-panel h1 {
+    font-family: "Anton", sans-serif;
+    font-size: clamp(34px, 4vw, 58px);
+    line-height: 1.05;
+    font-weight: 400;
+    margin: 18px 0 25px;
+    text-transform: uppercase;
+}
+
+.roxx-product-page .roxx-product-price {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: .5px;
+}
+
+.roxx-product-page .roxx-product-price span {
+    display: block;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    color: #777;
+    margin-top: 8px;
+}
+
+.roxx-product-page .roxx-product-copy {
+    max-width: 390px;
+    color: #999;
+    font-size: 12px;
+    line-height: 2;
+    margin: 28px 0;
+}
+
+.roxx-product-page .roxx-product-divider {
+    width: 100%;
+    height: 1px;
+    background: #292929;
+    margin: 30px 0;
+}
+
+/* SIZE SELECTOR */
+
+.roxx-product-page .selector-heading,
+.roxx-product-page .quantity-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    margin-bottom: 17px;
+}
+
+.roxx-product-page .size-guide-trigger {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 9px;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.roxx-product-page .roxx-size-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 9px;
+    margin-bottom: 30px;
+}
+
+.roxx-product-page .roxx-size-btn {
+    height: 48px;
+    background: #101010;
+    border: 1px solid #303030;
+    color: #fff;
+    font-size: 11px;
+    cursor: pointer;
+    transition: .25s ease;
+}
+
+.roxx-product-page .roxx-size-btn:hover,
+.roxx-product-page .roxx-size-btn.selected {
+    background: #fff;
+    border-color: #fff;
+    color: #000;
+}
+
+/* QUANTITY */
+
+.roxx-product-page .roxx-quantity {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    border: 1px solid #303030;
+    padding: 9px 14px;
+}
+
+.roxx-product-page .roxx-quantity button {
+    background: transparent;
+    color: #fff;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.roxx-product-page .roxx-quantity output {
+    font-size: 12px;
+    min-width: 12px;
+    text-align: center;
+}
+
+/* ADD TO BAG */
+
+.roxx-product-page .roxx-add-button {
+    width: 100%;
+    min-height: 58px;
+    margin-top: 25px;
+    padding: 0 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    color: #000;
+    border: 1px solid #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: .3s ease;
+}
+
+.roxx-product-page .roxx-add-button:hover {
+    background: transparent;
+    color: #fff;
+}
+
+/* PERKS */
+
+.roxx-product-page .roxx-product-perks {
+    margin-top: 35px;
+    border-top: 1px solid #252525;
+}
+
+.roxx-product-page .roxx-product-perks div {
+    display: flex;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #252525;
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+.roxx-product-page .roxx-product-perks b {
+    color: #777;
+}
+
+.roxx-product-page .roxx-product-perks span {
+    color: #bbb;
+}
+
+.roxx-product-page .roxx-back-link {
+    display: inline-block;
+    margin-top: 30px;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: #888;
+    transition: color .3s;
+}
+
+.roxx-product-page .roxx-back-link:hover {
+    color: #fff;
+}
+
+/* RELATED PRODUCTS */
+
+.roxx-product-page .roxx-related {
+    width: min(1380px, 92%);
+    margin: 0 auto 110px;
+}
+
+.roxx-product-page .roxx-related-heading {
+    margin-bottom: 35px;
+}
+
+.roxx-product-page .roxx-related-heading p {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #777;
+}
+
+.roxx-product-page .roxx-related-heading h2 {
+    font-family: "Anton", sans-serif;
+    font-size: clamp(27px, 4vw, 42px);
+    font-weight: 400;
+    margin-top: 12px;
+}
+
+.roxx-product-page .roxx-related-heading h2 span {
+    color: #888;
+}
+
+.roxx-product-page .roxx-related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.roxx-product-page .roxx-related-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background: #111;
+    overflow: hidden;
+}
+
+.roxx-product-page .roxx-related-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 12px;
+    transition: transform .5s ease;
+}
+
+.roxx-product-page .roxx-related-card:hover img {
+    transform: scale(1.05);
+}
+
+.roxx-product-page .roxx-related-image > span {
+    position: absolute;
+    bottom: 13px;
+    left: 13px;
+    font-size: 8px;
+    letter-spacing: 1px;
+}
+
+.roxx-product-page .roxx-related-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding-top: 14px;
+}
+
+.roxx-product-page .roxx-related-meta small {
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: #777;
+}
+
+.roxx-product-page .roxx-related-meta strong {
+    font-size: 11px;
+    letter-spacing: .5px;
+}
+
+.roxx-product-page .roxx-related-meta b {
+    font-size: 11px;
+    color: #aaa;
+}
+
+/* FOOTER */
+
+.roxx-product-page .roxx-product-footer {
+    padding: 55px 5%;
+    border-top: 1px solid #222;
+    text-align: center;
+}
+
+.roxx-product-page .roxx-product-footer .footer-logo {
+    font-family: "Anton", sans-serif;
+    font-size: 38px;
+}
+
+.roxx-product-page .roxx-product-footer p {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #888;
+    margin: 12px 0 25px;
+}
+
+.roxx-product-page .roxx-product-footer small {
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: #666;
+}
+
+/* =========================================
+   LAPTOP / TABLET
+========================================= */
+
+@media (max-width: 1000px) {
+
+    .roxx-product-page .roxx-product-layout {
+        gap: 35px;
+        grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
+    }
+
+    .roxx-product-page .roxx-product-main-image {
+        height: clamp(380px, 52vw, 560px);
+    }
+
+    .roxx-product-page .roxx-related-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+
+    .roxx-product-page .roxx-product-layout {
+        width: 92%;
+        margin: 25px auto 75px;
+        display: flex;
+        flex-direction: column;
+        gap: 35px;
+    }
+
+    .roxx-product-page .roxx-product-visual {
+        width: 100%;
+    }
+
+    .roxx-product-page .roxx-product-main-image {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 4 / 5;
+        max-height: 570px;
+    }
+
+    .roxx-product-page .roxx-product-main-image img {
+        padding: 18px;
+        object-fit: contain;
+    }
+
+    .roxx-product-page .roxx-image-thumbs .thumb {
+        width: 72px;
+        height: 85px;
+    }
+
+    .roxx-product-page .roxx-product-info-panel {
+        max-width: 100%;
+        padding-top: 0;
+    }
+
+    .roxx-product-page .product-overline {
+        margin-bottom: 25px;
+    }
+
+    .roxx-product-page .roxx-product-info-panel h1 {
+        font-size: clamp(32px, 9vw, 43px);
+    }
+
+    .roxx-product-page .roxx-product-copy {
+        max-width: 100%;
+    }
+
+    .roxx-product-page .roxx-related {
+        width: 92%;
+        margin-bottom: 75px;
+    }
+
+    .roxx-product-page .roxx-related-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 10px;
+    }
+
+}
+
+/* SMALL PHONES */
+
+@media (max-width: 380px) {
+
+    .roxx-product-page .roxx-product-main-image {
+        aspect-ratio: 4 / 5;
+    }
+
+    .roxx-product-page .roxx-product-main-image img {
+        padding: 12px;
+    }
+
+    .roxx-product-page .roxx-product-info-panel h1 {
+        font-size: 30px;
+    }
+
+    .roxx-product-page .roxx-image-label {
+        font-size: 7px;
+    }
+
+}
+/* =========================================
+   ROXX — FIX PRODUCT PAGE SCROLL
+========================================= */
+
+html {
+    height: auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+body.roxx-product-page {
+    height: auto !important;
+    min-height: 100vh;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+}
+
+.roxx-product-page .roxx-product-layout {
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+}
+
+.roxx-product-page .roxx-product-info-panel {
+    overflow: visible !important;
+}
+
+.roxx-product-page .roxx-related-products {
+    overflow: visible !important;
+}
+/* =========================================
+   ROXX — SIDE DRAWER MENU
+========================================= */
+
+.roxx-menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    opacity: 0;
+    visibility: hidden;
+    z-index: 9998;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.roxx-menu-panel {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+
+    width: min(420px, 88vw);
+    height: 100dvh;
+
+    background: #080808;
+    color: #fff;
+
+    z-index: 9999;
+
+    padding: 30px 35px;
+    box-sizing: border-box;
+
+    overflow-y: auto;
+
+    transform: translateX(-105%);
+    visibility: hidden;
+
+    transition:
+        transform 0.4s cubic-bezier(.77, 0, .18, 1),
+        visibility 0.4s ease;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.roxx-menu-panel.active {
+    transform: translateX(0);
+    visibility: visible;
+}
+
+.roxx-menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+body.menu-open {
+    overflow: hidden !important;
+}
+
+/* TOP */
+
+.roxx-menu-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #292929;
+}
+
+.roxx-menu-top span {
+    font-family: "DM Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.roxx-menu-top button {
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+/* NAVIGATION */
+
+.roxx-menu-nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.roxx-menu-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-family: "DM Sans", sans-serif;
+    transition: color 0.2s ease;
+}
+
+.roxx-menu-nav a:hover {
+    color: #888;
+}
+
+.menu-main-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 0;
+    border-bottom: 1px solid #292929;
+
+    font-size: 27px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.roxx-menu-category {
+    display: flex;
+    flex-direction: column;
+    gap: 19px;
+    padding: 28px 0;
+}
+
+.roxx-menu-category > span {
+    color: #777;
+    font-size: 10px;
+    letter-spacing: 3px;
+    margin-bottom: 5px;
+}
+
+.roxx-menu-category a {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.roxx-menu-bottom-links {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+    padding: 25px 0;
+    border-top: 1px solid #292929;
+}
+
+.roxx-menu-bottom-links a {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* FOOTER */
+
+.roxx-menu-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid #292929;
+
+    color: #777;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .roxx-menu-panel {
+        width: 88vw;
+        padding: 25px 24px;
+    }
+
+    .menu-main-link {
+        font-size: 24px;
+    }
+
+}
+/* =========================================
+   ROXX — SHOP PAGE COMPLETE DESIGN
+========================================= */
+
+/* PAGE */
+
+body {
+    background: #000;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* =========================================
+   NAVBAR
+========================================= */
+
+.navbar {
+    width: 100%;
+    min-height: 85px;
+    padding: 0 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    background: #000;
+    border-bottom: 1px solid #242424;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar .logo {
+    color: #fff;
+    font-size: 35px;
+    font-weight: 900;
+    letter-spacing: -2px;
+}
+
+.navbar nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 35px;
+}
+
+.navbar nav a {
+    color: #aaa;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    transition: color .3s ease;
+}
+
+.navbar nav a:hover {
+    color: #fff;
+}
+
+.navbar .cart {
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+    transition: opacity .3s ease;
+}
+
+.navbar .cart:hover {
+    opacity: .6;
+}
+
+/* =========================================
+   SHOP HEADING
+========================================= */
+
+.shop-heading {
+    width: 100%;
+    padding: 100px 5% 75px;
+    background: #000;
+    border-bottom: 1px solid #242424;
+}
+
+.shop-heading p {
+    color: #777;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 30px;
+}
+
+.shop-heading h1 {
+    color: #fff;
+    font-size: clamp(65px, 11vw, 155px);
+    font-weight: 900;
+    line-height: .82;
+    letter-spacing: -8px;
+    text-transform: uppercase;
+}
+
+.shop-heading span {
+    display: block;
+    margin-top: 35px;
+    color: #888;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+/* =========================================
+   SHOP SECTION
+========================================= */
+
+.shop-section {
+    width: 100%;
+    padding: 45px 5% 100px;
+    background: #000;
+}
+
+/* =========================================
+   SHOP TOP / FILTERS
+========================================= */
+
+.shop-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    padding-bottom: 25px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #292929;
+}
+
+.shop-search {
+    width: 230px;
+    flex-shrink: 0;
+}
+
+.shop-search input {
+    width: 100%;
+    padding: 13px 0;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #444;
+    outline: none;
+    color: #fff;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    transition: border-color .3s ease;
+}
+
+.shop-search input:focus {
+    border-color: #fff;
+}
+
+.shop-search input::placeholder {
+    color: #777;
+}
+
+.shop-filters {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filter-btn {
+    padding: 11px 17px;
+    background: transparent;
+    border: 1px solid #333;
+    color: #999;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: all .3s ease;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: #fff;
+    border-color: #fff;
+    color: #000;
+}
+
+/* =========================================
+   PRODUCTS GRID
+========================================= */
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 45px 18px;
+    width: 100%;
+}
+
+/* PRODUCT CARD */
+
+.product-card {
+    min-width: 0;
+    background: transparent;
+    border: none;
+    animation: productAppear .7s ease both;
+}
+
+.product-link {
+    display: block;
+    width: 100%;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* PRODUCT IMAGE */
+
+.product-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: #111;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform .8s cubic-bezier(.2,.7,.2,1);
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.06);
+}
+
+/* PRODUCT INFO */
+
+.product-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 9px;
+    padding-top: 17px;
+}
+
+.product-info p {
+    color: #777;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.product-info h3 {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+.product-info strong {
+    color: #aaa;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .5px;
+}
+
+.view-product {
+    display: inline-block;
+    margin-top: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #777;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    transition: all .3s ease;
+}
+
+.product-card:hover .view-product {
+    border-color: #fff;
+    letter-spacing: 2px;
+}
+
+/* EMPTY PRODUCTS */
+
+.products-grid:empty::after {
+    content: "NO PRODUCTS AVAILABLE.";
+    color: #777;
+    font-size: 11px;
+    letter-spacing: 2px;
+}
+
+/* FILTER ANIMATION */
+
+.product-card {
+    transition: opacity .3s ease, transform .3s ease;
+}
+
+.product-card[style*="display: none"] {
+    display: none !important;
+}
+
+@keyframes productAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+    width: 100%;
+    padding: 65px 5% 35px;
+    background: #050505;
+    border-top: 1px solid #252525;
+    text-align: center;
+}
+
+.footer-logo {
+    color: #fff;
+    font-size: 55px;
+    font-weight: 900;
+    letter-spacing: -4px;
+}
+
+footer p {
+    margin-top: 15px;
+    color: #888;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+footer small {
+    display: block;
+    margin-top: 45px;
+    color: #555;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+}
+
+/* =========================================
+   LAPTOP
+========================================= */
+
+@media (max-width: 1100px) {
+
+    .products-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 35px 15px;
+    }
+
+    .shop-heading h1 {
+        font-size: clamp(65px, 12vw, 120px);
+    }
+
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 768px) {
+
+    .navbar {
+        min-height: 70px;
+        padding: 0 20px;
+        gap: 15px;
+    }
+
+    .navbar .logo {
+        font-size: 28px;
+    }
+
+    .navbar nav {
+        gap: 15px;
+    }
+
+    .navbar nav a {
+        font-size: 8px;
+        letter-spacing: .5px;
+    }
+
+    .navbar .cart {
+        font-size: 9px;
+    }
+
+    .shop-heading {
+        padding: 75px 20px 55px;
+    }
+
+    .shop-heading h1 {
+        font-size: clamp(65px, 13vw, 100px);
+        letter-spacing: -5px;
+    }
+
+    .shop-section {
+        padding: 30px 20px 70px;
+    }
+
+    .shop-top {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 22px;
+    }
+
+    .shop-search {
+        width: 100%;
+    }
+
+    .shop-filters {
+        justify-content: flex-start;
+        gap: 8px;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 30px 12px;
+    }
+
+    .product-info {
+        gap: 7px;
+        padding-top: 12px;
+    }
+
+    .product-info h3 {
+        font-size: 12px;
+    }
+
+    .product-info p {
+        font-size: 8px;
+    }
+
+    .product-info strong {
+        font-size: 11px;
+    }
+
+    .view-product {
+        font-size: 8px;
+    }
+
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+
+    .navbar {
+        min-height: 65px;
+        padding: 0 14px;
+        gap: 8px;
+    }
+
+    .navbar .logo {
+        font-size: 24px;
+    }
+
+    .navbar nav {
+        gap: 9px;
+    }
+
+    .navbar nav a {
+        font-size: 7px;
+    }
+
+    .navbar .cart {
+        font-size: 8px;
+    }
+
+    .shop-heading {
+        padding: 65px 16px 45px;
+    }
+
+    .shop-heading p {
         font-size: 8px;
         letter-spacing: 2px;
     }
 
-
-    .roxx-logo-animation {
-        height: 70px;
+    .shop-heading h1 {
+        font-size: 18vw;
+        letter-spacing: -4px;
     }
 
-    .roxx-logo-animation img {
-        width: 48px;
-        height: 48px;
+    .shop-heading span {
+        font-size: 7px;
+        letter-spacing: 1px;
+        line-height: 1.8;
+    }
+
+    .shop-section {
+        padding: 25px 14px 55px;
+    }
+
+    .filter-btn {
+        padding: 10px 12px;
+        font-size: 8px;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 25px 10px;
+    }
+
+    .product-info h3 {
+        font-size: 11px;
+    }
+
+    .product-image {
+        aspect-ratio: 3 / 4;
+    }
+
+    footer {
+        padding: 45px 15px 25px;
+    }
+
+    .footer-logo {
+        font-size: 43px;
     }
 
 }
-/* ROXX ANIMATED LOGO */
 
-.roxx-logo-animation{
-    background:#111;
-    padding:30px 0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 350px) {
+
+    .navbar nav {
+        gap: 6px;
+    }
+
+    .navbar nav a {
+        font-size: 6px;
+    }
+
+    .navbar .logo {
+        font-size: 21px;
+    }
+
+    .navbar .cart {
+        font-size: 7px;
+    }
+
+    .shop-heading {
+        padding: 55px 12px 35px;
+    }           }
+.cart-page,
+.checkout-page {
+    min-height: 80vh;
+    padding: 90px 7%;
+    background: #0A0A0A;
+    color: #fff;
+    position: relative;
+}
+/* =========================================
+   ROXX — PREMIUM CHECKOUT
+========================================= */
+
+:root {
+    --roxx-green: #39FF14;
+    --roxx-black: #0A0A0A;
+    --roxx-gray: #888;
+    --roxx-border: #292929;
 }
 
-.roxx-logo-animation video{
-    width:180px;
-    height:180px;
-    object-fit:contain;
-    display:block;
-}
-/* =========================
-   ROXX LOGO VIDEO
-========================= */
+/* MAIN */
 
-.roxx-logo-animation {
+.checkout-page {
+    min-height: 100vh;
+    padding: 90px 7%;
+    background: var(--roxx-black);
+    color: #fff;
+}
+
+/* HEADER */
+
+.checkout-header {
+    padding-bottom: 55px;
+    border-bottom: 1px solid var(--roxx-border);
+    margin-bottom: 55px;
+}
+
+.checkout-header p {
+    color: var(--roxx-green);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    margin-bottom: 25px;
+}
+
+.checkout-header h1 {
+    font-size: clamp(65px, 10vw, 125px);
+    font-weight: 900;
+    line-height: .85;
+    letter-spacing: -7px;
+}
+
+.checkout-header span {
+    display: block;
+    margin-top: 28px;
+    color: #888;
+    font-size: 10px;
+    letter-spacing: 3px;
+}
+
+/* LAYOUT */
+
+.checkout-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 65px;
+    align-items: start;
+}
+
+/* SECTION TITLES */
+
+.checkout-section-title {
+    margin-bottom: 35px;
+}
+
+.checkout-section-title p {
+    color: var(--roxx-green);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
+
+.checkout-section-title h2 {
+    font-size: 27px;
+    font-weight: 900;
+    letter-spacing: -1px;
+}
+
+/* ORDER SUMMARY */
+
+.order-summary {
+    padding: 35px;
+    background: #101010;
+    border: 1px solid var(--roxx-border);
+}
+
+.order-items {
+    display: flex;
+    flex-direction: column;
+}
+
+.order-item {
+    display: grid;
+    grid-template-columns: 95px 1fr auto;
+    gap: 20px;
+    align-items: center;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--roxx-border);
+}
+
+.order-item-image {
+    width: 95px;
+    height: 115px;
+    overflow: hidden;
+    background: #191919;
+}
+
+.order-item-image img {
     width: 100%;
-    height: 220px;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .5s ease;
+}
+
+.order-item:hover .order-item-image img {
+    transform: scale(1.07);
+}
+
+.order-item-info p {
+    color: var(--roxx-green);
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    margin-bottom: 9px;
+    text-transform: uppercase;
+}
+
+.order-item-info h3 {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.order-item-info span {
+    color: #888;
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+.order-item strong {
+    color: #fff;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* TOTAL */
+
+.checkout-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 30px;
+    margin-top: 10px;
+}
+
+.checkout-total span {
+    color: #888;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.checkout-total strong {
+    color: var(--roxx-green);
+    font-size: 25px;
+    font-weight: 900;
+}
+
+/* FORM SECTION */
+
+.checkout-form-section {
+    padding: 35px;
+    background: #101010;
+    border: 1px solid var(--roxx-border);
+}
+
+/* FORM */
+
+.checkout-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-group label {
+    color: #aaa;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 17px;
+    background: #080808;
+    border: 1px solid #303030;
+    outline: none;
+    color: #fff;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 1px;
+    transition: border-color .3s ease,
+                box-shadow .3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: var(--roxx-green);
+    box-shadow: 0 0 0 2px rgba(57,255,20,.08);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #555;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-group select {
+    cursor: pointer;
+}
+
+.form-group select option {
     background: #111;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+    color: #fff;
 }
 
-.roxx-logo-animation video {
-    width: 180px;
-    height: 180px;
-    object-fit: contain;
-    display: block;
-}
-/* =========================
-   ROXX LOGO VIDEO BACKGROUND
-========================= */
+/* PLACE ORDER */
 
-.roxx-logo-animation {
-    background: #000000 !important;
+.place-order-btn {
     width: 100%;
-    height: 220px;
+    min-height: 60px;
+    margin-top: 10px;
+    padding: 18px;
+    background: var(--roxx-green);
+    border: 1px solid var(--roxx-green);
+    color: #000;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all .3s ease;
+}
+
+.place-order-btn:hover {
+    background: transparent;
+    color: var(--roxx-green);
+    box-shadow: 0 0 25px rgba(57,255,20,.12);
+}
+
+.place-order-btn:active {
+    transform: scale(.98);
+}
+
+/* NOTE */
+
+.checkout-note {
+    color: #777;
+    font-size: 9px;
+    line-height: 1.8;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+/* NAVBAR */
+
+.checkout-page ~ footer {
+    margin-top: 0;
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 950px) {
+
+    .checkout-page {
+        padding: 75px 5%;
+    }
+
+    .checkout-layout {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+
+    .checkout-header h1 {
+        font-size: 90px;
+    }
+
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .checkout-page {
+        padding: 55px 15px;
+    }
+
+    .checkout-header {
+        padding-bottom: 35px;
+        margin-bottom: 35px;
+    }
+
+    .checkout-header h1 {
+        font-size: 17vw;
+        letter-spacing: -4px;
+    }
+
+    .checkout-header p {
+        font-size: 8px;
+    }
+
+    .checkout-header span {
+        font-size: 8px;
+    }
+
+    .checkout-layout {
+        gap: 25px;
+    }
+
+    .order-summary,
+    .checkout-form-section {
+        padding: 20px 15px;
+    }
+
+    .checkout-section-title h2 {
+        font-size: 21px;
+    }
+
+    .order-item {
+        grid-template-columns: 75px 1fr;
+        gap: 13px;
+    }
+
+    .order-item-image {
+        width: 75px;
+        height: 95px;
+    }
+
+    .order-item strong {
+        grid-column: 2;
+        font-size: 12px;
+    }
+
+    .order-item-info h3 {
+        font-size: 11px;
+    }
+
+    .order-item-info span {
+        font-size: 8px;
+    }
+
+    .checkout-total strong {
+        font-size: 21px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        padding: 15px 12px;
+        font-size: 12px;
+    }
+
+    .place-order-btn {
+        min-height: 56px;
+    }
+
+}
+
+/* SMALL PHONES */
+
+@media (max-width: 360px) {
+
+    .checkout-page {
+        padding: 45px 10px;
+    }
+
+    .order-summary,
+    .checkout-form-section {
+        padding: 16px 11px;
+    }
+
+    .order-item {
+        grid-template-columns: 65px 1fr;
+        gap: 10px;
+    }
+
+    .order-item-image {
+        width: 65px;
+        height: 85px;
+    }
+
+    .checkout-section-title h2 {
+        font-size: 19px;
+    }
+
+}
+
+/* ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .order-item-image img,
+    .place-order-btn,
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        transition: none;
+    }
+
+}
+/* ROXX SOCIAL ICONS */
+
+.roxx-socials {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 18px;
+    margin: 30px 0;
+}
+
+.roxx-socials a {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #333;
+    color: #fff;
+    font-size: 19px;
+    text-decoration: none;
+    transition: .3s ease;
+}
+
+.roxx-socials a:hover {
+    background: #39FF14;
+    border-color: #39FF14;
+    color: #000;
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px #39ff1440;
+}
+/* =========================================
+   ROXX — STAR SIZE SELECTOR
+========================================= */
+
+/* ROXX — CLEAN SMALL STAR SIZES */
+
+.roxx-size-options {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.roxx-size-btn {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: none !important;
+    outline: none;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 900;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .3s ease;
+}
+
+.roxx-size-btn::before {
+    content: "★";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 43px;
+    color: #292929;
+    z-index: 0;
+    transition: .3s ease;
+}
+
+.roxx-size-btn {
+    isolation: isolate;
+}
+
+.roxx-size-btn::after {
+    content: none !important;
+}
+
+.roxx-size-btn:hover::before,
+.roxx-size-btn.selected::before {
+    color: #39FF14;
+    filter: drop-shadow(0 0 5px #39FF1470);
+    transform: scale(1.05);
+}
+
+.roxx-size-btn:hover,
+.roxx-size-btn.selected {
+    color: #000;
+}
+
+.roxx-size-btn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+@media (max-width: 480px) {
+    .roxx-size-btn {
+        width: 42px;
+        height: 42px;
+    }
+
+    .roxx-size-btn::before {
+        font-size: 37px;
+    }
+}
+.roxx-size-btn {
+    position: relative;
+    z-index: 1;
+    color: #fff !important;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.roxx-size-btn::before {
+    z-index: -1;
+}
+
+.roxx-size-btn:hover,
+.roxx-size-btn.selected {
+    color: #000 !important;
+}
+/* =================================
+   ROXX — ADD TO BAG PREMIUM BUTTON
+================================= */
+
+.roxx-add-button {
+    width: 100%;
+    min-height: 58px;
+    padding: 16px 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    background: #39FF14 !important;
+    color: #000 !important;
+
+    border: 1px solid #39FF14 !important;
+    border-radius: 3px;
+
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+
+    cursor: pointer;
+    transition: all .3s ease;
+}
+
+/* النص */
+.roxx-add-button span {
+    color: #000 !important;
+    transition: color .3s ease;
+}
+
+/* السهم الجديد */
+.roxx-add-button i {
+    font-size: 15px;
+    color: #000 !important;
+    transition: transform .3s ease, color .3s ease;
+}
+
+/* Hover */
+.roxx-add-button:hover {
+    background: transparent !important;
+    color: #39FF14 !important;
+    box-shadow: 0 0 18px #39FF1425;
+}
+
+.roxx-add-button:hover span,
+.roxx-add-button:hover i {
+    color: #39FF14 !important;
+}
+
+.roxx-add-button:hover i {
+    transform: translateX(5px);
+}
+
+/* الضغط */
+.roxx-add-button:active {
+    transform: scale(.98);
+}
+
+/* Focus */
+.roxx-add-button:focus-visible {
+    outline: 2px solid #39FF14;
+    outline-offset: 4px;
+}
+/* REMOVE OLD ARROW */
+.roxx-add-button i,
+.roxx-add-button .arrow {
+    display: none !important;
+}
+
+/* NEW MINIMAL ARROW */
+.roxx-add-button::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+    transform: rotate(45deg);
+    margin-left: 5px;
+    transition: .3s ease;
+}
+
+.roxx-add-button:hover::after {
+    transform: rotate(45deg) translate(3px, -3px);
+}
+/* =====================================
+   ROXX — NEON GREEN DETAILS
+===================================== */
+
+/* Product Title */
+.roxx-product-info h1 {
+    transition: .3s ease;
+}
+
+.roxx-product-info h1:hover {
+    color: #39FF14;
+}
+
+/* Product Price */
+.roxx-product-info .price,
+.roxx-product-info .product-price {
+    color: #39FF14 !important;
+}
+
+/* Section Headings */
+.roxx-product-info h2,
+.roxx-product-info h3 {
+    transition: .3s ease;
+}
+
+.roxx-product-info h2:hover,
+.roxx-product-info h3:hover {
+    color: #39FF14;
+}
+
+/* Labels */
+.roxx-product-info label {
+    color: #39FF14;
+}
+
+/* Icons */
+.roxx-product-info i,
+.roxx-product-info svg {
+    transition: .3s ease;
+}
+
+.roxx-product-info i:hover,
+.roxx-product-info svg:hover {
+    color: #39FF14;
+    fill: #39FF14;
+}
+
+/* Breadcrumb */
+.roxx-breadcrumb a:hover {
+    color: #39FF14;
+}
+
+/* Size Guide */
+.size-guide-trigger {
+    color: #39FF14 !important;
+}
+
+/* Small details */
+.roxx-product-info a:hover {
+    color: #39FF14;
+}
+
+/* Selection */
+::selection {
+    background: #39FF14;
+    color: #000;
+}
+/* =========================================
+   ROXX SHOP — NEON GREEN IDENTITY
+========================================= */
+
+:root {
+    --roxx-green: #39FF14;
+}
+
+/* SHOP HEADING */
+
+.shop-heading > p {
+    color: var(--roxx-green);
+    letter-spacing: 3px;
+}
+
+.shop-heading h1 {
+    color: #fff;
+}
+
+.shop-heading h1::first-line {
+    color: var(--roxx-green);
+}
+
+.shop-heading > span {
+    color: #888;
+}
+
+/* SEARCH */
+
+.shop-search input {
+    border: 1px solid #333;
+    color: #fff;
+    background: #0A0A0A;
+    transition: .3s ease;
+}
+
+.shop-search input:focus {
+    border-color: var(--roxx-green);
+    box-shadow: 0 0 12px #39FF1425;
+    outline: none;
+}
+
+.shop-search input::placeholder {
+    color: #777;
+}
+
+/* FILTERS */
+
+.filter-btn {
+    transition: .3s ease;
+}
+
+.filter-btn:hover {
+    color: var(--roxx-green);
+    border-color: var(--roxx-green);
+}
+
+.filter-btn.active {
+    background: var(--roxx-green);
+    color: #000;
+    border-color: var(--roxx-green);
+}
+
+/* PRODUCT CARDS */
+
+.product-card {
+    transition: .3s ease;
+}
+
+.product-card:hover {
+    border-color: var(--roxx-green);
+}
+
+.product-info > p {
+    color: var(--roxx-green);
+    letter-spacing: 2px;
+}
+
+.product-info h3 {
+    color: #fff;
+    transition: .3s ease;
+}
+
+.product-card:hover .product-info h3 {
+    color: var(--roxx-green);
+}
+
+.product-info strong {
+    color: var(--roxx-green);
+    font-size: 16px;
+}
+
+/* VIEW PRODUCT */
+
+.view-product {
+    color: var(--roxx-green);
+    transition: .3s ease;
+}
+
+.product-card:hover .view-product {
+    letter-spacing: 2px;
+}
+
+/* PRODUCT IMAGE */
+
+.product-image img {
+    transition: transform .5s ease;
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.04);
+}
+
+/* NAVBAR */
+
+.navbar .logo {
+    color: var(--roxx-green);
+}
+
+.navbar nav a {
+    transition: .3s ease;
+}
+
+.navbar nav a:hover {
+    color: var(--roxx-green);
+}
+
+.navbar .cart {
+    transition: .3s ease;
+}
+
+.navbar .cart:hover {
+    color: var(--roxx-green);
+}
+
+/* FOOTER */
+
+.footer-logo {
+    color: var(--roxx-green);
+}
+
+footer small {
+    color: var(--roxx-green);
+}
+
+/* TEXT SELECTION */
+
+::selection {
+    background: var(--roxx-green);
+    color: #000;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .shop-heading > p {
+        font-size: 11px;
+    }
+
+    .shop-heading > span {
+        font-size: 10px;
+    }
+
+    .shop-filters {
+        gap: 8px;
+    }
+
+}
+/* ROXX — SOCIAL ICONS NO BOX */
+
+.social-icons a,
+.social-links a,
+.footer-social a {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    color: #fff !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: .3s ease;
+}
+
+.social-icons a:hover,
+.social-links a:hover,
+.footer-social a:hover {
+    color: #39FF14 !important;
+    transform: translateY(-3px);
+}
+
+.social-icons i,
+.social-links i,
+.footer-social i {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    font-size: 22px;
+}
+/* =====================================
+   ROXX — GREEN ANNOUNCEMENT TICKER
+===================================== */
+
+.announcement-bar,
+.announcement-ticker,
+.ticker {
+    background: rgba(57, 255, 20, 0.07) !important;
+    border-top: 1px solid rgba(57, 255, 20, 0.2);
+    border-bottom: 1px solid rgba(57, 255, 20, 0.2);
     overflow: hidden;
 }
 
-.roxx-logo-animation video {
-    width: 180px;
-    height: 180px;
+.announcement-bar *,
+.announcement-ticker *,
+.ticker * {
+    color: #39FF14 !important;
+}
+
+
+/* Remove White Background */
+.announcement-bar,
+.announcement-ticker,
+.ticker {
+    box-shadow: none !important;
+}
+/* ROXX — ULTRA FAST TICKER */
+
+.announcement-bar,
+.announcement-ticker,
+.ticker {
+    background: rgba(57, 255, 20, 0.07) !important;
+    border: none !important;
+    overflow: hidden;
+}
+
+/* سرعة حركة الكلام */
+.announcement-bar .ticker-track,
+.announcement-ticker .ticker-track,
+.ticker .ticker-track {
+    animation-duration: 4s !important;
+    animation-timing-function: linear !important;
+    animation-iteration-count: infinite !important;
+}
+
+/* لون الكلام */
+.announcement-bar *,
+.announcement-ticker *,
+.ticker * {
+    color: #39FF14 !important;
+}
+/* =====================================
+   ROXX HEADER — NEON GREEN
+===================================== */
+
+:root {
+    --roxx-green: #39FF14;
+}
+
+/* HAMBURGER MENU */
+
+.roxx-menu-button {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    cursor: pointer;
+}
+
+.roxx-menu-button span {
+    background: var(--roxx-green) !important;
+    height: 2px;
+    transition: .3s ease;
+}
+
+.roxx-menu-button:hover span {
+    box-shadow: 0 0 8px var(--roxx-green);
+}
+
+/* SEARCH ICON */
+
+.roxx-search-button {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    cursor: pointer;
+}
+
+.roxx-search-button svg {
+    width: 23px;
+    height: 23px;
+    fill: none !important;
+    stroke: var(--roxx-green) !important;
+    stroke-width: 1.7;
+    transition: .3s ease;
+}
+
+.roxx-search-button:hover svg {
+    transform: scale(1.12);
+    filter: drop-shadow(0 0 5px var(--roxx-green));
+}
+
+/* CART ICON */
+
+.roxx-cart-button {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: var(--roxx-green) !important;
+    text-decoration: none;
+}
+
+.roxx-cart-button svg {
+    width: 23px;
+    height: 23px;
+    fill: none !important;
+    stroke: var(--roxx-green) !important;
+    stroke-width: 1.7;
+    transition: .3s ease;
+}
+
+.roxx-cart-button span {
+    color: var(--roxx-green) !important;
+}
+
+.roxx-cart-button:hover svg {
+    transform: translateY(-2px);
+    filter: drop-shadow(0 0 5px var(--roxx-green));
+}
+
+/* REMOVE HEADER BOXES */
+
+.roxx-header button {
+    outline: none;
+    border-radius: 0 !important;
+}
+
+/* REMOVE FOCUS BOX */
+.roxx-header button:focus {
+    box-shadow: none !important;
+}
+/* =====================================
+   ROXX — NEON GREEN SIDE MENU
+===================================== */
+
+.roxx-menu-panel {
+    background: #080808 !important;
+    border: none !important;
+    color: #39FF14 !important;
+}
+
+/* TOP */
+
+.roxx-menu-top {
+    border-bottom: 1px solid rgba(57,255,20,.15) !important;
+}
+
+.roxx-menu-top span {
+    color: #39FF14 !important;
+    letter-spacing: 3px;
+}
+
+.roxx-menu-top button {
+    background: transparent !important;
+    border: none !important;
+    color: #39FF14 !important;
+    font-size: 22px;
+    transition: .3s ease;
+}
+
+.roxx-menu-top button:hover {
+    transform: rotate(90deg);
+    color: #fff !important;
+}
+
+/* MAIN LINK */
+
+.roxx-menu-nav .menu-main-link {
+    color: #39FF14 !important;
+    font-weight: 900;
+    font-size: 30px;
+    text-decoration: none;
+    transition: .3s ease;
+}
+
+.roxx-menu-nav .menu-main-link:hover {
+    color: #fff !important;
+    padding-left: 8px;
+}
+
+/* COLLECTION TITLE */
+
+.roxx-menu-category > span {
+    color: #39FF14 !important;
+    font-size: 11px;
+    letter-spacing: 3px;
+}
+
+/* CATEGORY LINKS */
+
+.roxx-menu-category a {
+    color: #fff !important;
+    text-decoration: none;
+    transition: .25s ease;
+}
+
+.roxx-menu-category a:hover {
+    color: #39FF14 !important;
+    padding-left: 7px;
+}
+
+/* BOTTOM LINKS */
+
+.roxx-menu-bottom-links a {
+    color: #39FF14 !important;
+    text-decoration: none;
+    transition: .3s ease;
+}
+
+.roxx-menu-bottom-links a:hover {
+    color: #fff !important;
+}
+
+/* FOOTER */
+
+.roxx-menu-footer {
+    border-top: 1px solid rgba(57,255,20,.15) !important;
+}
+
+.roxx-menu-footer span {
+    color: #39FF14 !important;
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+/* REMOVE BOXES AND ARROWS */
+
+.roxx-menu-panel a::after {
+    content: none !important;
+}
+
+.roxx-menu-panel a {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* SMOOTH TRANSITIONS */
+
+.roxx-menu-panel a,
+.roxx-menu-panel button {
+    transition: all .3s ease;
+}
+/* =========================================
+   ROXX FULLSCREEN PRODUCT ZOOM
+========================================= */
+
+.product-gallery img {
+    cursor: zoom-in;
+    transition: transform .65s cubic-bezier(.2, .8, .2, 1);
+}
+
+/* DARK OVERLAY */
+
+.roxx-zoom-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .96);
+    z-index: 99999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .4s ease, visibility .4s ease;
+
+    padding: 30px;
+}
+
+/* ACTIVE OVERLAY */
+
+.roxx-zoom-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ZOOMED IMAGE */
+
+.roxx-zoom-overlay img {
+    max-width: 95%;
+    max-height: 92%;
+    width: auto;
+    height: auto;
     object-fit: contain;
+
+    transform: scale(.75);
+    opacity: 0;
+
+    transition:
+        transform .55s cubic-bezier(.2, .8, .2, 1),
+        opacity .4s ease;
+
+    cursor: zoom-out;
+}
+
+.roxx-zoom-overlay.active img {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* CLOSE BUTTON */
+
+.roxx-zoom-close {
+    position: absolute;
+    top: 25px;
+    right: 35px;
+
+    width: 45px;
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent;
+    color: #fff;
+    border: 1px solid #555;
+
+    font-size: 24px;
+    cursor: pointer;
+
+    transition: .3s ease;
+}
+
+.roxx-zoom-close:hover {
+    background: #fff;
+    color: #000;
+}
+
+/* PREVENT SCROLL */
+
+body.roxx-zoom-open {
+    overflow: hidden;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .roxx-zoom-overlay {
+        padding: 15px;
+    }
+
+    .roxx-zoom-overlay img {
+        max-width: 100%;
+        max-height: 85%;
+    }
+
+    .roxx-zoom-close {
+        top: 15px;
+        right: 15px;
+    }
+
+}
+/* =========================================
+   ROXX FULLSCREEN PRODUCT IMAGE ZOOM
+========================================= */
+
+.roxx-product-main-image img {
+    cursor: zoom-in;
+}
+
+/* OVERLAY */
+
+.roxx-zoom-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 35px;
+
+    background: rgba(0, 0, 0, 0.97);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity .5s ease,
+        visibility .5s ease;
+}
+
+/* ACTIVE */
+
+.roxx-zoom-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* FULLSCREEN IMAGE */
+
+.roxx-zoom-overlay img {
     display: block;
-    background: #000000;
+
+    max-width: 95%;
+    max-height: 90%;
+
+    width: auto;
+    height: auto;
+
+    object-fit: contain;
+
+    transform: scale(.65);
+    opacity: 0;
+
+    transition:
+        transform .65s cubic-bezier(.16, 1, .3, 1),
+        opacity .45s ease;
+
+    cursor: zoom-out;
+}
+
+.roxx-zoom-overlay.active img {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* CLOSE BUTTON */
+
+.roxx-zoom-close {
+    position: absolute;
+    top: 30px;
+    right: 35px;
+
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent;
+    border: 1px solid #555;
+
+    color: #fff;
+    font-size: 30px;
+
+    cursor: pointer;
+
+    transition: .3s ease;
+}
+
+.roxx-zoom-close:hover {
+    background: #fff;
+    color: #000;
+}
+
+/* CAPTION */
+
+.roxx-zoom-caption {
+    position: absolute;
+    bottom: 25px;
+    left: 35px;
+
+    color: #777;
+
+    font-size: 9px;
+    letter-spacing: 3px;
+    font-weight: 700;
+}
+
+/* LOCK SCROLL */
+
+body.roxx-zoom-open {
+    overflow: hidden;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .roxx-zoom-overlay {
+        padding: 15px;
+    }
+
+    .roxx-zoom-overlay img {
+        max-width: 100%;
+        max-height: 82%;
+    }
+
+    .roxx-zoom-close {
+        top: 15px;
+        right: 15px;
+    }
+
+    .roxx-zoom-caption {
+        left: 15px;
+        bottom: 15px;
+    }
+
 }

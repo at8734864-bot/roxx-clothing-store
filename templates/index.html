@@ -2,408 +2,406 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="ROXX — Shop the collection.">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <title>ROXX — SHOP</title>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <title>ROXX | Clothing Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
-
 </head>
 
+<body class="roxx-home">
 
-<body>
+    <!-- INTRO -->
+<!-- INTRO -->
 
+<!-- ROXX AUTO INTRO -->
+<!-- INTRO -->
 
-<!-- =========================
-     ANNOUNCEMENT BAR
-========================= -->
+<div class="roxx-intro" id="roxxIntro">
+    <div class="roxx-intro-content">
+        <h1 class="roxx-intro-logo">ROXX</h1>
+    </div>
+</div>
+    <!-- ANNOUNCEMENT BAR -->
 
-<div class="announcement-bar">
+    <div class="announcement-bar">
 
-    <div class="announcement-track">
+        <div class="announcement-track">
 
-        <span>FREE SHIPPING</span>
-        <span>•</span>
+            <span>ROXX</span>
+            <span>✳</span>
+            <span>NEW COLLECTION</span>
+            <span>✳</span>
+            <span>SHOP NOW</span>
+            <span>✳</span>
 
-        <span>NEW COLLECTION 2026</span>
-        <span>•</span>
+            <span>ROXX</span>
+            <span>✳</span>
+            <span>NEW COLLECTION</span>
+            <span>✳</span>
+            <span>SHOP NOW</span>
+            <span>✳</span>
 
-        <span>SHOP ROXX</span>
-        <span>•</span>
-
-        <span>EVERYDAY STREETWEAR</span>
-        <span>•</span>
-
-        <span>FREE SHIPPING</span>
-        <span>•</span>
-
-        <span>NEW COLLECTION 2026</span>
-        <span>•</span>
-
-        <span>SHOP ROXX</span>
-        <span>•</span>
-
-        <span>EVERYDAY STREETWEAR</span>
-        <span>•</span>
+        </div>
 
     </div>
 
-</div>
+
+    <!-- HEADER -->
+
+    <header class="roxx-header">
+
+        <div class="roxx-header-left">
+
+            <button
+                class="roxx-menu-button"
+                id="menuToggle"
+                type="button"
+                aria-label="Open menu"
+                aria-expanded="false"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+        </div>
+
+<a href="{{ url_for('home') }}" class="roxx-logo roxx-3d-logo">
+    <iframe
+        src="{{ url_for('static', filename='roxx-3d-logo.html') }}"
+        title="ROXX 3D Logo">
+    </iframe>
+</a>
+
+        <div class="roxx-header-right">
+
+            <button
+                class="roxx-search-button"
+                id="searchToggle"
+                type="button"
+                aria-label="Search"
+            >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="10.8" cy="10.8" r="6.8"></circle>
+                    <path d="M16 16L21 21"></path>
+                </svg>
+            </button>
+
+            <a
+                href="{{ url_for('cart') }}"
+                class="roxx-cart-button"
+                aria-label="Shopping cart"
+            >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 4H5L7.5 16H18.5L21 7H6"></path>
+                    <circle cx="9" cy="20" r="1"></circle>
+                    <circle cx="18" cy="20" r="1"></circle>
+                </svg>
+
+                <span>{{ cart_count }}</span>
+            </a>
+
+        </div>
+
+    </header>
 
 
+    <!-- MENU PANEL -->
 
-<!-- =========================
-     ANIMATED ROXX LOGO VIDEO
-========================= -->
+    <!-- MENU OVERLAY -->
+<div class="roxx-menu-overlay" id="menuOverlay"></div>
 
-<div class="roxx-logo-animation">
+<!-- MENU PANEL -->
+<aside class="roxx-menu-panel" id="menuPanel" aria-hidden="true">
 
-    <video
-        autoplay
-        muted
-        loop
-        playsinline>
+    <div class="roxx-menu-top">
+        <span>ROXX MENU</span>
 
-        <source
-            src="{{ url_for('static', filename='images/logo.mp4') }}"
-            type="video/mp4">
+        <button type="button" id="menuClose" aria-label="Close menu">
+            ✕
+        </button>
+    </div>
 
-    </video>
+    <nav class="roxx-menu-nav">
 
-</div>
-
-
-
-<!-- =========================
-     NAVBAR
-========================= -->
-
-<header class="navbar">
-
-    <a href="/" class="logo">
-        ROXX
-    </a>
-
-
-    <nav>
-
-        <a href="/">
-            HOME
+        <a href="{{ url_for('products_page') }}" class="menu-main-link">
+            SHOP ALL
         </a>
 
-        <a href="/products">
-            SHOP
-        </a>
+        <div class="roxx-menu-category">
+            <span>COLLECTION</span>
 
-        <a href="/about">
-            ABOUT
-        </a>
+            <a href="{{ url_for('products_page') }}">T-SHIRTS</a>
+            <a href="{{ url_for('products_page') }}">HOODIES</a>
+            <a href="{{ url_for('products_page') }}">SWEATSHIRTS</a>
+            <a href="{{ url_for('products_page') }}">JACKETS</a>
+            <a href="{{ url_for('products_page') }}">PANTS</a>
+            <a href="{{ url_for('products_page') }}">ACCESSORIES</a>
+        </div>
 
-        <a href="/contact">
-            CONTACT
-        </a>
+        <div class="roxx-menu-bottom-links">
+            <a href="{{ url_for('about') }}">ABOUT ROXX</a>
+            <a href="{{ url_for('contact') }}">CONTACT</a>
+        </div>
 
     </nav>
 
+    <div class="roxx-menu-footer">
+        <span>ROXX — FUTURE LAB</span>
+        <span>© 2026</span>
+    </div>
 
-    <a href="/cart" class="cart">
+</aside>
+    <!-- SEARCH PANEL -->
 
-        🛒 CART
+    <div class="roxx-search-panel" id="searchPanel" aria-hidden="true">
 
-        {% if cart_count > 0 %}
-            ({{ cart_count }})
-        {% endif %}
+        <form action="{{ url_for('products_page') }}" method="get">
+
+            <input
+                type="search"
+                name="search"
+                placeholder="SEARCH PRODUCTS"
+                aria-label="Search products"
+            >
+
+            <button type="submit" aria-label="Submit search">
+                ↗
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- SHOP -->
+        <section class="roxx-shop-products">
+
+            {% for product in products %}
+
+           <a
+    href="{{ url_for('product_page', product_id=product.id) }}"
+    class="roxx-shop-product"
+>
+
+    <div class="roxx-shop-product-image">
+
+        <img
+            src="{{ url_for('static', filename='images/' + product.image) }}"
+            alt="{{ product.name }}"
+            loading="lazy"
+        >
+
+        <span class="product-view">VIEW PRODUCT ↗</span>
+
+    </div>
+
+    <div class="roxx-shop-product-info">
+
+        <span class="product-number">
+            PRODUCT {{ '%03d'|format(loop.index) }}
+        </span>
+
+        <h2>{{ product.name }}</h2>
+
+        <span class="product-price">
+            EGP {{ '%.0f'|format(product.price) }}
+        </span>
+
+    </div>
+
+</a>
+            {% else %}
+
+            <p class="no-products">
+                NO PRODUCTS AVAILABLE.
+            </p>
+
+            {% endfor %}
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer class="roxx-footer">
+
+        <a href="{{ url_for('home') }}" class="footer-logo">
+            ROXX
+        </a>
+
+        <div>
+            <a href="{{ url_for('about') }}">ABOUT</a>
+            <a href="{{ url_for('contact') }}">CONTACT</a>
+        </div>
+
+        <small>© 2026 ROXX. ALL RIGHTS RESERVED.</small>
+<div class="roxx-socials">
+
+    <a href="https://www.instagram.com/roxx.eg/"
+       target="_blank"
+       aria-label="Instagram">
+
+        <i class="fa-brands fa-instagram"></i>
 
     </a>
 
-</header>
+    <a href="https://www.tiktok.com/roxx.eg"
+       target="_blank"
+       aria-label="TikTok">
 
+        <i class="fa-brands fa-tiktok"></i>
 
-
-<!-- =========================
-     HERO
-========================= -->
-
-<main>
-
-<section class="hero">
-
-
-    <div class="hero-content">
-
-        <p class="hero-label">
-            ROXX — NEW SEASON
-        </p>
-
-
-        <h1>
-            WEAR<br>
-            YOUR<br>
-            ATTITUDE.
-        </h1>
-
-
-        <p class="hero-description">
-            Modern streetwear made for everyday movement.
-        </p>
-
-
-        <div class="hero-buttons">
-
-            <a
-                href="/products"
-                class="hero-btn">
-
-                SHOP NOW →
-
-            </a>
-
-
-            <a
-                href="/about"
-                class="hero-link">
-
-                DISCOVER ROXX
-
-            </a>
-
-        </div>
-
-    </div>
-
-
-
-    <div class="hero-side">
-
-        <div class="hero-side-text">
-            EST. 2026
-        </div>
-
-
-        <div class="hero-side-logo">
-            ROXX
-        </div>
-
-
-        <div class="hero-side-text">
-            EVERYDAY / STREET / ESSENTIAL
-        </div>
-
-    </div>
-
-
-</section>
-
-
-
-<!-- =========================
-     CATEGORIES
-========================= -->
-
-<section class="categories">
-
-    <h2>
-        SHOP BY CATEGORY
-    </h2>
-
-
-    <div class="category-grid">
-
-
-        <a
-            href="/products"
-            class="category-card">
-
-            <span>
-                01
-            </span>
-
-            <h3>
-                T-SHIRTS
-            </h3>
-
-        </a>
-
-
-        <a
-            href="/products"
-            class="category-card">
-
-            <span>
-                02
-            </span>
-
-            <h3>
-                HOODIES
-            </h3>
-
-        </a>
-
-
-        <a
-            href="/products"
-            class="category-card">
-
-            <span>
-                03
-            </span>
-
-            <h3>
-                JEANS
-            </h3>
-
-        </a>
-
-
-        <a
-            href="/products"
-            class="category-card">
-
-            <span>
-                04
-            </span>
-
-            <h3>
-                JACKETS
-            </h3>
-
-        </a>
-
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================
-     FEATURED PRODUCTS
-========================= -->
-
-<section class="featured">
-
-
-    <div class="section-title">
-
-        <div>
-
-            <p>
-                OUR COLLECTION
-            </p>
-
-            <h2>
-                FEATURED PIECES
-            </h2>
-
-        </div>
-
-
-        <a href="/products">
-            VIEW ALL →
-        </a>
-
-    </div>
-
-
-
-    <div class="products-grid">
-
-
-        {% for product in products %}
-
-
-        <a
-            href="{{ url_for('product_page', product_id=product.id) }}"
-            class="product-card">
-
-
-            <div class="product-image">
-
-                <img
-                    src="{{ url_for(
-                        'static',
-                        filename='images/' + product.image
-                    ) }}"
-                    alt="{{ product.name }}"
-                >
-
-            </div>
-
-
-            <div class="product-info">
-
-                <p>
-                    {{ product.category }}
-                </p>
-
-
-                <h3>
-                    {{ product.name }}
-                </h3>
-
-
-                <strong>
-                    {{ product.price }} EGP
-                </strong>
-
-            </div>
-
-
-        </a>
-
-
-        {% endfor %}
-
-
-    </div>
-
-
-</section>
-
-
-</main>
-
-
-
-<!-- =========================
-     FOOTER
-========================= -->
-
-<footer>
-
-    <div class="footer-logo">
-        ROXX
-    </div>
-
-
-    <p>
-        MODERN CLOTHING FOR EVERYDAY LIFE.
-    </p>
-
-
-    <small>
-        © 2026 ROXX. ALL RIGHTS RESERVED.
-    </small>
-
-</footer>
-<div class="roxx-logo-animation">
-
-    <video
-        src="{{ url_for('static', filename='images/logo.mp4') }}"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="auto">
-    </video>
+    </a>
 
 </div>
+    </footer>
 
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+        // INTRO
+
+     // CINEMATIC INTRO
+
+// ROXX AUTO INTRO
+
+// ROXX AUTO INTRO
+
+const intro = document.getElementById("roxxIntro");
+
+if (intro) {
+    document.body.classList.add("intro-active");
+
+    setTimeout(() => {
+        intro.classList.add("intro-exit");
+        document.body.classList.remove("intro-active");
+        document.body.classList.add("shop-entered");
+
+        setTimeout(() => {
+            intro.style.display = "none";
+        }, 1100);
+
+    }, 3000);
+}
+
+        // MENU
+
+        // MENU
+
+const menuToggle = document.getElementById("menuToggle");
+const menuPanel = document.getElementById("menuPanel");
+const menuOverlay = document.getElementById("menuOverlay");
+const menuClose = document.getElementById("menuClose");
+
+function openMenu() {
+    menuPanel.classList.add("active");
+    menuOverlay.classList.add("active");
+    menuToggle.classList.add("active");
+
+    document.body.classList.add("menu-open");
+
+    menuToggle.setAttribute("aria-expanded", "true");
+    menuPanel.setAttribute("aria-hidden", "false");
+}
+
+function closeMenu() {
+    menuPanel.classList.remove("active");
+    menuOverlay.classList.remove("active");
+    menuToggle.classList.remove("active");
+
+    document.body.classList.remove("menu-open");
+
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuPanel.setAttribute("aria-hidden", "true");
+}
+
+menuToggle.addEventListener("click", openMenu);
+menuClose.addEventListener("click", closeMenu);
+menuOverlay.addEventListener("click", closeMenu);
+
+        // SEARCH
+
+        const searchToggle = document.getElementById("searchToggle");
+        const searchPanel = document.getElementById("searchPanel");
+
+        searchToggle.addEventListener("click", () => {
+
+            const isOpen = searchPanel.classList.toggle("active");
+
+            searchPanel.setAttribute("aria-hidden", !isOpen);
+
+            if (isOpen) {
+                searchPanel.querySelector("input").focus();
+            }
+
+        });
+
+
+        // ESCAPE
+
+        
+document.addEventListener("keydown", event => {
+
+    if (event.key === "Escape") {
+        closeMenu();
+
+        searchPanel.classList.remove("active");
+        searchPanel.setAttribute("aria-hidden", "true");
+    }
+
+});
+
+// PRODUCT SCROLL REVEAL
+
+const productCards = document.querySelectorAll(".roxx-shop-product");
+
+if ("IntersectionObserver" in window) {
+
+    const observer = new IntersectionObserver((entries) => {
+
+        entries.forEach(entry => {
+
+            if (entry.isIntersecting) {
+
+                entry.target.classList.add("reveal-visible");
+
+                observer.unobserve(entry.target);
+
+            }
+
+        });
+
+    }, {
+        threshold: 0.12
+    });
+
+    productCards.forEach(card => {
+
+        card.classList.add("reveal-pending");
+
+        observer.observe(card);
+
+    });
+
+}
+
+</script>
 </body>
-
 </html>

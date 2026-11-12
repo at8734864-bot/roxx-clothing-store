@@ -40,7 +40,6 @@ BASE_DIR = os.path.dirname(
     os.path.abspath(__file__)
 )
 
-# Vercel has a temporary writable directory: /tmp
 IS_VERCEL = bool(
     os.environ.get("VERCEL")
 )
@@ -123,9 +122,7 @@ def init_db():
     db = get_db()
 
 
-    # ==================================================
     # PRODUCTS TABLE
-    # ==================================================
 
     db.execute("""
         CREATE TABLE IF NOT EXISTS products (
@@ -144,9 +141,7 @@ def init_db():
     """)
 
 
-    # ==================================================
     # ORDERS TABLE
-    # ==================================================
 
     db.execute("""
         CREATE TABLE IF NOT EXISTS orders (
@@ -171,9 +166,7 @@ def init_db():
     """)
 
 
-    # ==================================================
     # ORDER ITEMS TABLE
-    # ==================================================
 
     db.execute("""
         CREATE TABLE IF NOT EXISTS order_items (
@@ -201,72 +194,175 @@ def init_db():
     """)
 
 
-    # ==================================================
-    # DEFAULT PRODUCTS
-    # ==================================================
+    # REPLACE OLD PRODUCT CATALOG (RUN ONCE)
 
-    count = db.execute(
-        "SELECT COUNT(*) AS count FROM products"
-    ).fetchone()["count"]
+   # ==================================================
+# PRODUCT CATALOG MIGRATIONS
+# ==def init_db():
 
+   # ==================================================
+# PRODUCT CATALOG MIGRATIONS
+# ==================================================
 
-    if count == 0:
+    db = get_db()
 
-        default_products = [
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS app_migrations (
+            migration_key TEXT PRIMARY KEY
+        )
+    """)
+
+    # ==============================================
+    # ORIGINAL CATALOG MIGRATION
+    # ==============================================
+
+    migration_key = "roxx_cheetah_catalog_v1"
+
+    migration_done = db.execute(
+        "SELECT migration_key FROM app_migrations WHERE migration_key = ?",
+        (migration_key,)
+    ).fetchone()
+
+    if migration_done is None:
+
+        existing_products = db.execute(
+            "SELECT COUNT(*) FROM products"
+        ).fetchone()[0]
+
+        if existing_products == 0:
+
+            original_products = [
+
+                (
+                    "CHEETAH HOODIE — BLACK",
+                    1000,
+                    "Hoodies",
+                    "cheetah-hoodie-black.png"
+                ),
+
+                (
+                    "CHEETAH PANTS — BLACK",
+                    1000,
+                    "Pants",
+                    "cheetah-pants-black.png"
+                ),
+
+                (
+                    "CHEETAH SET — BLACK",
+                    2000,
+                    "Sets",
+                    "cheetah-set-black.png"
+                ),
+
+                (
+                    "CHEETAH SET — OFF WHITE",
+                    2000,
+                    "Sets",
+                    "cheetah-set-offwhite.png"
+                )
+
+            ]
+
+            db.executemany(
+                """
+                INSERT INTO products
+                (name, price, category, image)
+                VALUES (?, ?, ?, ?)
+                """,
+                original_products
+            )
+
+        db.execute(
+            "INSERT INTO app_migrations (migration_key) VALUES (?)",
+            (migration_key,)
+        )
+
+    # ==============================================
+    # ADD OFF WHITE PRODUCTS
+    # ==============================================
+
+    migration_key = "roxx_offwhite_separate_products_v1"
+
+    migration_done = db.execute(
+        "SELECT migration_key FROM app_migrations WHERE migration_key = ?",
+        (migration_key,)
+    ).fetchone()
+
+    if migration_done is None:
+
+        # Update existing product images to PNG
+
+        db.execute("""
+            UPDATE products
+            SET image = 'cheetah-hoodie-black.png'
+            WHERE name = 'CHEETAH HOODIE — BLACK'
+        """)
+
+        db.execute("""
+            UPDATE products
+            SET image = 'cheetah-pants-black.png'
+            WHERE name = 'CHEETAH PANTS — BLACK'
+        """)
+
+        db.execute("""
+            UPDATE products
+            SET image = 'cheetah-set-black.png'
+            WHERE name = 'CHEETAH SET — BLACK'
+        """)
+
+        db.execute("""
+            UPDATE products
+            SET image = 'cheetah-set-offwhite.png'
+            WHERE name = 'CHEETAH SET — OFF WHITE'
+        """)
+
+        new_products = [
 
             (
-                "Classic Black T-Shirt",
-                299,
-                "T-Shirts",
-                "tshirt.jpg"
-            ),
-
-            (
-                "Oversized Hoodie",
-                699,
+                "CHEETAH HOODIE — OFF WHITE",
+                1000,
                 "Hoodies",
-                "hoodie.jpg"
+                "cheetah-hoodie-offwhite.png"
             ),
 
             (
-                "Blue Jeans",
-                799,
-                "Jeans",
-                "jeans.jpg"
-            ),
-
-            (
-                "Street Jacket",
-                999,
-                "Jackets",
-                "jacket.jpg"
+                "CHEETAH PANTS — OFF WHITE",
+                1000,
+                "Pants",
+                "cheetah-pants-offwhite.png"
             )
 
         ]
 
+        for product in new_products:
 
-        db.executemany(
-            """
-            INSERT INTO products
-            (
-                name,
-                price,
-                category,
-                image
-            )
-            VALUES (?, ?, ?, ?)
-            """,
-            default_products
+            existing = db.execute(
+                "SELECT id FROM products WHERE name = ?",
+                (product[0],)
+            ).fetchone()
+
+            if existing is None:
+
+                db.execute(
+                    """
+                    INSERT INTO products
+                    (name, price, category, image)
+                    VALUES (?, ?, ?, ?)
+                    """,
+                    product
+                )
+
+        db.execute(
+            "INSERT INTO app_migrations (migration_key) VALUES (?)",
+            (migration_key,)
         )
 
+    # ==============================================
+    # SAVE AND CLOSE DATABASE
+    # ==============================================
 
     db.commit()
-
     db.close()
-
-
-init_db()
-
 
 # ==================================================
 # PRODUCT FUNCTIONS
@@ -276,19 +372,15 @@ def get_all_products():
 
     db = get_db()
 
-    products = db.execute(
-        """
-        SELECT *
-        FROM products
-        ORDER BY id DESC
-        """
+    products_rows = db.execute(
+        "SELECT * FROM products"
     ).fetchall()
 
     db.close()
 
     return [
         dict(product)
-        for product in products
+        for product in products_rows
     ]
 
 
@@ -297,23 +389,16 @@ def get_product(product_id):
     db = get_db()
 
     product = db.execute(
-        """
-        SELECT *
-        FROM products
-        WHERE id = ?
-        """,
+        "SELECT * FROM products WHERE id = ?",
         (product_id,)
     ).fetchone()
 
     db.close()
 
+    if product:
+        return dict(product)
 
-    if product is None:
-
-        return None
-
-
-    return dict(product)
+    return None
 
 
 # ==================================================
@@ -327,14 +412,12 @@ def get_cart():
         {}
     )
 
-
     if not isinstance(
         cart,
         dict
     ):
 
         cart = {}
-
 
     return cart
 
@@ -345,7 +428,6 @@ def cart_count():
     cart = get_cart()
 
     count = 0
-
 
     for quantity in cart.values():
 
@@ -362,7 +444,6 @@ def cart_count():
 
             pass
 
-
     return {
         "cart_count": count
     }
@@ -376,7 +457,6 @@ def cart_count():
 def home():
 
     products = get_all_products()
-
 
     return render_template(
         "index.html",
@@ -392,7 +472,6 @@ def home():
 def products_page():
 
     products = get_all_products()
-
 
     return render_template(
         "products.html",
@@ -413,14 +492,12 @@ def product_page(product_id):
         product_id
     )
 
-
     if product is None:
 
         return (
             "Product not found",
             404
         )
-
 
     return render_template(
         "product.html",
@@ -441,7 +518,6 @@ def add_to_cart(product_id):
         product_id
     )
 
-
     if product is None:
 
         return (
@@ -449,14 +525,11 @@ def add_to_cart(product_id):
             404
         )
 
-
     cart = get_cart()
-
 
     size = request.args.get(
         "size"
     )
-
 
     if not size:
 
@@ -467,25 +540,21 @@ def add_to_cart(product_id):
             )
         )
 
-
     quantity = request.args.get(
         "quantity",
         1,
         type=int
     )
 
-
     if quantity < 1:
 
         quantity = 1
-
 
     cart_key = (
         str(product_id)
         + "_"
         + size
     )
-
 
     cart[cart_key] = (
         cart.get(
@@ -495,9 +564,7 @@ def add_to_cart(product_id):
         + quantity
     )
 
-
     session["cart"] = cart
-
 
     return redirect(
         url_for(
@@ -517,11 +584,9 @@ def increase(product_id):
 
     cart = get_cart()
 
-
     size = request.args.get(
         "size"
     )
-
 
     if not size:
 
@@ -531,21 +596,17 @@ def increase(product_id):
             )
         )
 
-
     cart_key = (
         str(product_id)
         + "_"
         + size
     )
 
-
     if cart_key in cart:
 
         cart[cart_key] += 1
 
-
     session["cart"] = cart
-
 
     return redirect(
         url_for(
@@ -565,11 +626,9 @@ def decrease(product_id):
 
     cart = get_cart()
 
-
     size = request.args.get(
         "size"
     )
-
 
     if not size:
 
@@ -579,34 +638,27 @@ def decrease(product_id):
             )
         )
 
-
     cart_key = (
         str(product_id)
         + "_"
         + size
     )
 
-
     if cart_key in cart:
 
         cart[cart_key] -= 1
-
 
         if cart[cart_key] <= 0:
 
             del cart[cart_key]
 
-
     session["cart"] = cart
-
 
     return redirect(
         url_for(
             "cart"
         )
     )
-
-
 # ==================================================
 # REMOVE FROM CART
 # ==================================================
@@ -618,20 +670,15 @@ def remove_from_cart(product_id):
 
     cart = get_cart()
 
-
     size = request.args.get(
         "size"
     )
 
-
     if not size:
 
         return redirect(
-            url_for(
-                "cart"
-            )
+            url_for("cart")
         )
-
 
     cart_key = (
         str(product_id)
@@ -639,19 +686,14 @@ def remove_from_cart(product_id):
         + size
     )
 
-
     if cart_key in cart:
 
         del cart[cart_key]
 
-
     session["cart"] = cart
 
-
     return redirect(
-        url_for(
-            "cart"
-        )
+        url_for("cart")
     )
 
 
@@ -668,7 +710,6 @@ def cart():
 
     total = 0
 
-
     for cart_key, quantity in cart.items():
 
         try:
@@ -678,13 +719,9 @@ def cart():
                 1
             )
 
-            product_id = int(
-                product_id
-            )
+            product_id = int(product_id)
 
-            quantity = int(
-                quantity
-            )
+            quantity = int(quantity)
 
         except (
             ValueError,
@@ -693,19 +730,15 @@ def cart():
 
             continue
 
-
         product = get_product(
             product_id
         )
-
 
         if product is None:
 
             continue
 
-
         item = product.copy()
-
 
         item["quantity"] = quantity
 
@@ -716,14 +749,9 @@ def cart():
             * quantity
         )
 
-
-        cart_products.append(
-            item
-        )
-
+        cart_products.append(item)
 
         total += item["subtotal"]
-
 
     return render_template(
         "cart.html",
@@ -744,19 +772,13 @@ def checkout():
 
     cart = get_cart()
 
-
     if not cart:
 
         return redirect(
-            url_for(
-                "cart"
-            )
+            url_for("cart")
         )
 
-
-    # ==================================================
     # CREATE ORDER
-    # ==================================================
 
     if request.method == "POST":
 
@@ -767,7 +789,6 @@ def checkout():
             or ""
         ).strip()
 
-
         phone = (
             request.form.get("phone")
             or request.form.get("phone_number")
@@ -775,18 +796,15 @@ def checkout():
             or ""
         ).strip()
 
-
         address = (
             request.form.get("address")
             or ""
         ).strip()
 
-
         payment = (
             request.form.get("payment")
             or "Cash on Delivery"
         ).strip()
-
 
         if (
             not name
@@ -800,20 +818,14 @@ def checkout():
             )
 
             return redirect(
-                url_for(
-                    "checkout"
-                )
+                url_for("checkout")
             )
 
-
-        # ==================================================
         # ORDER ITEMS
-        # ==================================================
 
         order_items = []
 
         total = 0
-
 
         for cart_key, quantity in cart.items():
 
@@ -824,13 +836,9 @@ def checkout():
                     1
                 )
 
-                product_id = int(
-                    product_id
-                )
+                product_id = int(product_id)
 
-                quantity = int(
-                    quantity
-                )
+                quantity = int(quantity)
 
             except (
                 ValueError,
@@ -839,64 +847,46 @@ def checkout():
 
                 continue
 
-
             product = get_product(
                 product_id
             )
 
-
             if product is None:
 
                 continue
-
 
             subtotal = (
                 product["price"]
                 * quantity
             )
 
-
             order_items.append({
 
-                "product_id":
-                    product_id,
+                "product_id": product_id,
 
-                "product_name":
-                    product["name"],
+                "product_name": product["name"],
 
-                "size":
-                    size,
+                "size": size,
 
-                "quantity":
-                    quantity,
+                "quantity": quantity,
 
-                "price":
-                    product["price"],
+                "price": product["price"],
 
-                "subtotal":
-                    subtotal
+                "subtotal": subtotal
 
             })
 
-
             total += subtotal
-
 
         if not order_items:
 
             return redirect(
-                url_for(
-                    "cart"
-                )
+                url_for("cart")
             )
 
-
-        # ==================================================
         # SAVE ORDER
-        # ==================================================
 
         db = get_db()
-
 
         cursor = db.execute(
             """
@@ -921,13 +911,9 @@ def checkout():
             )
         )
 
-
         order_id = cursor.lastrowid
 
-
-        # ==================================================
         # SAVE ORDER ITEMS
-        # ==================================================
 
         for item in order_items:
 
@@ -956,38 +942,28 @@ def checkout():
                 )
             )
 
-
         db.commit()
 
         db.close()
 
-
-        # ==================================================
         # CLEAR CART
-        # ==================================================
 
         session["cart"] = {}
-
 
         print(
             "NEW ORDER:",
             order_id
         )
 
-
         return render_template(
             "success.html"
         )
 
-
-    # ==================================================
     # CHECKOUT PAGE
-    # ==================================================
 
     cart_products = []
 
     total = 0
-
 
     for cart_key, quantity in cart.items():
 
@@ -998,13 +974,9 @@ def checkout():
                 1
             )
 
-            product_id = int(
-                product_id
-            )
+            product_id = int(product_id)
 
-            quantity = int(
-                quantity
-            )
+            quantity = int(quantity)
 
         except (
             ValueError,
@@ -1013,19 +985,15 @@ def checkout():
 
             continue
 
-
         product = get_product(
             product_id
         )
-
 
         if product is None:
 
             continue
 
-
         item = product.copy()
-
 
         item["quantity"] = quantity
 
@@ -1036,14 +1004,9 @@ def checkout():
             * quantity
         )
 
-
-        cart_products.append(
-            item
-        )
-
+        cart_products.append(item)
 
         total += item["subtotal"]
-
 
     return render_template(
         "checkout.html",
@@ -1080,51 +1043,41 @@ def contact():
             "name"
         )
 
-
         email = request.form.get(
             "email"
         )
-
 
         message = request.form.get(
             "message"
         )
 
-
         print(
             "NEW CONTACT MESSAGE"
         )
-
 
         print(
             "Name:",
             name
         )
 
-
         print(
             "Email:",
             email
         )
-
 
         print(
             "Message:",
             message
         )
 
-
         return render_template(
             "contact.html",
             sent=True
         )
 
-
     return render_template(
         "contact.html"
     )
-
-
 # ==================================================
 # ADMIN LOGIN
 # ==================================================
@@ -1146,11 +1099,8 @@ def admin_login():
     if admin_logged_in():
 
         return redirect(
-            url_for(
-                "admin_dashboard"
-            )
+            url_for("admin_dashboard")
         )
-
 
     if request.method == "POST":
 
@@ -1159,35 +1109,26 @@ def admin_login():
             ""
         ).strip()
 
-
         password = request.form.get(
             "password",
             ""
         )
-
 
         if (
             username == ADMIN_USERNAME
             and password == ADMIN_PASSWORD
         ):
 
-            session[
-                "admin_logged_in"
-            ] = True
-
+            session["admin_logged_in"] = True
 
             return redirect(
-                url_for(
-                    "admin_dashboard"
-                )
+                url_for("admin_dashboard")
             )
-
 
         flash(
             "Wrong username or password.",
             "error"
         )
-
 
     return render_template(
         "admin_login.html"
@@ -1204,25 +1145,16 @@ def admin_dashboard():
     if not admin_logged_in():
 
         return redirect(
-            url_for(
-                "admin_login"
-            )
+            url_for("admin_login")
         )
 
-
-    # ==================================================
     # PRODUCTS
-    # ==================================================
 
     products = get_all_products()
 
-
-    # ==================================================
     # ORDERS
-    # ==================================================
 
     db = get_db()
-
 
     orders_rows = db.execute(
         """
@@ -1232,16 +1164,11 @@ def admin_dashboard():
         """
     ).fetchall()
 
-
     orders = []
-
 
     for order_row in orders_rows:
 
-        order = dict(
-            order_row
-        )
-
+        order = dict(order_row)
 
         items_rows = db.execute(
             """
@@ -1255,20 +1182,14 @@ def admin_dashboard():
             )
         ).fetchall()
 
-
         order["items"] = [
             dict(item)
             for item in items_rows
         ]
 
-
-        orders.append(
-            order
-        )
-
+        orders.append(order)
 
     db.close()
-
 
     return render_template(
         "admin.html",
@@ -1290,34 +1211,27 @@ def admin_add_product():
     if not admin_logged_in():
 
         return redirect(
-            url_for(
-                "admin_login"
-            )
+            url_for("admin_login")
         )
-
 
     name = request.form.get(
         "name",
         ""
     ).strip()
 
-
     category = request.form.get(
         "category",
         ""
     ).strip()
-
 
     price_text = request.form.get(
         "price",
         ""
     ).strip()
 
-
     image = request.files.get(
         "image"
     )
-
 
     if (
         not name
@@ -1331,23 +1245,16 @@ def admin_add_product():
         )
 
         return redirect(
-            url_for(
-                "admin_dashboard"
-            )
+            url_for("admin_dashboard")
         )
-
 
     try:
 
-        price = float(
-            price_text
-        )
-
+        price = float(price_text)
 
         if price < 0:
 
             raise ValueError
-
 
     except ValueError:
 
@@ -1357,11 +1264,8 @@ def admin_add_product():
         )
 
         return redirect(
-            url_for(
-                "admin_dashboard"
-            )
+            url_for("admin_dashboard")
         )
-
 
     if (
         image is None
@@ -1374,15 +1278,10 @@ def admin_add_product():
         )
 
         return redirect(
-            url_for(
-                "admin_dashboard"
-            )
+            url_for("admin_dashboard")
         )
 
-
-    if not allowed_file(
-        image.filename
-    ):
+    if not allowed_file(image.filename):
 
         flash(
             "Only JPG, JPEG, PNG, WEBP and GIF images are allowed.",
@@ -1390,22 +1289,17 @@ def admin_add_product():
         )
 
         return redirect(
-            url_for(
-                "admin_dashboard"
-            )
+            url_for("admin_dashboard")
         )
-
 
     original_name = secure_filename(
         image.filename
     )
 
-
     extension = original_name.rsplit(
         ".",
         1
     )[1].lower()
-
 
     unique_name = (
         uuid.uuid4().hex
@@ -1413,26 +1307,19 @@ def admin_add_product():
         + extension
     )
 
-
     save_path = os.path.join(
         UPLOAD_FOLDER,
         unique_name
     )
 
-
-    image.save(
-        save_path
-    )
-
+    image.save(save_path)
 
     image_path = (
         "uploads/"
         + unique_name
     )
 
-
     db = get_db()
-
 
     db.execute(
         """
@@ -1453,22 +1340,17 @@ def admin_add_product():
         )
     )
 
-
     db.commit()
 
     db.close()
-
 
     flash(
         "Product added successfully.",
         "success"
     )
 
-
     return redirect(
-        url_for(
-            "admin_dashboard"
-        )
+        url_for("admin_dashboard")
     )
 
 
@@ -1485,16 +1367,10 @@ def admin_delete_product(product_id):
     if not admin_logged_in():
 
         return redirect(
-            url_for(
-                "admin_login"
-            )
+            url_for("admin_login")
         )
 
-
-    product = get_product(
-        product_id
-    )
-
+    product = get_product(product_id)
 
     if product is None:
 
@@ -1504,14 +1380,10 @@ def admin_delete_product(product_id):
         )
 
         return redirect(
-            url_for(
-                "admin_dashboard"
-            )
+            url_for("admin_dashboard")
         )
 
-
     db = get_db()
-
 
     db.execute(
         """
@@ -1523,49 +1395,34 @@ def admin_delete_product(product_id):
         )
     )
 
-
     db.commit()
 
     db.close()
 
-
-    if product["image"].startswith(
-        "uploads/"
-    ):
+    if product["image"].startswith("uploads/"):
 
         image_path = os.path.join(
             UPLOAD_FOLDER,
-            os.path.basename(
-                product["image"]
-            )
+            os.path.basename(product["image"])
         )
 
-
-        if os.path.exists(
-            image_path
-        ):
+        if os.path.exists(image_path):
 
             try:
 
-                os.remove(
-                    image_path
-                )
+                os.remove(image_path)
 
             except OSError:
 
                 pass
-
 
     flash(
         "Product deleted successfully.",
         "success"
     )
 
-
     return redirect(
-        url_for(
-            "admin_dashboard"
-        )
+        url_for("admin_dashboard")
     )
 
 
@@ -1582,17 +1439,13 @@ def admin_update_order(order_id):
     if not admin_logged_in():
 
         return redirect(
-            url_for(
-                "admin_login"
-            )
+            url_for("admin_login")
         )
-
 
     status = request.form.get(
         "status",
         "New"
     ).strip()
-
 
     allowed_statuses = {
         "New",
@@ -1602,7 +1455,6 @@ def admin_update_order(order_id):
         "Cancelled"
     }
 
-
     if status not in allowed_statuses:
 
         flash(
@@ -1611,14 +1463,10 @@ def admin_update_order(order_id):
         )
 
         return redirect(
-            url_for(
-                "admin_dashboard"
-            )
+            url_for("admin_dashboard")
         )
 
-
     db = get_db()
-
 
     db.execute(
         """
@@ -1632,22 +1480,17 @@ def admin_update_order(order_id):
         )
     )
 
-
     db.commit()
 
     db.close()
-
 
     flash(
         "Order status updated.",
         "success"
     )
 
-
     return redirect(
-        url_for(
-            "admin_dashboard"
-        )
+        url_for("admin_dashboard")
     )
 
 
@@ -1665,11 +1508,8 @@ def admin_logout():
         None
     )
 
-
     return redirect(
-        url_for(
-            "admin_login"
-        )
+        url_for("admin_login")
     )
 
 
@@ -1679,6 +1519,6 @@ def admin_logout():
 
 if __name__ == "__main__":
 
-    app.run(
-        debug=True
-    )
+    init_db()
+
+    app.run(debug=True)

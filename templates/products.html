@@ -2,75 +2,42 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ROXX | Shop</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
-
 </head>
-
 
 <body>
 
-
-<!-- =========================
-     NAVBAR
-========================= -->
-
+<!-- NAVBAR -->
 <header class="navbar">
 
-    <a href="/" class="logo">
-        ROXX
-    </a>
+    <a href="/" class="logo">ROXX</a>
 
     <nav>
-
-        <a href="/">
-            HOME
-        </a>
-
-        <a href="/products">
-            SHOP
-        </a>
-
-        <a href="/about">
-            ABOUT
-        </a>
-
-        <a href="/contact">
-            CONTACT
-        </a>
-
+        <a href="/">HOME</a>
+        <a href="/products">SHOP</a>
+        <a href="/about">ABOUT</a>
+        <a href="/contact">CONTACT</a>
     </nav>
 
     <a href="/cart" class="cart">
-
         🛒 CART
-
         {% if cart_count > 0 %}
             ({{ cart_count }})
         {% endif %}
-
     </a>
 
 </header>
 
 
-<!-- =========================
-     SHOP HERO
-========================= -->
-
+<!-- SHOP HERO -->
 <section class="shop-heading">
 
-    <p>
-        ROXX / COLLECTION 01
-    </p>
+    <p>ROXX / COLLECTION 01</p>
 
     <h1>
         SHOP<br>
@@ -84,60 +51,44 @@
 </section>
 
 
-<!-- =========================
-     SHOP CONTROLS
-========================= -->
-
+<!-- SHOP SECTION -->
 <section class="shop-section">
 
     <div class="shop-top">
 
         <div class="shop-search">
-
             <input
                 type="text"
                 id="productSearch"
                 placeholder="SEARCH PRODUCTS..."
                 onkeyup="applyFilters()"
             >
-
         </div>
-
 
         <div class="shop-filters">
 
-            <button
-                class="filter-btn active"
-                onclick="filterProducts('all', this)"
-            >
+            <button class="filter-btn active"
+                    onclick="filterProducts('all', this)">
                 ALL
             </button>
 
-            <button
-                class="filter-btn"
-                onclick="filterProducts('T-Shirts', this)"
-            >
+            <button class="filter-btn"
+                    onclick="filterProducts('T-Shirts', this)">
                 T-SHIRTS
             </button>
 
-            <button
-                class="filter-btn"
-                onclick="filterProducts('Hoodies', this)"
-            >
+            <button class="filter-btn"
+                    onclick="filterProducts('Hoodies', this)">
                 HOODIES
             </button>
 
-            <button
-                class="filter-btn"
-                onclick="filterProducts('Jeans', this)"
-            >
+            <button class="filter-btn"
+                    onclick="filterProducts('Jeans', this)">
                 JEANS
             </button>
 
-            <button
-                class="filter-btn"
-                onclick="filterProducts('Jackets', this)"
-            >
+            <button class="filter-btn"
+                    onclick="filterProducts('Jackets', this)">
                 JACKETS
             </button>
 
@@ -146,84 +97,54 @@
     </div>
 
 
-    <!-- =========================
-         PRODUCTS
-    ========================= -->
+    <!-- PRODUCTS -->
+    {% for product in products %}
 
-    <div class="products-grid">
+<article
+    class="product-card"
+    data-category="{{ product.category }}"
+>
 
-        {% for product in products %}
+    <a
+        href="{{ url_for('product_page', product_id=product.id) }}"
+        class="product-link"
+    >
 
-        <article
-            class="product-card"
-            data-category="{{ product.category }}"
-        >
+        <div class="product-image">
+<img
+    src="{{ url_for('static', filename='images/' + product.image) }}"
+    alt="{{ product.name }}"
+    loading="lazy"
+    onerror="this.onerror=null; this.src='/static/images/placeholder.png';"
+>
 
-            <a
-                href="{{ url_for(
-                    'product_page',
-                    product_id=product.id
-                ) }}"
-                class="product-link"
-            >
+        <div class="product-info">
 
-                <div class="product-image">
+            <p>{{ product.category }}</p>
 
-                    <img
-                        src="{{ url_for(
-                            'static',
-                            filename='images/' + product.image
-                        ) }}"
-                        alt="{{ product.name }}"
-                    >
+            <h3>{{ product.name }}</h3>
 
-                </div>
+            <strong>{{ product.price }} EGP</strong>
 
+            <span class="view-product">
+                VIEW PRODUCT →
+            </span>
 
-                <div class="product-info">
+        </div>
 
-                    <p>
-                        {{ product.category }}
-                    </p>
+    </a>
 
-                    <h3>
-                        {{ product.name }}
-                    </h3>
+</article>
 
-                    <strong>
-                        {{ product.price }} EGP
-                    </strong>
-
-                    <span class="view-product">
-                        VIEW PRODUCT →
-                    </span>
-
-                </div>
-
-            </a>
-
-        </article>
-
-        {% endfor %}
-
-    </div>
-
-</section>
+{% endfor %}
 
 
-<!-- =========================
-     FOOTER
-========================= -->
-
+<!-- FOOTER -->
 <footer>
 
-    <div class="footer-logo">
-        ROXX
-    </div>
+    <div class="footer-logo">ROXX</div>
 
-    <p>
-        MODERN CLOTHING FOR EVERYDAY LIFE.
-    </p>
+    <p>MODERN CLOTHING FOR EVERYDAY LIFE.</p>
 
     <small>
         © 2026 ROXX. ALL RIGHTS RESERVED.
@@ -232,88 +153,49 @@
 </footer>
 
 
-<!-- =========================
-     JAVASCRIPT
-========================= -->
-
+<!-- JAVASCRIPT -->
 <script>
 
 let currentCategory = "all";
-
 
 function filterProducts(category, button) {
 
     currentCategory = category;
 
-
-    const buttons =
-        document.querySelectorAll(".filter-btn");
-
+    const buttons = document.querySelectorAll(".filter-btn");
 
     buttons.forEach(function(btn) {
-
         btn.classList.remove("active");
-
     });
-
 
     button.classList.add("active");
 
-
     applyFilters();
-
 }
 
 
 function applyFilters() {
 
-    const searchInput =
-        document.getElementById("productSearch");
+    const searchInput = document.getElementById("productSearch");
 
+    const searchValue = searchInput.value.toLowerCase().trim();
 
-    const searchValue =
-        searchInput.value.toLowerCase().trim();
-
-
-    const products =
-        document.querySelectorAll(".product-card");
-
+    const products = document.querySelectorAll(".product-card");
 
     products.forEach(function(product) {
 
+        const productName = product.querySelector("h3").textContent.toLowerCase();
 
-        const productName =
-            product
-                .querySelector("h3")
-                .textContent
-                .toLowerCase();
+        const productCategory = product.dataset.category;
 
-
-        const productCategory =
-            product.dataset.category;
-
-
-        const matchesSearch =
-            productName.includes(searchValue);
-
+        const matchesSearch = productName.includes(searchValue);
 
         const matchesCategory =
             currentCategory === "all" ||
             productCategory === currentCategory;
 
-
-        if (
-            matchesSearch &&
-            matchesCategory
-        ) {
-
-            product.style.display = "";
-
-        } else {
-
-            product.style.display = "none";
-
-        }
+        product.style.display =
+            matchesSearch && matchesCategory ? "" : "none";
 
     });
 
@@ -321,7 +203,5 @@ function applyFilters() {
 
 </script>
 
-
 </body>
-
 </html>
