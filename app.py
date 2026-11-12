@@ -363,7 +363,8 @@ def init_db():
 
     db.commit()
     db.close()
-
+# Initialize database when application starts
+init_db()
 # ==================================================
 # PRODUCT FUNCTIONS
 # ==================================================
@@ -1192,10 +1193,10 @@ def admin_dashboard():
     db.close()
 
     return render_template(
-        "admin.html",
-        products=products,
-        orders=orders
-    )
+    "admin_dashboard.html",
+    products=products,
+    orders=orders
+)
 
 
 # ==================================================
