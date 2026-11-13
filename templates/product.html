@@ -15,8 +15,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@400;500;600;700;800&display=swap"
           rel="stylesheet">
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+       <link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}?v=2">
 </head>
 
 <body class="roxx-product-page">
@@ -120,66 +120,52 @@
         <section class="roxx-product-layout">
 
 
-            <!-- GALLERY -->
-            <div class="roxx-product-visual">
+        <!-- ROXX PRODUCT GALLERY -->
 
-                <div class="roxx-product-main-image">
+<div
+    class="roxx-product-visual roxx-product-gallery"
+    data-front-src="{{ url_for('static', filename=product.image if product.image.startswith('uploads/') else 'images/' + product.image) }}"
+    data-back-src="{% if product.back_image %}{{ url_for('static', filename=product.back_image if product.back_image.startswith('uploads/') else 'images/' + product.back_image) }}{% endif %}"
+>
 
-                    <span class="roxx-image-label">
-                        ROXX / PRODUCT DETAILS
-                    </span>
+    <!-- MAIN IMAGE -->
 
-                    <img
-                        id="mainProductImage"
-                        src="{{ url_for('static', filename='images/' + product.image) }}"
-                        alt="{{ product.name }}"
-                        fetchpriority="high"
-                    >
+    <div class="roxx-product-main-image">
 
-                    <span class="roxx-image-index">
-                        PRODUCT / 001
-                    </span>
+        <img
+            id="mainProductImage"
+            src="{{ url_for('static', filename=product.image if product.image.startswith('uploads/') else 'images/' + product.image) }}"
+            alt="{{ product.name }} Front"
+            fetchpriority="high"
+        >
 
-                </div>
-
-
-                <div class="roxx-image-thumbs">
-
-                    <button
-                        class="thumb active"
-                        type="button"
-                        aria-label="View product image"
-                    >
-
-                        <img
-                            src="{{ url_for('static', filename='images/' + product.image) }}"
-                            alt="{{ product.name }}"
-                        >
-
-                    </button>
-
-                    <div class="thumb thumb-note">
-
-                        <span>01</span>
-
-                        <small>THE<br>DETAIL</small>
-
-                    </div>
-
-                    <div class="thumb thumb-note">
-
-                        <span>02</span>
-
-                        <small>MADE<br>TO MOVE</small>
-
-                    </div>
-
-                </div>
-
-            </div>
+    </div>
 
 
+    <!-- SMALL BACK THUMBNAIL -->
 
+   {% if true %}
+
+    <button
+        type="button"
+        class="roxx-back-thumbnail"
+        id="backThumbnail"
+        aria-label="Show back image"
+    >
+
+        <img
+            id="backThumbnailImage"
+            src="{{ url_for('static', filename=product.back_image if product.back_image.startswith('uploads/') else 'images/' + product.back_image) }}"
+            alt="{{ product.name }} Back"
+        >
+
+    </button>
+
+    {% endif %}
+
+</div>
+
+    
             <!-- PRODUCT INFORMATION -->
             <div class="roxx-product-info-panel">
 
@@ -435,15 +421,38 @@
         &times;
     </button>
 
-    <img
-        id="roxxZoomImage"
-        src=""
-        alt="ROXX Product Fullscreen"
-    >
+    <div class="roxx-zoom-scroll">
 
-    <span class="roxx-zoom-caption">
-        ROXX / PRODUCT DETAILS
-    </span>
+        <!-- FRONT -->
+
+        <div class="roxx-zoom-item">
+
+            <img
+                id="roxxZoomFront"
+                src=""
+                alt="ROXX Product Front"
+            >
+
+            <span>FRONT / 001</span>
+
+        </div>
+
+
+        <!-- BACK -->
+
+        <div class="roxx-zoom-item" id="roxxZoomBackContainer">
+
+            <img
+                id="roxxZoomBack"
+                src=""
+                alt="ROXX Product Back"
+            >
+
+            <span>BACK / 002</span>
+
+        </div>
+
+    </div>
 
 </div>
 
@@ -729,32 +738,125 @@
 
         });
 // =========================================
-// ROXX PRODUCT FULLSCREEN ZOOM
+// ROXX FRONT / BACK GALLERY
 // =========================================
+
+const gallery = document.querySelector('.roxx-product-gallery');
 
 const mainProductImage = document.getElementById('mainProductImage');
 
-const zoomOverlay = document.getElementById('roxxZoomOverlay');
+const backThumbnail = document.getElementById('backThumbnail');
 
-const zoomImage = document.getElementById('roxxZoomImage');
+const backThumbnailImage = document.getElementById('backThumbnailImage');
+
+const zoomOverlay = document.getElementById('roxxZoomOverlay');
 
 const zoomClose = document.getElementById('roxxZoomClose');
 
+const zoomFront = document.getElementById('roxxZoomFront');
+
+const zoomBack = document.getElementById('roxxZoomBack');
+
+const zoomBackContainer = document.getElementById('roxxZoomBackContainer');
+
+const zoomScroll = document.querySelector('.roxx-zoom-scroll');
+
+
+const frontSrc = gallery.dataset.frontSrc;
+
+const backSrc = gallery.dataset.backSrc;
+
+let showingBack = false;
+
+
+// =========================================
+// SWITCH MAIN IMAGE
+// =========================================
+
+function switchProductImage(showBack) {
+
+    if (!backSrc || !backThumbnailImage) return;
+
+    showingBack = showBack;
+
+    if (showBack) {
+
+        mainProductImage.src = backSrc;
+
+        mainProductImage.alt = 'Product Back';
+
+        backThumbnailImage.src = frontSrc;
+
+        backThumbnailImage.alt = 'Product Front';
+
+        backThumbnail.setAttribute('aria-label', 'Show front image');
+
+    } else {
+
+        mainProductImage.src = frontSrc;
+
+        mainProductImage.alt = 'Product Front';
+
+        backThumbnailImage.src = backSrc;
+
+        backThumbnailImage.alt = 'Product Back';
+
+        backThumbnail.setAttribute('aria-label', 'Show back image');
+
+    }
+
+}
+
+
+// =========================================
+// THUMBNAIL CLICK
+// =========================================
+
+if (backThumbnail) {
+
+    backThumbnail.addEventListener('click', function() {
+
+        switchProductImage(!showingBack);
+
+    });
+
+}
+
+
+// =========================================
+// OPEN ZOOM
+// =========================================
 
 function openProductZoom() {
 
-    zoomImage.src = mainProductImage.src;
+    zoomFront.src = frontSrc;
 
-    zoomImage.alt = mainProductImage.alt;
+    if (backSrc) {
+
+        zoomBack.src = backSrc;
+
+        zoomBackContainer.style.display = 'flex';
+
+    } else {
+
+        zoomBackContainer.style.display = 'none';
+
+    }
 
     zoomOverlay.classList.add('active');
 
     document.body.classList.add('roxx-zoom-open');
 
+    zoomScroll.scrollTop = 0;
+
     zoomClose.focus();
 
 }
 
+
+// =========================================
+// CLOSE ZOOM
+// =========================================
 
 function closeProductZoom() {
 
@@ -767,18 +869,27 @@ function closeProductZoom() {
 }
 
 
+// =========================================
+// MAIN IMAGE CLICK
+// =========================================
+
 mainProductImage.addEventListener('click', openProductZoom);
 
+
+// =========================================
+// CLOSE BUTTON
+// =========================================
 
 zoomClose.addEventListener('click', closeProductZoom);
 
 
+// =========================================
+// CLICK OUTSIDE
+// =========================================
+
 zoomOverlay.addEventListener('click', function(event) {
 
-    if (
-        event.target === zoomOverlay ||
-        event.target === zoomImage
-    ) {
+    if (event.target === zoomOverlay) {
 
         closeProductZoom();
 
@@ -786,6 +897,10 @@ zoomOverlay.addEventListener('click', function(event) {
 
 });
 
+
+// =========================================
+// ESCAPE
+// =========================================
 
 document.addEventListener('keydown', function(event) {
 

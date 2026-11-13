@@ -29,7 +29,7 @@ app.secret_key = "roxx-secret-key-2026"
 # ==================================================
 
 ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD = "a01556464880A12"
+ADMIN_PASSWORD = "roxx2026"
 
 
 # ==================================================
@@ -164,7 +164,31 @@ def init_db():
 
         )
     """)
+    # PRODUCT DETAILS MIGRATION
 
+    existing_columns = {
+        row[1]
+        for row in db.execute(
+            "PRAGMA table_info(products)"
+        ).fetchall()
+    }
+
+    new_columns = {
+    "description": "TEXT DEFAULT ''",
+    "material": "TEXT DEFAULT ''",
+    "fabric_weight": "TEXT DEFAULT ''",
+    "fit": "TEXT DEFAULT ''",
+    "care": "TEXT DEFAULT ''",
+    "shipping_returns": "TEXT DEFAULT ''",
+    "back_image": "TEXT DEFAULT ''"
+}
+    for column, data_type in new_columns.items():
+
+        if column not in existing_columns:
+
+            db.execute(
+                f"ALTER TABLE products ADD COLUMN {column} {data_type}"
+            )
 
     # ORDER ITEMS TABLE
 
@@ -484,27 +508,41 @@ def products_page():
 # PRODUCT PAGE
 # ==================================================
 
-@app.route(
-    "/product/<int:product_id>"
-)
+
+@app.route("/product/<int:product_id>")
 def product_page(product_id):
 
-    product = get_product(
-        product_id
-    )
+    product = get_product(product_id)
 
     if product is None:
+        return "Product not found", 404
 
-        return (
-            "Product not found",
-            404
-        )
+    # PRODUCT BACK IMAGES
+
+    back_images = {
+        "CHEETAH HOODIE — BLACK": "cheetah-hoodie-black-back.png",
+
+        "CHEETAH PANTS — BLACK": "cheetah-pants-black-back.png",
+
+        "CHEETAH HOODIE — OFF WHITE": "cheetah-hoodie-offwhite-back.png",
+
+        "CHEETAH PANTS — OFF WHITE": "cheetah-pants-offwhite-back.png"
+    }
+
+    # ASSIGN BACK IMAGE
+
+    if product["name"] in back_images:
+        product["back_image"] = back_images[product["name"]]
 
     return render_template(
         "product.html",
         product=product
     )
 
+
+# ==================================================
+# ADD TO CART
+# ==================================================
 
 # ==================================================
 # ADD TO CART
@@ -1210,10 +1248,134 @@ def admin_dashboard():
 def admin_add_product():
 
     if not admin_logged_in():
+        return redirect(url_for("admin_login"))
 
-        return redirect(
-            url_for("admin_login")
+    # BASIC INFORMATION
+
+    name = request.form.get("name", "").strip()
+    category = request.form.get("category", "").strip()
+    price_text = request.form.get("price", "").strip()
+
+    # PRODUCT DETAILS
+
+    description = request.form.get("description", "").strip()
+    material = request.form.get("material", "").strip()
+    fabric_weight = request.form.get("fabric_weight", "").strip()
+    fit = request.form.get("fit", "").strip()
+    care = request.form.get("care", "").strip()
+    shipping_returns = request.form.get("shipping_returns", "").strip()
+
+    # IMAGES
+
+    image = request.files.get("image")
+    back_image_file = request.files.get("back_image")
+
+    # VALIDATION
+
+    if not name or not category or not price_text:
+        flash("Please fill in all product fields.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    try:
+        price = float(price_text)
+
+        if price < 0:
+            raise ValueError
+
+    except ValueError:
+        flash("Please enter a valid price.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    if image is None or image.filename == "":
+        flash("Please choose a front product image.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    if not allowed_file(image.filename):
+        flash("Invalid front image format.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    if back_image_file and back_image_file.filename:
+        if not allowed_file(back_image_file.filename):
+            flash("Invalid back image format.", "error")
+            return redirect(url_for("admin_dashboard"))
+
+    # SAVE FRONT IMAGE
+
+    original_name = secure_filename(image.filename)
+    extension = original_name.rsplit(".", 1)[1].lower()
+
+    unique_name = uuid.uuid4().hex + "." + extension
+
+    save_path = os.path.join(UPLOAD_FOLDER, unique_name)
+    image.save(save_path)
+
+    image_path = "uploads/" + unique_name
+
+    # SAVE BACK IMAGE
+
+    back_image_path = ""
+
+    if back_image_file and back_image_file.filename:
+
+        back_original_name = secure_filename(back_image_file.filename)
+
+        back_extension = back_original_name.rsplit(".", 1)[1].lower()
+
+        back_unique_name = uuid.uuid4().hex + "." + back_extension
+
+        back_save_path = os.path.join(
+            UPLOAD_FOLDER,
+            back_unique_name
         )
+
+        back_image_file.save(back_save_path)
+
+        back_image_path = "uploads/" + back_unique_name
+
+    # DATABASE
+
+    db = get_db()
+
+    db.execute(
+        """
+        INSERT INTO products
+        (
+            name,
+            price,
+            category,
+            image,
+            description,
+            material,
+            fabric_weight,
+            fit,
+            care,
+            shipping_returns,
+            back_image
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            name,
+            price,
+            category,
+            image_path,
+            description,
+            material,
+            fabric_weight,
+            fit,
+            care,
+            shipping_returns,
+            back_image_path
+        )
+    )
+
+    db.commit()
+    db.close()
+
+    flash("Product added successfully.", "success")
+
+    return redirect(url_for("admin_dashboard"))
+    # BASIC PRODUCT INFORMATION
 
     name = request.form.get(
         "name",
@@ -1229,6 +1391,40 @@ def admin_add_product():
         "price",
         ""
     ).strip()
+
+    # ADDITIONAL PRODUCT DETAILS
+
+    description = request.form.get(
+        "description",
+        ""
+    ).strip()
+
+    material = request.form.get(
+        "material",
+        ""
+    ).strip()
+
+    fabric_weight = request.form.get(
+        "fabric_weight",
+        ""
+    ).strip()
+
+    fit = request.form.get(
+        "fit",
+        ""
+    ).strip()
+
+    care = request.form.get(
+        "care",
+        ""
+    ).strip()
+
+    shipping_returns = request.form.get(
+        "shipping_returns",
+        ""
+    ).strip()
+
+    # PRODUCT IMAGE
 
     image = request.files.get(
         "image"
@@ -1249,6 +1445,8 @@ def admin_add_product():
             url_for("admin_dashboard")
         )
 
+    # VALIDATE PRICE
+
     try:
 
         price = float(price_text)
@@ -1267,6 +1465,8 @@ def admin_add_product():
         return redirect(
             url_for("admin_dashboard")
         )
+
+    # VALIDATE IMAGE
 
     if (
         image is None
@@ -1292,6 +1492,8 @@ def admin_add_product():
         return redirect(
             url_for("admin_dashboard")
         )
+
+    # SAVE IMAGE
 
     original_name = secure_filename(
         image.filename
@@ -1320,6 +1522,8 @@ def admin_add_product():
         + unique_name
     )
 
+    # SAVE PRODUCT TO DATABASE
+
     db = get_db()
 
     db.execute(
@@ -1329,15 +1533,29 @@ def admin_add_product():
             name,
             price,
             category,
-            image
+            image,
+            description,
+            material,
+            fabric_weight,
+            fit,
+            care,
+            shipping_returns
         )
-        VALUES (?, ?, ?, ?)
+
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
+
         (
             name,
             price,
             category,
-            image_path
+            image_path,
+            description,
+            material,
+            fabric_weight,
+            fit,
+            care,
+            shipping_returns
         )
     )
 
@@ -1353,8 +1571,6 @@ def admin_add_product():
     return redirect(
         url_for("admin_dashboard")
     )
-
-
 # ==================================================
 # ADMIN DELETE PRODUCT
 # ==================================================

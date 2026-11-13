@@ -22,40 +22,57 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
 <body class="roxx-home">
 
-    <!-- INTRO -->
-<!-- INTRO -->
-
-<!-- ROXX AUTO INTRO -->
-<!-- INTRO -->
+<!-- ROXX VIDEO INTRO -->
 
 <div class="roxx-intro" id="roxxIntro">
+
+    <video
+    class="roxx-intro-video"
+    autoplay
+    muted
+    playsinline
+    webkit-playsinline
+    preload="auto"
+>
+        <source src="{{ url_for('static', filename='videos/intro.mp4') }}" type="video/mp4">
+    </video>
+
     <div class="roxx-intro-content">
+
         <h1 class="roxx-intro-logo">ROXX</h1>
+
+        <button class="roxx-enter-btn" id="roxxEnter">
+            ENTER
+        </button>
+
     </div>
+
 </div>
-    <!-- ANNOUNCEMENT BAR -->
+   
+<!-- ANNOUNCEMENT BAR -->
 
-    <div class="announcement-bar">
+<div class="announcement-bar">
 
-        <div class="announcement-track">
+    <div class="announcement-track">
 
-            <span>ROXX</span>
-            <span>✳</span>
-            <span>NEW COLLECTION</span>
-            <span>✳</span>
-            <span>SHOP NOW</span>
-            <span>✳</span>
+        <span>FREE SHIPPING ON ORDERS ABOVE 3,000 EGP</span>
+        <span>✳</span>
+        <span>ROXX ORIGINALS™</span>
+        <span>✳</span>
+        <span>FREE SHIPPING ON ORDERS ABOVE 3,000 EGP</span>
+        <span>✳</span>
 
-            <span>ROXX</span>
-            <span>✳</span>
-            <span>NEW COLLECTION</span>
-            <span>✳</span>
-            <span>SHOP NOW</span>
-            <span>✳</span>
-
-        </div>
+        <span>FREE SHIPPING ON ORDERS ABOVE 3,000 EGP</span>
+        <span>✳</span>
+        <span>ROXX ORIGINALS™</span>
+        <span>✳</span>
+        <span>FREE SHIPPING ON ORDERS ABOVE 3,000 EGP</span>
+        <span>✳</span>
 
     </div>
+
+</div>
+
 
 
     <!-- HEADER -->
@@ -210,8 +227,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
     <div class="roxx-shop-product-info">
 
-        <span class="product-number">
-            PRODUCT {{ '%03d'|format(loop.index) }}
+        
+           
         </span>
 
         <h2>{{ product.name }}</h2>
@@ -285,20 +302,48 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 // ROXX AUTO INTRO
 
 const intro = document.getElementById("roxxIntro");
+const video = intro?.querySelector(".roxx-intro-video");
+const enterBtn = document.getElementById("roxxEnter");
 
-if (intro) {
+if (intro && video) {
+
     document.body.classList.add("intro-active");
 
-    setTimeout(() => {
-        intro.classList.add("intro-exit");
+   video.addEventListener("ended", () => {
+    if (enterBtn) {
+        enterBtn.style.display = "inline-block";
+    }
+});
+// Force video autoplay on mobile
+video.muted = true;
+video.playsInline = true;
+
+const playPromise = video.play();
+
+if (playPromise !== undefined) {
+    playPromise.catch(error => {
+        console.log("Video autoplay failed:", error);
+    });
+}
+    
+
+    // Enter the shop
+    function enterShop() {
+
+        intro.classList.add("hidden");
         document.body.classList.remove("intro-active");
         document.body.classList.add("shop-entered");
 
         setTimeout(() => {
             intro.style.display = "none";
-        }, 1100);
+        }, 800);
 
-    }, 3000);
+    }
+
+    if (enterBtn) {
+        enterBtn.addEventListener("click", enterShop);
+    }
+
 }
 
         // MENU
@@ -401,7 +446,93 @@ if ("IntersectionObserver" in window) {
     });
 
 }
+// ROXX CUSTOM CURSOR
 
+const cursor = document.querySelector(".roxx-cursor");
+const cursorRing = document.querySelector(".roxx-cursor-ring");
+
+if (cursor && cursorRing) {
+    let mouseX = 0;
+    let mouseY = 0;
+    let ringX = 0;
+    let ringY = 0;
+
+    document.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        cursor.style.left = mouseX + "px";
+        cursor.style.top = mouseY + "px";
+    });
+
+    function animateCursor() {
+        ringX += (mouseX - ringX) * 0.15;
+        ringY += (mouseY - ringY) * 0.15;
+
+        cursorRing.style.left = ringX + "px";
+        cursorRing.style.top = ringY + "px";
+
+        requestAnimationFrame(animateCursor);
+    }
+
+    animateCursor();
+
+    document.querySelectorAll("a, button, input").forEach((element) => {
+        element.addEventListener("mouseenter", () => {
+            cursorRing.classList.add("hover");
+        });
+
+        element.addEventListener("mouseleave", () => {
+            cursorRing.classList.remove("hover");
+        });
+    });
+}
+</script>
+<!-- ROXX CUSTOM CURSOR -->
+<div class="roxx-cursor"></div>
+<div class="roxx-cursor-ring"></div>
+<div id="roxx-starfield"></div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const starfield = document.getElementById("roxx-starfield");
+
+    if (!starfield) return;
+
+    const STAR_COUNT = 100;
+
+    function createStar() {
+
+        const star = document.createElement("span");
+
+        star.className = "roxx-star";
+
+        const x = (Math.random() - 0.5) * window.innerWidth * 2;
+        const y = (Math.random() - 0.5) * window.innerHeight * 2;
+
+        star.style.setProperty("--star-x", x + "px");
+        star.style.setProperty("--star-y", y + "px");
+
+        star.style.animationDuration =
+            (Math.random() * 4 + 3) + "s";
+
+        star.style.animationDelay =
+            (Math.random() * 5) + "s";
+
+        const size = Math.random() * 2 + 1;
+
+        star.style.width = size + "px";
+        star.style.height = size + "px";
+
+        starfield.appendChild(star);
+    }
+
+    for (let i = 0; i < STAR_COUNT; i++) {
+        createStar();
+    }
+
+});
 </script>
 </body>
+
 </html>
