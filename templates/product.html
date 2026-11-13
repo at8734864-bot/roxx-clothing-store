@@ -184,29 +184,20 @@
                 </span>
 
 
-                <h1>{{ product.name|upper }}</h1>
+                <div class="roxx-product-heading">
 
+<h1>{{ product.name|upper|replace(' — ', ' ') }}</h1>
+    <div class="roxx-product-price">
 
-                <div class="roxx-product-price">
+        EGP {{ '%.0f'|format(product.price) }}
 
-                    EGP {{ '%.0f'|format(product.price) }}
+        
 
-                    <span>INCL. TAXES</span>
+    </div>
 
-                </div>
+</div>
 
-
-                <p class="roxx-product-copy">
-
-                    Built for everyday rotation. A considered essential
-                    with a confident streetwear attitude. Easy to style,
-                    made to wear on repeat.
-
-                </p>
-
-
-                <div class="roxx-product-divider"></div>
-
+              
 
                 <!-- ADD TO CART -->
                 <form
@@ -305,38 +296,67 @@
     <span>ADD TO BAG</span>
 </button>
 
-                <!-- PRODUCT PERKS -->
-                <div class="roxx-product-perks">
+                <!-- PRODUCT ACCORDIONS -->
 
-                    <div>
-                        <b>01 /</b>
-                        <span>SECURE CHECKOUT</span>
-                    </div>
+<div class="roxx-product-accordions">
 
-                    <div>
-                        <b>02 /</b>
-                        <span>FAST DELIVERY</span>
-                    </div>
+    <!-- SHIPPING -->
+    <details class="roxx-accordion">
 
-                    <div>
-                        <b>03 /</b>
-                        <span>MADE FOR DAILY WEAR</span>
-                    </div>
+        <summary>
+            <span>SHIPPING INFORMATION</span>
+            <b></b>
+        </summary>
 
-                </div>
+        <div class="roxx-accordion-content">
+            <p>
+                Delivery within 3–5 business days.
+            </p>
+        </div>
 
-
-                <a
-                    class="roxx-back-link"
-                    href="{{ url_for('products_page') }}"
-                >
-                    ← BACK TO ALL PRODUCTS
-                </a>
+    </details>
 
 
-            </div>
+    <!-- RETURNS -->
+    <details class="roxx-accordion">
 
-        </section>
+        <summary>
+            <span>RETURNS & EXCHANGES</span>
+            <b></b>
+        </summary>
+
+        <div class="roxx-accordion-content">
+            <p>
+                Returns are accepted within 7 days of delivery.
+            </p>
+        </div>
+
+    </details>
+
+
+    <!-- FULL DESCRIPTION -->
+    <details class="roxx-accordion">
+
+        <summary>
+            <span>FULL DESCRIPTION</span>
+            <b></b>
+        </summary>
+
+        <div class="roxx-accordion-content">
+
+            <p>
+                Meet the ROXXWORLD Cheetah Hoodie, where clean streetwear meets a wild side. The chest carries our signature arched ROXXWORLD lettering, filled with a full cheetah print, while the hood opens up to a matching cheetah lining that shows every time you pull it up. Inside the collar, a ROXXWORLD label finishes the look.
+            </p>
+
+            <p>
+                Cut in a relaxed, boxy fit with a front kangaroo pocket and ribbed cuffs and hem, it layers easily and looks just as good on its own. Wear it as a set with the matching ROXXWORLD sweatpants, which feature the same cheetah waistband and a small arched logo on the thigh.
+            </p>
+
+        </div>
+
+    </details>
+
+</div>
 
 
 
@@ -474,90 +494,136 @@
 
 
     <!-- SIZE GUIDE -->
+<div
+    class="size-guide-modal"
+    id="sizeGuideModal"
+    aria-hidden="true"
+>
+
     <div
-        class="size-guide-modal"
-        id="sizeGuideModal"
-        aria-hidden="true"
+        class="size-guide-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sizeGuideTitle"
     >
 
-        <div
-            class="size-guide-card"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="sizeGuideTitle"
+        <button
+            type="button"
+            class="size-guide-close"
+            id="sizeGuideClose"
+            aria-label="Close size guide"
         >
+            ×
+        </button>
+
+        <p>ROXX / FIT HELP</p>
+
+        <h2 id="sizeGuideTitle">
+            SIZE GUIDE<span>.</span>
+        </h2>
+
+        <!-- SIZE CHART -->
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>SIZE</th>
+                    <th>CHEST</th>
+                    <th>LENGTH</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>S</td>
+                    <td>36–38 in</td>
+                    <td>26 in</td>
+                </tr>
+
+                <tr>
+                    <td>M</td>
+                    <td>38–40 in</td>
+                    <td>27 in</td>
+                </tr>
+
+                <tr>
+                    <td>L</td>
+                    <td>40–42 in</td>
+                    <td>28 in</td>
+                </tr>
+
+                <tr>
+                    <td>XL</td>
+                    <td>42–44 in</td>
+                    <td>29 in</td>
+                </tr>
+            </tbody>
+
+        </table>
+
+        <small>
+            Guide is approximate. Check the garment fit before ordering.
+        </small>
+
+        <!-- SIZE FINDER -->
+
+        <div class="roxx-size-finder">
+
+            <div class="roxx-size-finder-heading">
+                <span>01 / PERSONAL FIT</span>
+                <h3>FIND YOUR SIZE<span>.</span></h3>
+                <p>
+                    Enter your height and weight to get a size recommendation.
+                </p>
+            </div>
+
+            <div class="roxx-size-finder-fields">
+
+                <div class="roxx-size-finder-field">
+                    <label for="customerHeight">HEIGHT (CM)</label>
+                    <input
+                        type="number"
+                        id="customerHeight"
+                        placeholder="175"
+                        min="100"
+                        max="220"
+                    >
+                </div>
+
+                <div class="roxx-size-finder-field">
+                    <label for="customerWeight">WEIGHT (KG)</label>
+                    <input
+                        type="number"
+                        id="customerWeight"
+                        placeholder="70"
+                        min="25"
+                        max="200"
+                    >
+                </div>
+
+            </div>
 
             <button
                 type="button"
-                class="size-guide-close"
-                id="sizeGuideClose"
-                aria-label="Close size guide"
+                class="roxx-find-size-btn"
+                id="findMySize"
             >
-                ×
+                FIND MY SIZE
+                <span>↗</span>
             </button>
 
-
-            <p>ROXX / FIT HELP</p>
-
-
-            <h2 id="sizeGuideTitle">
-                SIZE GUIDE<span>.</span>
-            </h2>
-
-
-            <table>
-
-                <thead>
-
-                    <tr>
-                        <th>SIZE</th>
-                        <th>CHEST</th>
-                        <th>LENGTH</th>
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                    <tr>
-                        <td>S</td>
-                        <td>36–38 in</td>
-                        <td>26 in</td>
-                    </tr>
-
-                    <tr>
-                        <td>M</td>
-                        <td>38–40 in</td>
-                        <td>27 in</td>
-                    </tr>
-
-                    <tr>
-                        <td>L</td>
-                        <td>40–42 in</td>
-                        <td>28 in</td>
-                    </tr>
-
-                    <tr>
-                        <td>XL</td>
-                        <td>42–44 in</td>
-                        <td>29 in</td>
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-
-            <small>
-                Guide is approximate. Check the garment fit before ordering.
-            </small>
-
+            <div
+                class="roxx-size-result"
+                id="sizeResult"
+                aria-live="polite"
+            ></div>
 
         </div>
 
     </div>
 
+</div>
 
 
     <!-- JAVASCRIPT -->
@@ -679,64 +745,204 @@
 
         // SIZE GUIDE MODAL
 
-        const modal = document.getElementById('sizeGuideModal');
+const modal = document.getElementById('sizeGuideModal');
 
-        const openGuide = document.getElementById('sizeGuideOpen');
+const openGuide = document.getElementById('sizeGuideOpen');
 
-        const closeGuideButton = document.getElementById('sizeGuideClose');
+const closeGuideButton = document.getElementById('sizeGuideClose');
 
 
-        function closeGuide() {
+function closeGuide() {
 
-            modal.classList.remove('open');
+    modal.classList.remove('open');
 
-            modal.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('aria-hidden', 'true');
 
-            openGuide.focus();
+    openGuide.focus();
+
+}
+
+
+openGuide.addEventListener('click', () => {
+
+    modal.classList.add('open');
+
+    modal.setAttribute('aria-hidden', 'false');
+
+    closeGuideButton.focus();
+
+});
+
+
+closeGuideButton.addEventListener('click', closeGuide);
+
+
+modal.addEventListener('click', event => {
+
+    if (event.target === modal) {
+
+        closeGuide();
+
+    }
+
+});
+
+
+document.addEventListener('keydown', event => {
+
+    if (event.key === 'Escape') {
+
+        menuPanel.classList.remove('active');
+
+        if (modal.classList.contains('open')) {
+
+            closeGuide();
+
+        }
+
+    }
+
+});
+
+
+// ROXX SIZE RECOMMENDATION
+
+const findMySizeButton = document.getElementById('findMySize');
+
+const heightInput = document.getElementById('customerHeight');
+
+const weightInput = document.getElementById('customerWeight');
+
+const sizeResult = document.getElementById('sizeResult');
+
+
+if (findMySizeButton) {
+
+    findMySizeButton.addEventListener('click', () => {
+
+        const height = Number(heightInput.value);
+
+        const weight = Number(weightInput.value);
+
+        if (!height || !weight) {
+
+            sizeResult.innerHTML = `
+                <p class="size-error">
+                    PLEASE ENTER YOUR HEIGHT AND WEIGHT.
+                </p>
+            `;
+
+            return;
+
+        }
+
+        if (
+            height < 100 ||
+            height > 220 ||
+            weight < 25 ||
+            weight > 200
+        ) {
+
+            sizeResult.innerHTML = `
+                <p class="size-error">
+                    PLEASE ENTER VALID VALUES.
+                </p>
+            `;
+
+            return;
 
         }
 
 
-        openGuide.addEventListener('click', () => {
+        // INITIAL ROXX SIZE CHART
 
-            modal.classList.add('open');
+        let recommendedSize = '';
 
-            modal.setAttribute('aria-hidden', 'false');
+        if (height <= 165 && weight <= 58) {
 
-            closeGuideButton.focus();
+            recommendedSize = 'S';
 
-        });
+        } else if (height <= 175 && weight <= 70) {
+
+            recommendedSize = 'M';
+
+        } else if (height <= 185 && weight <= 82) {
+
+            recommendedSize = 'L';
+
+        } else {
+
+            recommendedSize = 'XL';
+
+        }
 
 
-        closeGuideButton.addEventListener('click', closeGuide);
+        sizeResult.innerHTML = `
+            <div class="size-result-content">
+
+                <span>YOUR RECOMMENDED SIZE</span>
+
+                <strong>${recommendedSize}</strong>
+
+                <p>
+                    This is an initial estimate.
+                    Your preferred fit may vary.
+                </p>
+
+                <button
+                    type="button"
+                    class="size-select-recommended"
+                    data-recommended-size="${recommendedSize}"
+                >
+                    SELECT SIZE
+                </button>
+
+            </div>
+        `;
 
 
-        modal.addEventListener('click', event => {
+        // SELECT RECOMMENDED SIZE
 
-            if (event.target === modal) {
+        const selectButton = sizeResult.querySelector(
+            '.size-select-recommended'
+        );
 
-                closeGuide();
+        selectButton.addEventListener('click', () => {
+
+            const sizeButtons = document.querySelectorAll(
+                '.roxx-size-btn'
+            );
+
+            sizeButtons.forEach(button => {
+
+                const isSelected =
+                    button.dataset.size === recommendedSize;
+
+                button.classList.toggle('selected', isSelected);
+
+                button.setAttribute(
+                    'aria-pressed',
+                    isSelected ? 'true' : 'false'
+                );
+
+            });
+
+            const selectedSizeInput =
+                document.getElementById('selectedSize');
+
+            if (selectedSizeInput) {
+
+                selectedSizeInput.value = recommendedSize;
 
             }
 
-        });
-
-
-        document.addEventListener('keydown', event => {
-
-            if (event.key === 'Escape') {
-
-                menuPanel.classList.remove('active');
-
-                if (modal.classList.contains('open')) {
-
-                    closeGuide();
-
-                }
-
-            }
+            closeGuide();
 
         });
+
+    });
+
+}
 // =========================================
 // ROXX FRONT / BACK GALLERY
 // =========================================
