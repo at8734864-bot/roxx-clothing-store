@@ -15,13 +15,9 @@
 
 </head>
 
-
 <body>
 
-
-<!-- =========================
-     NAVBAR
-========================= -->
+<!-- NAVBAR -->
 
 <header class="navbar">
 
@@ -31,21 +27,13 @@
 
     <nav>
 
-        <a href="/">
-            HOME
-        </a>
+        <a href="/">HOME</a>
 
-        <a href="/products">
-            SHOP
-        </a>
+        <a href="/products">SHOP</a>
 
-        <a href="/about">
-            ABOUT
-        </a>
+        <a href="/about">ABOUT</a>
 
-        <a href="/contact">
-            CONTACT
-        </a>
+        <a href="/contact">CONTACT</a>
 
     </nav>
 
@@ -62,50 +50,30 @@
 </header>
 
 
-<!-- =========================
-     CHECKOUT
-========================= -->
+<!-- CHECKOUT -->
 
 <main class="checkout-page">
 
-
-    <!-- HEADER -->
-
     <section class="checkout-header">
 
-        <p>
-            ROXX / ORDER
-        </p>
+        <p>ROXX / ORDER</p>
 
-        <h1>
-            CHECKOUT.
-        </h1>
+        <h1>CHECKOUT.</h1>
 
-        <span>
-            COMPLETE YOUR ORDER
-        </span>
+        <span>REVIEW YOUR ORDER</span>
 
     </section>
 
 
     <div class="checkout-layout">
 
-
-        <!-- =========================
-             ORDER SUMMARY
-        ========================= -->
-
         <section class="order-summary">
 
             <div class="checkout-section-title">
 
-                <p>
-                    01 / YOUR ORDER
-                </p>
+                <p>01 / YOUR ORDER</p>
 
-                <h2>
-                    ORDER SUMMARY
-                </h2>
+                <h2>ORDER SUMMARY</h2>
 
             </div>
 
@@ -116,14 +84,10 @@
 
                 <article class="order-item">
 
-
                     <div class="order-item-image">
 
                         <img
-                            src="{{ url_for(
-                                'static',
-                                filename='images/' + item.image
-                            ) }}"
+                            src="{{ item.image }}"
                             alt="{{ item.name }}"
                         >
 
@@ -132,13 +96,9 @@
 
                     <div class="order-item-info">
 
-                        <p>
-                            {{ item.category }}
-                        </p>
+                        <p>{{ item.category }}</p>
 
-                        <h3>
-                            {{ item.name }}
-                        </h3>
+                        <h3>{{ item.name }}</h3>
 
                         <span>
                             SIZE: {{ item.size }}
@@ -150,9 +110,8 @@
 
 
                     <strong>
-                        {{ item.subtotal }} EGP
+                        {{ item.subtotal }} {{ item.currencyCode }}
                     </strong>
-
 
                 </article>
 
@@ -163,134 +122,62 @@
 
             <div class="checkout-total">
 
-                <span>
-                    TOTAL
-                </span>
+                <span>TOTAL</span>
 
                 <strong>
-                    {{ total }} EGP
+                    {{ total }} {{ currency_code }}
                 </strong>
 
             </div>
 
+
+            <a href="{{ url_for('cart') }}" class="continue-shopping">
+                ← BACK TO BAG
+            </a>
+
         </section>
 
-
-        <!-- =========================
-             CUSTOMER INFORMATION
-        ========================= -->
 
         <section class="checkout-form-section">
 
             <div class="checkout-section-title">
 
-                <p>
-                    02 / DELIVERY
-                </p>
+                <p>02 / SECURE CHECKOUT</p>
 
-                <h2>
-                    YOUR DETAILS
-                </h2>
+                <h2>COMPLETE YOUR ORDER</h2>
 
             </div>
 
 
-            <form
-                method="POST"
-                class="checkout-form"
-            >
+            <div class="checkout-information">
 
-
-                <div class="form-group">
-
-                    <label for="name">
-                        FULL NAME
-                    </label>
-
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        placeholder="YOUR FULL NAME"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="phone">
-                        PHONE NUMBER
-                    </label>
-
-                    <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        placeholder="YOUR PHONE NUMBER"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="address">
-                        DELIVERY ADDRESS
-                    </label>
-
-                    <textarea
-                        id="address"
-                        name="address"
-                        rows="5"
-                        placeholder="YOUR DELIVERY ADDRESS"
-                        required
-                    ></textarea>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="payment">
-                        PAYMENT METHOD
-                    </label>
-
-                    <select
-                        id="payment"
-                        name="payment"
-                        required
-                    >
-
-                        <option value="">
-                            SELECT PAYMENT
-                        </option>
-
-                        <option value="cash">
-                            CASH ON DELIVERY
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    class="place-order-btn"
-                >
-                    PLACE ORDER →
-                </button>
-
-
-                <p class="checkout-note">
-                    PAYMENT IS CURRENTLY AVAILABLE
-                    BY CASH ON DELIVERY.
+                <p>
+                    YOUR ORDER IS READY.
                 </p>
 
-            </form>
+                <h3>
+                    COMPLETE YOUR PURCHASE
+                    THROUGH SHOPIFY.
+                </h3>
+
+                <span>
+                    Your delivery information and available
+                    payment methods will be handled securely
+                    through Shopify Checkout.
+                </span>
+
+                <a
+                    href="{{ url_for('checkout') }}"
+                    class="place-order-btn"
+                >
+                    PROCEED TO CHECKOUT →
+                </a>
+
+                <p class="checkout-note">
+                    SECURE CHECKOUT POWERED BY SHOPIFY.
+                </p>
+
+            </div>
 
         </section>
 
@@ -299,9 +186,7 @@
 </main>
 
 
-<!-- =========================
-     FOOTER
-========================= -->
+<!-- FOOTER -->
 
 <footer>
 
@@ -318,7 +203,6 @@
     </small>
 
 </footer>
-
 
 </body>
 

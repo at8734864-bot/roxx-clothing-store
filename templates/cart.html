@@ -4,14 +4,71 @@
 <head>
 
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>ROXX | Cart</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .cart-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cart-quantity form {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quantity-controls button {
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            font-size: 20px;
+            padding: 5px 10px;
+        }
+
+        .quantity-controls button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .quantity-controls input {
+            width: 35px;
+            text-align: center;
+            background: transparent;
+            color: inherit;
+            border: none;
+            font: inherit;
+        }
+
+        .remove-form {
+            margin-top: 15px;
+        }
+
+        .remove-btn {
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            color: inherit;
+            font: inherit;
+        }
+
+        .cart-checkout-form {
+            display: inline-block;
+        }
+
+        .cart-checkout-form button {
+            cursor: pointer;
+            font: inherit;
+        }
+    </style>
 
 </head>
 
@@ -99,13 +156,21 @@
 
             <div class="cart-image">
 
-                <img
-                    src="{{ url_for(
-                        'static',
-                        filename='images/' + item.image
-                    ) }}"
-                    alt="{{ item.name }}"
-                >
+                {% if item.image %}
+
+                    <img
+                        src="{{ item.image }}"
+                        alt="{{ item.name }}"
+                        loading="lazy"
+                    >
+
+                {% else %}
+
+                    <div class="cart-no-image">
+                        ROXX
+                    </div>
+
+                {% endif %}
 
             </div>
 
@@ -115,22 +180,39 @@
             <div class="cart-info">
 
                 <p class="cart-category">
-                    {{ item.category }}
+                    {{ item.category or 'ROXX COLLECTION' }}
                 </p>
 
                 <h2>
                     {{ item.name }}
                 </h2>
 
+
+                <!-- SIZE -->
+
+                {% if item.size %}
+
                 <p class="cart-size">
+
                     SIZE:
+
                     <strong>
                         {{ item.size }}
                     </strong>
+
                 </p>
 
+                {% endif %}
+
+
+                <!-- PRICE -->
+
                 <p class="cart-price">
-                    {{ item.price }} EGP
+
+                    {{ "%.2f"|format(item.price|float) }}
+
+                    {{ item.currencyCode or 'EGP' }}
+
                 </p>
 
 
@@ -144,29 +226,62 @@
 
                     <div class="quantity-controls">
 
-                        <a
-                            href="{{ url_for(
-                                'decrease',
-                                product_id=item.id,
-                                size=item.size
-                            ) }}"
+                        <form
+                            method="POST"
+                            action="{{ url_for('update_cart') }}"
                         >
-                            −
-                        </a>
+
+                            <input
+                                type="hidden"
+                                name="line_id"
+                                value="{{ item.line_id }}"
+                            >
+
+                            <input
+                                type="hidden"
+                                name="quantity"
+                                value="{{ [item.quantity|int - 1, 1]|max }}"
+                            >
+
+                            <button
+                                type="submit"
+                                {% if item.quantity|int <= 1 %}
+                                    disabled
+                                {% endif %}
+                            >
+                                −
+                            </button>
+
+                        </form>
+
 
                         <span>
                             {{ item.quantity }}
                         </span>
 
-                        <a
-                            href="{{ url_for(
-                                'increase',
-                                product_id=item.id,
-                                size=item.size
-                            ) }}"
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('update_cart') }}"
                         >
-                            +
-                        </a>
+
+                            <input
+                                type="hidden"
+                                name="line_id"
+                                value="{{ item.line_id }}"
+                            >
+
+                            <input
+                                type="hidden"
+                                name="quantity"
+                                value="{{ item.quantity|int + 1 }}"
+                            >
+
+                            <button type="submit">
+                                +
+                            </button>
+
+                        </form>
 
                     </div>
 
@@ -182,7 +297,11 @@
                     </span>
 
                     <strong>
-                        {{ item.subtotal }} EGP
+
+                        {{ "%.2f"|format(item.subtotal|float) }}
+
+                        {{ item.currencyCode or 'EGP' }}
+
                     </strong>
 
                 </div>
@@ -190,16 +309,26 @@
 
                 <!-- REMOVE -->
 
-                <a
-                    href="{{ url_for(
-                        'remove_from_cart',
-                        product_id=item.id,
-                        size=item.size
-                    ) }}"
-                    class="remove-btn"
+                <form
+                    method="POST"
+                    action="{{ url_for('remove_from_cart') }}"
+                    class="remove-form"
                 >
-                    REMOVE ITEM ×
-                </a>
+
+                    <input
+                        type="hidden"
+                        name="line_id"
+                        value="{{ item.line_id }}"
+                    >
+
+                    <button
+                        type="submit"
+                        class="remove-btn"
+                    >
+                        REMOVE ITEM ×
+                    </button>
+
+                </form>
 
             </div>
 
@@ -224,7 +353,11 @@
             </span>
 
             <strong>
-                {{ total }} EGP
+
+                {{ "%.2f"|format(total|float) }}
+
+                {{ currency_code or 'EGP' }}
+
             </strong>
 
         </div>

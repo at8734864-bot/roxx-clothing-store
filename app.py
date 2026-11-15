@@ -1,6 +1,6 @@
 import os
-import sqlite3
-import uuid
+import re
+import requests
 
 from flask import (
     Flask,
@@ -12,462 +12,1047 @@ from flask import (
     flash
 )
 
-from werkzeug.utils import secure_filename
-
 
 # ==================================================
-# APP
+# APP CONFIGURATION
 # ==================================================
 
 app = Flask(__name__)
 
-app.secret_key = "roxx-secret-key-2026"
-
-
-# ==================================================
-# ADMIN LOGIN
-# ==================================================
-
-ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD = "roxx2026"
-
-
-# ==================================================
-# PATHS
-# ==================================================
-
-BASE_DIR = os.path.dirname(
-    os.path.abspath(__file__)
+app.secret_key = os.environ.get(
+    "SECRET_KEY",
+    "roxx-local-development-key-change-before-deploy"
 )
 
-IS_VERCEL = bool(
-    os.environ.get("VERCEL")
-)
-
-if IS_VERCEL:
-
-    DATABASE = "/tmp/roxx.db"
-
-    UPLOAD_FOLDER = "/tmp/roxx_uploads"
-
-else:
-
-    DATABASE = os.path.join(
-        BASE_DIR,
-        "roxx.db"
-    )
-
-    UPLOAD_FOLDER = os.path.join(
-        BASE_DIR,
-        "static",
-        "images",
-        "uploads"
-    )
-
-
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-
-app.config["MAX_CONTENT_LENGTH"] = (
-    5 * 1024 * 1024
-)
-
-
-os.makedirs(
-    UPLOAD_FOLDER,
-    exist_ok=True
-)
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
 
 # ==================================================
-# ALLOWED IMAGE TYPES
+# SHOPIFY CONFIGURATION
 # ==================================================
 
-ALLOWED_EXTENSIONS = {
-    "jpg",
-    "jpeg",
-    "png",
-    "webp",
-    "gif"
-}
+SHOPIFY_STORE_DOMAIN = os.environ.get(
+    "SHOPIFY_STORE_DOMAIN",
+    ""
+).strip()
+
+SHOPIFY_API_VERSION = os.environ.get(
+    "SHOPIFY_API_VERSION",
+    "2026-10"
+).strip()
+
+SHOPIFY_STOREFRONT_ACCESS_TOKEN = os.environ.get(
+    "SHOPIFY_STOREFRONT_ACCESS_TOKEN",
+    ""
+).strip()
 
 
-def allowed_file(filename):
+def shopify_is_configured():
+
+    return all([
+        SHOPIFY_STORE_DOMAIN,
+        SHOPIFY_API_VERSION,
+        SHOPIFY_STOREFRONT_ACCESS_TOKEN
+    ])
+
+
+def shopify_endpoint():
+
+    domain = SHOPIFY_STORE_DOMAIN.replace(
+        "https://",
+        ""
+    ).replace(
+        "http://",
+        ""
+    ).strip("/")
 
     return (
-        "." in filename
-        and filename.rsplit(
-            ".",
-            1
-        )[1].lower() in ALLOWED_EXTENSIONS
+        f"https://{domain}/api/"
+        f"{SHOPIFY_API_VERSION}/graphql.json"
     )
 
 
 # ==================================================
-# DATABASE
+# SHOPIFY GRAPHQL CLIENT
 # ==================================================
 
-def get_db():
+def shopify_request(query, variables=None):
 
-    db = sqlite3.connect(
-        DATABASE
-    )
+    if not shopify_is_configured():
 
-    db.row_factory = sqlite3.Row
-
-    return db
-
-
-def init_db():
-
-    db = get_db()
-
-
-    # PRODUCTS TABLE
-
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS products (
-
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-            name TEXT NOT NULL,
-
-            price REAL NOT NULL,
-
-            category TEXT NOT NULL,
-
-            image TEXT NOT NULL
-
+        raise RuntimeError(
+            "Shopify environment variables are missing."
         )
-    """)
 
-
-    # ORDERS TABLE
-
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS orders (
-
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-            customer_name TEXT NOT NULL,
-
-            phone TEXT NOT NULL,
-
-            address TEXT NOT NULL,
-
-            payment TEXT NOT NULL,
-
-            total REAL NOT NULL,
-
-            status TEXT NOT NULL DEFAULT 'New',
-
-            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-
-        )
-    """)
-    # PRODUCT DETAILS MIGRATION
-
-    existing_columns = {
-        row[1]
-        for row in db.execute(
-            "PRAGMA table_info(products)"
-        ).fetchall()
+    headers = {
+        "Content-Type": "application/json",
+        "X-Shopify-Storefront-Access-Token":
+            SHOPIFY_STOREFRONT_ACCESS_TOKEN
     }
 
-    new_columns = {
-    "description": "TEXT DEFAULT ''",
-    "material": "TEXT DEFAULT ''",
-    "fabric_weight": "TEXT DEFAULT ''",
-    "fit": "TEXT DEFAULT ''",
-    "care": "TEXT DEFAULT ''",
-    "shipping_returns": "TEXT DEFAULT ''",
-    "back_image": "TEXT DEFAULT ''"
-}
-    for column, data_type in new_columns.items():
+    response = requests.post(
+        shopify_endpoint(),
+        headers=headers,
+        json={
+            "query": query,
+            "variables": variables or {}
+        },
+        timeout=25
+    )
 
-        if column not in existing_columns:
+    response.raise_for_status()
 
-            db.execute(
-                f"ALTER TABLE products ADD COLUMN {column} {data_type}"
-            )
+    result = response.json()
 
-    # ORDER ITEMS TABLE
+    if result.get("errors"):
 
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS order_items (
-
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-            order_id INTEGER NOT NULL,
-
-            product_id INTEGER NOT NULL,
-
-            product_name TEXT NOT NULL,
-
-            size TEXT NOT NULL,
-
-            quantity INTEGER NOT NULL,
-
-            price REAL NOT NULL,
-
-            subtotal REAL NOT NULL,
-
-            FOREIGN KEY(order_id)
-                REFERENCES orders(id)
-
-        )
-    """)
-
-
-    # REPLACE OLD PRODUCT CATALOG (RUN ONCE)
-
-   # ==================================================
-# PRODUCT CATALOG MIGRATIONS
-# ==def init_db():
-
-   # ==================================================
-# PRODUCT CATALOG MIGRATIONS
-# ==================================================
-
-    db = get_db()
-
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS app_migrations (
-            migration_key TEXT PRIMARY KEY
-        )
-    """)
-
-    # ==============================================
-    # ORIGINAL CATALOG MIGRATION
-    # ==============================================
-
-    migration_key = "roxx_cheetah_catalog_v1"
-
-    migration_done = db.execute(
-        "SELECT migration_key FROM app_migrations WHERE migration_key = ?",
-        (migration_key,)
-    ).fetchone()
-
-    if migration_done is None:
-
-        existing_products = db.execute(
-            "SELECT COUNT(*) FROM products"
-        ).fetchone()[0]
-
-        if existing_products == 0:
-
-            original_products = [
-
-                (
-                    "CHEETAH HOODIE — BLACK",
-                    1000,
-                    "Hoodies",
-                    "cheetah-hoodie-black.png"
-                ),
-
-                (
-                    "CHEETAH PANTS — BLACK",
-                    1000,
-                    "Pants",
-                    "cheetah-pants-black.png"
-                ),
-
-                (
-                    "CHEETAH SET — BLACK",
-                    2000,
-                    "Sets",
-                    "cheetah-set-black.png"
-                ),
-
-                (
-                    "CHEETAH SET — OFF WHITE",
-                    2000,
-                    "Sets",
-                    "cheetah-set-offwhite.png"
-                )
-
-            ]
-
-            db.executemany(
-                """
-                INSERT INTO products
-                (name, price, category, image)
-                VALUES (?, ?, ?, ?)
-                """,
-                original_products
-            )
-
-        db.execute(
-            "INSERT INTO app_migrations (migration_key) VALUES (?)",
-            (migration_key,)
-        )
-
-    # ==============================================
-    # ADD OFF WHITE PRODUCTS
-    # ==============================================
-
-    migration_key = "roxx_offwhite_separate_products_v1"
-
-    migration_done = db.execute(
-        "SELECT migration_key FROM app_migrations WHERE migration_key = ?",
-        (migration_key,)
-    ).fetchone()
-
-    if migration_done is None:
-
-        # Update existing product images to PNG
-
-        db.execute("""
-            UPDATE products
-            SET image = 'cheetah-hoodie-black.png'
-            WHERE name = 'CHEETAH HOODIE — BLACK'
-        """)
-
-        db.execute("""
-            UPDATE products
-            SET image = 'cheetah-pants-black.png'
-            WHERE name = 'CHEETAH PANTS — BLACK'
-        """)
-
-        db.execute("""
-            UPDATE products
-            SET image = 'cheetah-set-black.png'
-            WHERE name = 'CHEETAH SET — BLACK'
-        """)
-
-        db.execute("""
-            UPDATE products
-            SET image = 'cheetah-set-offwhite.png'
-            WHERE name = 'CHEETAH SET — OFF WHITE'
-        """)
-
-        new_products = [
-
-            (
-                "CHEETAH HOODIE — OFF WHITE",
-                1000,
-                "Hoodies",
-                "cheetah-hoodie-offwhite.png"
-            ),
-
-            (
-                "CHEETAH PANTS — OFF WHITE",
-                1000,
-                "Pants",
-                "cheetah-pants-offwhite.png"
-            )
-
+        messages = [
+            error.get("message", "Unknown Shopify error")
+            for error in result["errors"]
         ]
 
-        for product in new_products:
-
-            existing = db.execute(
-                "SELECT id FROM products WHERE name = ?",
-                (product[0],)
-            ).fetchone()
-
-            if existing is None:
-
-                db.execute(
-                    """
-                    INSERT INTO products
-                    (name, price, category, image)
-                    VALUES (?, ?, ?, ?)
-                    """,
-                    product
-                )
-
-        db.execute(
-            "INSERT INTO app_migrations (migration_key) VALUES (?)",
-            (migration_key,)
+        raise RuntimeError(
+            "Shopify GraphQL error: "
+            + " | ".join(messages)
         )
 
-    # ==============================================
-    # SAVE AND CLOSE DATABASE
-    # ==============================================
+    return result.get("data", {})
 
-    db.commit()
-    db.close()
-# Initialize database when application starts
-init_db()
+
 # ==================================================
-# PRODUCT FUNCTIONS
+# PRODUCT QUERIES
+# ==================================================
+
+PRODUCTS_QUERY = """
+query RoxxProducts {
+
+    products(first: 100) {
+
+        edges {
+
+            node {
+
+                id
+                handle
+                title
+                description
+                descriptionHtml
+                productType
+                vendor
+                availableForSale
+
+                featuredImage {
+                    url
+                    altText
+                }
+
+                images(first: 10) {
+
+                    edges {
+
+                        node {
+                            url
+                            altText
+                        }
+
+                    }
+
+                }
+
+                priceRange {
+
+                    minVariantPrice {
+                        amount
+                        currencyCode
+                    }
+
+                }
+
+                variants(first: 100) {
+
+                    edges {
+
+                        node {
+
+                            id
+                            title
+                            availableForSale
+
+                            selectedOptions {
+                                name
+                                value
+                            }
+
+                            price {
+                                amount
+                                currencyCode
+                            }
+
+                            image {
+                                url
+                                altText
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+"""
+
+
+PRODUCT_QUERY = """
+query RoxxSingleProduct($id: ID!) {
+
+    product(id: $id) {
+
+        id
+        handle
+        title
+        description
+        descriptionHtml
+        productType
+        vendor
+        availableForSale
+
+        featuredImage {
+            url
+            altText
+        }
+
+        images(first: 10) {
+
+            edges {
+
+                node {
+                    url
+                    altText
+                }
+
+            }
+
+        }
+
+        priceRange {
+
+            minVariantPrice {
+                amount
+                currencyCode
+            }
+
+        }
+
+        variants(first: 100) {
+
+            edges {
+
+                node {
+
+                    id
+                    title
+                    availableForSale
+
+                    selectedOptions {
+                        name
+                        value
+                    }
+
+                    price {
+                        amount
+                        currencyCode
+                    }
+
+                    image {
+                        url
+                        altText
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+"""
+
+
+# ==================================================
+# PRODUCT CONVERSION
+# ==================================================
+
+def numeric_shopify_id(gid):
+
+    if not gid:
+        return 0
+
+    match = re.search(
+        r"/(\d+)$",
+        gid
+    )
+
+    return int(match.group(1)) if match else 0
+
+
+def convert_shopify_product(node):
+
+    if not node:
+        return None
+
+    images = [
+        edge["node"]
+        for edge in node.get(
+            "images",
+            {}
+        ).get(
+            "edges",
+            []
+        )
+    ]
+
+    variants = [
+        edge["node"]
+        for edge in node.get(
+            "variants",
+            {}
+        ).get(
+            "edges",
+            []
+        )
+    ]
+
+    featured_image = node.get(
+        "featuredImage"
+    ) or {}
+
+    price_info = node.get(
+        "priceRange",
+        {}
+    ).get(
+        "minVariantPrice",
+        {}
+    )
+
+    product_id = numeric_shopify_id(
+        node.get("id")
+    )
+
+    converted_variants = []
+
+    for variant in variants:
+
+        selected_options = variant.get(
+            "selectedOptions",
+            []
+        )
+
+        size = ""
+
+        for option in selected_options:
+
+            if option.get("name", "").lower() in (
+                "size",
+                "sizes"
+            ):
+
+                size = option.get("value", "")
+
+        variant_price = variant.get(
+            "price",
+            {}
+        )
+
+        converted_variants.append({
+
+            "id": variant.get("id"),
+
+            "numeric_id": numeric_shopify_id(
+                variant.get("id")
+            ),
+
+            "title": variant.get("title"),
+
+            "size": size,
+
+            "available": variant.get(
+                "availableForSale",
+                False
+            ),
+
+            "price": float(
+                variant_price.get("amount", 0)
+            ),
+
+            "currency": variant_price.get(
+                "currencyCode",
+                "EGP"
+            ),
+
+            "selected_options": selected_options
+
+        })
+
+    image_url = featured_image.get(
+        "url",
+        ""
+    )
+
+    if not image_url and images:
+
+        image_url = images[0].get(
+            "url",
+            ""
+        )
+
+    back_image = ""
+
+    if len(images) > 1:
+
+        back_image = images[1].get(
+            "url",
+            ""
+        )
+
+    product = {
+
+        "id": product_id,
+
+        "shopify_id": node.get("id"),
+
+        "handle": node.get("handle"),
+
+        "name": node.get("title", ""),
+
+        "title": node.get("title", ""),
+
+        "description": node.get(
+            "description",
+            ""
+        ),
+
+        "description_html": node.get(
+            "descriptionHtml",
+            ""
+        ),
+
+        "category": node.get(
+            "productType",
+            "ROXX ORIGINALS"
+        ),
+
+        "vendor": node.get(
+            "vendor",
+            "ROXX"
+        ),
+
+        "price": float(
+            price_info.get("amount", 0)
+        ),
+
+        "currency": price_info.get(
+            "currencyCode",
+            "EGP"
+        ),
+
+        "image": image_url,
+
+        "back_image": back_image,
+
+        "images": [
+            image.get("url", "")
+            for image in images
+        ],
+
+        "available": node.get(
+            "availableForSale",
+            False
+        ),
+
+        "variants": converted_variants,
+
+        "sizes": [
+            variant["size"]
+            for variant in converted_variants
+            if variant["size"]
+        ]
+
+    }
+
+    return product
+
+
+# ==================================================
+# GET ALL PRODUCTS
 # ==================================================
 
 def get_all_products():
 
-    db = get_db()
+    data = shopify_request(
+        PRODUCTS_QUERY
+    )
 
-    products_rows = db.execute(
-        "SELECT * FROM products"
-    ).fetchall()
+    edges = data.get(
+        "products",
+        {}
+    ).get(
+        "edges",
+        []
+    )
 
-    db.close()
+    products = []
 
-    return [
-        dict(product)
-        for product in products_rows
-    ]
+    for edge in edges:
 
+        product = convert_shopify_product(
+            edge.get("node")
+        )
+
+        if product:
+
+            products.append(product)
+
+    return products
+
+
+# ==================================================
+# GET ONE PRODUCT
+# ==================================================
 
 def get_product(product_id):
 
-    db = get_db()
+    try:
 
-    product = db.execute(
-        "SELECT * FROM products WHERE id = ?",
-        (product_id,)
-    ).fetchone()
+        product_id = int(product_id)
 
-    db.close()
+    except (
+        ValueError,
+        TypeError
+    ):
 
-    if product:
-        return dict(product)
+        return None
+
+    products = get_all_products()
+
+    for product in products:
+
+        if product["id"] == product_id:
+
+            return product
 
     return None
 
 
 # ==================================================
-# CART
+# CART GRAPHQL
 # ==================================================
 
-def get_cart():
+CART_FIELDS = """
+id
+checkoutUrl
+totalQuantity
 
-    cart = session.get(
-        "cart",
+cost {
+    subtotalAmount {
+        amount
+        currencyCode
+    }
+
+    totalAmount {
+        amount
+        currencyCode
+    }
+}
+
+lines(first: 100) {
+
+    edges {
+
+        node {
+
+            id
+            quantity
+
+            merchandise {
+
+                ... on ProductVariant {
+
+                    id
+                    title
+
+                    selectedOptions {
+                        name
+                        value
+                    }
+
+                    price {
+                        amount
+                        currencyCode
+                    }
+
+                    image {
+                        url
+                        altText
+                    }
+
+                    product {
+
+                        id
+                        title
+                        handle
+
+                        featuredImage {
+                            url
+                            altText
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+"""
+
+
+CART_QUERY = f"""
+query RoxxCart($id: ID!) {{
+
+    cart(id: $id) {{
+
+        {CART_FIELDS}
+
+    }}
+
+}}
+"""
+
+
+CART_CREATE_MUTATION = f"""
+mutation RoxxCreateCart($input: CartInput!) {{
+
+    cartCreate(input: $input) {{
+
+        cart {{
+
+            {CART_FIELDS}
+
+        }}
+
+        userErrors {{
+            field
+            message
+        }}
+
+    }}
+
+}}
+"""
+
+
+CART_ADD_MUTATION = f"""
+mutation RoxxAddToCart(
+    $cartId: ID!,
+    $lines: [CartLineInput!]!
+) {{
+
+    cartLinesAdd(
+        cartId: $cartId,
+        lines: $lines
+    ) {{
+
+        cart {{
+
+            {CART_FIELDS}
+
+        }}
+
+        userErrors {{
+            field
+            message
+        }}
+
+    }}
+
+}}
+"""
+
+
+CART_UPDATE_MUTATION = f"""
+mutation RoxxUpdateCart(
+    $cartId: ID!,
+    $lines: [CartLineUpdateInput!]!
+) {{
+
+    cartLinesUpdate(
+        cartId: $cartId,
+        lines: $lines
+    ) {{
+
+        cart {{
+
+            {CART_FIELDS}
+
+        }}
+
+        userErrors {{
+            field
+            message
+        }}
+
+    }}
+
+}}
+"""
+
+
+CART_REMOVE_MUTATION = f"""
+mutation RoxxRemoveCart(
+    $cartId: ID!,
+    $lineIds: [ID!]!
+) {{
+
+    cartLinesRemove(
+        cartId: $cartId,
+        lineIds: $lineIds
+    ) {{
+
+        cart {{
+
+            {CART_FIELDS}
+
+        }}
+
+        userErrors {{
+            field
+            message
+        }}
+
+    }}
+
+}}
+"""
+
+
+# ==================================================
+# CART HELPERS
+# ==================================================
+
+def get_cart_id():
+
+    return session.get(
+        "shopify_cart_id"
+    )
+
+
+def save_cart_id(cart_id):
+
+    session["shopify_cart_id"] = cart_id
+
+
+def clear_shopify_cart():
+
+    session.pop(
+        "shopify_cart_id",
+        None
+    )
+
+
+def get_shopify_cart():
+
+    cart_id = get_cart_id()
+
+    if not cart_id:
+
+        return None
+
+    data = shopify_request(
+        CART_QUERY,
+        {
+            "id": cart_id
+        }
+    )
+
+    return data.get("cart")
+
+
+def get_cart_lines(cart):
+
+    if not cart:
+
+        return []
+
+    return [
+        edge["node"]
+        for edge in cart.get(
+            "lines",
+            {}
+        ).get(
+            "edges",
+            []
+        )
+    ]
+
+
+def check_user_errors(payload):
+
+    errors = payload.get(
+        "userErrors",
+        []
+    )
+
+    if errors:
+
+        message = " | ".join(
+            error.get(
+                "message",
+                "Shopify cart error"
+            )
+            for error in errors
+        )
+
+        raise RuntimeError(message)
+
+
+def add_shopify_variant(
+    variant_id,
+    quantity
+):
+
+    quantity = max(
+        1,
+        min(int(quantity), 20)
+    )
+
+    cart_id = get_cart_id()
+
+    line = {
+        "merchandiseId": variant_id,
+        "quantity": quantity
+    }
+
+    if cart_id:
+
+        try:
+
+            data = shopify_request(
+                CART_ADD_MUTATION,
+                {
+                    "cartId": cart_id,
+                    "lines": [line]
+                }
+            )
+
+            payload = data.get(
+                "cartLinesAdd",
+                {}
+            )
+
+            check_user_errors(payload)
+
+            cart = payload.get("cart")
+
+            if cart:
+
+                save_cart_id(
+                    cart["id"]
+                )
+
+                return cart
+
+        except Exception:
+
+            clear_shopify_cart()
+
+    data = shopify_request(
+        CART_CREATE_MUTATION,
+        {
+            "input": {
+                "lines": [line]
+            }
+        }
+    )
+
+    payload = data.get(
+        "cartCreate",
         {}
     )
 
-    if not isinstance(
-        cart,
-        dict
-    ):
+    check_user_errors(payload)
 
-        cart = {}
+    cart = payload.get("cart")
+
+    if not cart:
+
+        raise RuntimeError(
+            "Shopify did not return a cart."
+        )
+
+    save_cart_id(
+        cart["id"]
+    )
 
     return cart
 
 
+# ==================================================
+# CART DISPLAY CONVERSION
+# ==================================================
+
+def build_cart_products(cart):
+
+    cart_products = []
+
+    if not cart:
+
+        return cart_products
+
+    for line in get_cart_lines(cart):
+
+        merchandise = line.get(
+            "merchandise",
+            {}
+        )
+
+        product = merchandise.get(
+            "product",
+            {}
+        )
+
+        image = merchandise.get(
+            "image"
+        ) or product.get(
+            "featuredImage"
+        ) or {}
+
+        selected_options = merchandise.get(
+            "selectedOptions",
+            []
+        )
+
+        size = ""
+
+        for option in selected_options:
+
+            if option.get("name", "").lower() in (
+                "size",
+                "sizes"
+            ):
+
+                size = option.get(
+                    "value",
+                    ""
+                )
+
+        price = float(
+            merchandise.get(
+                "price",
+                {}
+            ).get(
+                "amount",
+                0
+            )
+        )
+
+        quantity = int(
+            line.get("quantity", 1)
+        )
+
+        cart_products.append({
+
+            "id": numeric_shopify_id(
+                product.get("id")
+            ),
+
+            "product_id": numeric_shopify_id(
+                product.get("id")
+            ),
+
+            "shopify_id": product.get("id"),
+
+            "variant_id": merchandise.get("id"),
+
+            "line_id": line.get("id"),
+
+            "name": product.get(
+                "title",
+                ""
+            ),
+
+            "title": product.get(
+                "title",
+                ""
+            ),
+
+            "image": image.get(
+                "url",
+                ""
+            ),
+
+            "price": price,
+
+           "currency": merchandise.get(
+    "price",
+    {}
+).get(
+    "currencyCode",
+    "EGP"
+),
+
+"currencyCode": merchandise.get(
+    "price",
+    {}
+).get(
+    "currencyCode",
+    "EGP"
+),
+
+            "size": size,
+
+            "quantity": quantity,
+
+            "subtotal": price * quantity
+
+        })
+
+    return cart_products
+
+
+# ==================================================
+# GLOBAL CART COUNT
+# ==================================================
+
 @app.context_processor
 def cart_count():
 
-    cart = get_cart()
+    try:
 
-    count = 0
+        cart = get_shopify_cart()
 
-    for quantity in cart.values():
-
-        try:
-
-            count += int(
-                quantity
+        count = int(
+            cart.get(
+                "totalQuantity",
+                0
             )
+        ) if cart else 0
 
-        except (
-            ValueError,
-            TypeError
-        ):
+    except Exception:
 
-            pass
+        count = 0
 
     return {
         "cart_count": count
@@ -481,7 +1066,23 @@ def cart_count():
 @app.route("/")
 def home():
 
-    products = get_all_products()
+    try:
+
+        products = get_all_products()
+
+    except Exception as error:
+
+        print(
+            "SHOPIFY HOME ERROR:",
+            str(error)
+        )
+
+        products = []
+
+        flash(
+            "Unable to load products. Please try again.",
+            "error"
+        )
 
     return render_template(
         "index.html",
@@ -496,7 +1097,23 @@ def home():
 @app.route("/products")
 def products_page():
 
-    products = get_all_products()
+    try:
+
+        products = get_all_products()
+
+    except Exception as error:
+
+        print(
+            "SHOPIFY PRODUCTS ERROR:",
+            str(error)
+        )
+
+        products = []
+
+        flash(
+            "Unable to load products.",
+            "error"
+        )
 
     return render_template(
         "products.html",
@@ -508,69 +1125,157 @@ def products_page():
 # PRODUCT PAGE
 # ==================================================
 
-
 @app.route("/product/<int:product_id>")
 def product_page(product_id):
 
-    product = get_product(product_id)
+    try:
 
-    if product is None:
-        return "Product not found", 404
+        product = get_product(
+            product_id
+        )
 
-    # PRODUCT BACK IMAGES
+        if not product:
 
-    back_images = {
-        "CHEETAH HOODIE — BLACK": "cheetah-hoodie-black-back.png",
+            return "Product not found", 404
 
-        "CHEETAH PANTS — BLACK": "cheetah-pants-black-back.png",
+        all_products = get_all_products()
 
-        "CHEETAH HOODIE — OFF WHITE": "cheetah-hoodie-offwhite-back.png",
+        related_products = [
+            item
+            for item in all_products
+            if item["id"] != product_id
+        ][:4]
 
-        "CHEETAH PANTS — OFF WHITE": "cheetah-pants-offwhite-back.png"
-    }
+        return render_template(
+            "product.html",
+            product=product,
+            related_products=related_products
+        )
 
-    # ASSIGN BACK IMAGE
+    except Exception as error:
 
-    if product["name"] in back_images:
-        product["back_image"] = back_images[product["name"]]
+        print(
+            "SHOPIFY PRODUCT PAGE ERROR:",
+            str(error)
+        )
 
-    return render_template(
-        "product.html",
-        product=product
-    )
+        return (
+            "Unable to load this product.",
+            500
+        )
 
-
-# ==================================================
-# ADD TO CART
-# ==================================================
 
 # ==================================================
 # ADD TO CART
 # ==================================================
 
 @app.route(
-    "/add-to-cart/<int:product_id>"
+    "/add-to-cart/<int:product_id>",
+    methods=["GET", "POST"]
 )
 def add_to_cart(product_id):
 
-    product = get_product(
-        product_id
-    )
+    try:
 
-    if product is None:
-
-        return (
-            "Product not found",
-            404
+        product = get_product(
+            product_id
         )
 
-    cart = get_cart()
+        if not product:
 
-    size = request.args.get(
-        "size"
-    )
+            return "Product not found", 404
 
-    if not size:
+        variant_id = (
+            request.values.get("variant_id")
+            or ""
+        ).strip()
+
+        size = (
+            request.values.get("size")
+            or ""
+        ).strip()
+
+        quantity = request.values.get(
+            "quantity",
+            1,
+            type=int
+        )
+
+        quantity = max(
+            1,
+            min(quantity or 1, 20)
+        )
+
+        selected_variant = None
+
+        if variant_id:
+
+            for variant in product["variants"]:
+
+                if variant["id"] == variant_id:
+
+                    selected_variant = variant
+
+                    break
+
+        elif size:
+
+            for variant in product["variants"]:
+
+                if variant["size"].lower() == size.lower():
+
+                    selected_variant = variant
+
+                    break
+
+        if not selected_variant:
+
+            flash(
+                "Please select an available size.",
+                "error"
+            )
+
+            return redirect(
+                url_for(
+                    "product_page",
+                    product_id=product_id
+                )
+            )
+
+        if not selected_variant["available"]:
+
+            flash(
+                "This size is currently unavailable.",
+                "error"
+            )
+
+            return redirect(
+                url_for(
+                    "product_page",
+                    product_id=product_id
+                )
+            )
+
+        add_shopify_variant(
+            selected_variant["id"],
+            quantity
+        )
+
+        return redirect(
+            url_for("cart")
+        )
+
+    except Exception as error:
+
+        print(
+            "SHOPIFY ADD TO CART ERROR:",
+            str(error)
+        )
+
+        flash(
+            "Unable to add this item. Please try again.",
+            "error"
+        )
 
         return redirect(
             url_for(
@@ -579,157 +1284,150 @@ def add_to_cart(product_id):
             )
         )
 
-    quantity = request.args.get(
-        "quantity",
-        1,
-        type=int
-    )
 
-    if quantity < 1:
+# ==================================================
+# UPDATE CART QUANTITY
+# ==================================================
 
-        quantity = 1
+def update_cart_line(
+    line_id,
+    new_quantity
+):
 
-    cart_key = (
-        str(product_id)
-        + "_"
-        + size
-    )
+    cart_id = get_cart_id()
 
-    cart[cart_key] = (
-        cart.get(
-            cart_key,
-            0
+    if not cart_id:
+
+        return
+
+    if new_quantity <= 0:
+
+        data = shopify_request(
+            CART_REMOVE_MUTATION,
+            {
+                "cartId": cart_id,
+                "lineIds": [line_id]
+            }
         )
-        + quantity
-    )
 
-    session["cart"] = cart
-
-    return redirect(
-        url_for(
-            "cart"
+        payload = data.get(
+            "cartLinesRemove",
+            {}
         )
-    )
+
+    else:
+
+        data = shopify_request(
+            CART_UPDATE_MUTATION,
+            {
+                "cartId": cart_id,
+                "lines": [{
+                    "id": line_id,
+                    "quantity": min(
+                        int(new_quantity),
+                        20
+                    )
+                }]
+            }
+        )
+
+        payload = data.get(
+            "cartLinesUpdate",
+            {}
+        )
+
+    check_user_errors(payload)
+
+    if not payload.get("cart"):
+
+        clear_shopify_cart()
 
 
 # ==================================================
 # INCREASE
 # ==================================================
 
-@app.route(
-    "/increase/<int:product_id>"
-)
+@app.route("/increase/<int:product_id>")
 def increase(product_id):
 
-    cart = get_cart()
-
     size = request.args.get(
-        "size"
+        "size",
+        ""
     )
 
-    if not size:
+    line_id = request.args.get(
+        "line_id",
+        ""
+    )
 
-        return redirect(
-            url_for(
-                "cart"
+    try:
+
+        cart = get_shopify_cart()
+
+        for line in get_cart_lines(cart):
+
+            merchandise = line.get(
+                "merchandise",
+                {}
             )
-        )
 
-    cart_key = (
-        str(product_id)
-        + "_"
-        + size
-    )
-
-    if cart_key in cart:
-
-        cart[cart_key] += 1
-
-    session["cart"] = cart
-
-    return redirect(
-        url_for(
-            "cart"
-        )
-    )
-
-
-# ==================================================
-# DECREASE
-# ==================================================
-
-@app.route(
-    "/decrease/<int:product_id>"
-)
-def decrease(product_id):
-
-    cart = get_cart()
-
-    size = request.args.get(
-        "size"
-    )
-
-    if not size:
-
-        return redirect(
-            url_for(
-                "cart"
+            product = merchandise.get(
+                "product",
+                {}
             )
+
+            current_product_id = numeric_shopify_id(
+                product.get("id")
+            )
+
+            selected_size = ""
+
+            for option in merchandise.get(
+                "selectedOptions",
+                []
+            ):
+
+                if option.get("name", "").lower() in (
+                    "size",
+                    "sizes"
+                ):
+
+                    selected_size = option.get(
+                        "value",
+                        ""
+                    )
+
+            if line_id:
+
+                matches = line["id"] == line_id
+
+            else:
+
+                matches = (
+                    current_product_id == product_id
+                    and selected_size == size
+                )
+
+            if matches:
+
+                update_cart_line(
+                    line["id"],
+                    int(line["quantity"]) + 1
+                )
+
+                break
+
+    except Exception as error:
+
+        print(
+            "CART INCREASE ERROR:",
+            str(error)
         )
 
-    cart_key = (
-        str(product_id)
-        + "_"
-        + size
-    )
-
-    if cart_key in cart:
-
-        cart[cart_key] -= 1
-
-        if cart[cart_key] <= 0:
-
-            del cart[cart_key]
-
-    session["cart"] = cart
-
-    return redirect(
-        url_for(
-            "cart"
+        flash(
+            "Unable to update cart.",
+            "error"
         )
-    )
-# ==================================================
-# REMOVE FROM CART
-# ==================================================
-
-@app.route(
-    "/remove-from-cart/<int:product_id>"
-)
-def remove_from_cart(product_id):
-
-    cart = get_cart()
-
-    size = request.args.get(
-        "size"
-    )
-
-    if not size:
-
-        return redirect(
-            url_for("cart")
-        )
-
-    cart_key = (
-        str(product_id)
-        + "_"
-        + size
-    )
-
-    if cart_key in cart:
-
-        del cart[cart_key]
-
-    session["cart"] = cart
 
     return redirect(
         url_for("cart")
@@ -737,68 +1435,276 @@ def remove_from_cart(product_id):
 
 
 # ==================================================
-# CART
+# DECREASE
+# ==================================================
+
+@app.route("/decrease/<int:product_id>")
+def decrease(product_id):
+
+    size = request.args.get(
+        "size",
+        ""
+    )
+
+    line_id = request.args.get(
+        "line_id",
+        ""
+    )
+
+    try:
+
+        cart = get_shopify_cart()
+
+        for line in get_cart_lines(cart):
+
+            merchandise = line.get(
+                "merchandise",
+                {}
+            )
+
+            product = merchandise.get(
+                "product",
+                {}
+            )
+
+            current_product_id = numeric_shopify_id(
+                product.get("id")
+            )
+
+            selected_size = ""
+
+            for option in merchandise.get(
+                "selectedOptions",
+                []
+            ):
+
+                if option.get("name", "").lower() in (
+                    "size",
+                    "sizes"
+                ):
+
+                    selected_size = option.get(
+                        "value",
+                        ""
+                    )
+
+            if line_id:
+
+                matches = line["id"] == line_id
+
+            else:
+
+                matches = (
+                    current_product_id == product_id
+                    and selected_size == size
+                )
+
+            if matches:
+
+                update_cart_line(
+                    line["id"],
+                    int(line["quantity"]) - 1
+                )
+
+                break
+
+    except Exception as error:
+
+        print(
+            "CART DECREASE ERROR:",
+            str(error)
+        )
+
+        flash(
+            "Unable to update cart.",
+            "error"
+        )
+
+    return redirect(
+        url_for("cart")
+    )
+
+
+# ==================================================
+# UPDATE CART
+# ==================================================
+
+@app.route("/update-cart", methods=["POST"])
+def update_cart():
+
+    line_id = request.form.get(
+        "line_id",
+        ""
+    ).strip()
+
+    quantity = request.form.get(
+        "quantity",
+        type=int
+    )
+
+    if not line_id or quantity is None:
+        flash("Invalid cart update.", "error")
+        return redirect(url_for("cart"))
+
+    try:
+
+        cart = get_shopify_cart()
+
+        if not cart:
+            return redirect(url_for("cart"))
+
+        # Verify that this line belongs to the current cart
+        valid_line = any(
+            line.get("id") == line_id
+            for line in get_cart_lines(cart)
+        )
+
+        if not valid_line:
+            flash("Cart item not found.", "error")
+            return redirect(url_for("cart"))
+
+        quantity = max(1, min(quantity, 20))
+
+        update_cart_line(
+            line_id,
+            quantity
+        )
+
+        flash("Cart updated.", "success")
+
+    except Exception as error:
+
+        print("CART UPDATE ERROR:", str(error))
+
+        flash(
+            "Unable to update your cart.",
+            "error"
+        )
+
+    return redirect(url_for("cart"))
+
+
+# ==================================================
+# REMOVE FROM CART
+# ==================================================
+
+@app.route("/remove-from-cart", methods=["POST"])
+def remove_from_cart():
+
+    line_id = request.form.get(
+        "line_id",
+        ""
+    ).strip()
+
+    if not line_id:
+        flash("Invalid cart item.", "error")
+        return redirect(url_for("cart"))
+
+    try:
+
+        cart = get_shopify_cart()
+
+        if not cart:
+            return redirect(url_for("cart"))
+
+        valid_line = any(
+            line.get("id") == line_id
+            for line in get_cart_lines(cart)
+        )
+
+        if not valid_line:
+            flash("Cart item not found.", "error")
+            return redirect(url_for("cart"))
+
+        update_cart_line(
+            line_id,
+            0
+        )
+
+        cart = get_shopify_cart()
+
+        if not cart or cart.get("totalQuantity", 0) == 0:
+            clear_shopify_cart()
+
+        flash("Item removed from your cart.", "success")
+
+    except Exception as error:
+
+        print("CART REMOVE ERROR:", str(error))
+
+        flash(
+            "Unable to remove this item.",
+            "error"
+        )
+
+    return redirect(url_for("cart"))
+# ==================================================
+# CART PAGE
 # ==================================================
 
 @app.route("/cart")
 def cart():
 
-    cart = get_cart()
+    try:
 
-    cart_products = []
+        shopify_cart = get_shopify_cart()
 
-    total = 0
+        cart_products = build_cart_products(
+            shopify_cart
+        )
 
-    for cart_key, quantity in cart.items():
+        total = 0
+        currency_code = "EGP"
 
-        try:
+        if shopify_cart:
 
-            product_id, size = cart_key.split(
-                "_",
-                1
+            total_amount = shopify_cart.get(
+                "cost",
+                {}
+            ).get(
+                "totalAmount",
+                {}
             )
 
-            product_id = int(product_id)
+            total = float(
+                total_amount.get(
+                    "amount",
+                    0
+                )
+            )
 
-            quantity = int(quantity)
+            currency_code = total_amount.get(
+                "currencyCode",
+                "EGP"
+            )
 
-        except (
-            ValueError,
-            TypeError
-        ):
-
-            continue
-
-        product = get_product(
-            product_id
+        return render_template(
+            "cart.html",
+            cart_products=cart_products,
+            total=total,
+            currency_code=currency_code,
+            shopify_cart=shopify_cart
         )
 
-        if product is None:
+    except Exception as error:
 
-            continue
-
-        item = product.copy()
-
-        item["quantity"] = quantity
-
-        item["size"] = size
-
-        item["subtotal"] = (
-            product["price"]
-            * quantity
+        print(
+            "SHOPIFY CART ERROR:",
+            str(error)
         )
 
-        cart_products.append(item)
+        flash(
+            "Unable to load your shopping bag.",
+            "error"
+        )
 
-        total += item["subtotal"]
-
-    return render_template(
-        "cart.html",
-        cart_products=cart_products,
-        total=total
-    )
-
-
+        return render_template(
+            "cart.html",
+            cart_products=[],
+            total=0,
+            currency_code="EGP",
+            shopify_cart=None
+        )
 # ==================================================
 # CHECKOUT
 # ==================================================
@@ -809,249 +1715,50 @@ def cart():
 )
 def checkout():
 
-    cart = get_cart()
+    try:
 
-    if not cart:
+        cart = get_shopify_cart()
 
-        return redirect(
-            url_for("cart")
-        )
-
-    # CREATE ORDER
-
-    if request.method == "POST":
-
-        name = (
-            request.form.get("name")
-            or request.form.get("full_name")
-            or request.form.get("fullName")
-            or ""
-        ).strip()
-
-        phone = (
-            request.form.get("phone")
-            or request.form.get("phone_number")
-            or request.form.get("phoneNumber")
-            or ""
-        ).strip()
-
-        address = (
-            request.form.get("address")
-            or ""
-        ).strip()
-
-        payment = (
-            request.form.get("payment")
-            or "Cash on Delivery"
-        ).strip()
-
-        if (
-            not name
-            or not phone
-            or not address
-        ):
+        if not cart or not cart.get("totalQuantity"):
 
             flash(
-                "Please fill in all checkout fields.",
+                "Your shopping bag is empty.",
                 "error"
             )
-
-            return redirect(
-                url_for("checkout")
-            )
-
-        # ORDER ITEMS
-
-        order_items = []
-
-        total = 0
-
-        for cart_key, quantity in cart.items():
-
-            try:
-
-                product_id, size = cart_key.split(
-                    "_",
-                    1
-                )
-
-                product_id = int(product_id)
-
-                quantity = int(quantity)
-
-            except (
-                ValueError,
-                TypeError
-            ):
-
-                continue
-
-            product = get_product(
-                product_id
-            )
-
-            if product is None:
-
-                continue
-
-            subtotal = (
-                product["price"]
-                * quantity
-            )
-
-            order_items.append({
-
-                "product_id": product_id,
-
-                "product_name": product["name"],
-
-                "size": size,
-
-                "quantity": quantity,
-
-                "price": product["price"],
-
-                "subtotal": subtotal
-
-            })
-
-            total += subtotal
-
-        if not order_items:
 
             return redirect(
                 url_for("cart")
             )
 
-        # SAVE ORDER
-
-        db = get_db()
-
-        cursor = db.execute(
-            """
-            INSERT INTO orders
-            (
-                customer_name,
-                phone,
-                address,
-                payment,
-                total,
-                status
-            )
-            VALUES (?, ?, ?, ?, ?, ?)
-            """,
-            (
-                name,
-                phone,
-                address,
-                payment,
-                total,
-                "New"
-            )
+        checkout_url = cart.get(
+            "checkoutUrl"
         )
 
-        order_id = cursor.lastrowid
+        if not checkout_url:
 
-        # SAVE ORDER ITEMS
-
-        for item in order_items:
-
-            db.execute(
-                """
-                INSERT INTO order_items
-                (
-                    order_id,
-                    product_id,
-                    product_name,
-                    size,
-                    quantity,
-                    price,
-                    subtotal
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    order_id,
-                    item["product_id"],
-                    item["product_name"],
-                    item["size"],
-                    item["quantity"],
-                    item["price"],
-                    item["subtotal"]
-                )
+            raise RuntimeError(
+                "Shopify checkout URL is missing."
             )
 
-        db.commit()
+        return redirect(
+            checkout_url
+        )
 
-        db.close()
-
-        # CLEAR CART
-
-        session["cart"] = {}
+    except Exception as error:
 
         print(
-            "NEW ORDER:",
-            order_id
+            "SHOPIFY CHECKOUT ERROR:",
+            str(error)
         )
 
-        return render_template(
-            "success.html"
+        flash(
+            "Unable to open checkout. Please try again.",
+            "error"
         )
 
-    # CHECKOUT PAGE
-
-    cart_products = []
-
-    total = 0
-
-    for cart_key, quantity in cart.items():
-
-        try:
-
-            product_id, size = cart_key.split(
-                "_",
-                1
-            )
-
-            product_id = int(product_id)
-
-            quantity = int(quantity)
-
-        except (
-            ValueError,
-            TypeError
-        ):
-
-            continue
-
-        product = get_product(
-            product_id
+        return redirect(
+            url_for("cart")
         )
-
-        if product is None:
-
-            continue
-
-        item = product.copy()
-
-        item["quantity"] = quantity
-
-        item["size"] = size
-
-        item["subtotal"] = (
-            product["price"]
-            * quantity
-        )
-
-        cart_products.append(item)
-
-        total += item["subtotal"]
-
-    return render_template(
-        "checkout.html",
-        cart_products=cart_products,
-        total=total
-    )
 
 
 # ==================================================
@@ -1079,33 +1786,35 @@ def contact():
     if request.method == "POST":
 
         name = request.form.get(
-            "name"
-        )
+            "name",
+            ""
+        ).strip()
 
         email = request.form.get(
-            "email"
-        )
+            "email",
+            ""
+        ).strip()
 
         message = request.form.get(
-            "message"
-        )
+            "message",
+            ""
+        ).strip()
+
+        if not name or not email or not message:
+
+            flash(
+                "Please complete all fields.",
+                "error"
+            )
+
+            return redirect(
+                url_for("contact")
+            )
 
         print(
-            "NEW CONTACT MESSAGE"
-        )
-
-        print(
-            "Name:",
-            name
-        )
-
-        print(
-            "Email:",
-            email
-        )
-
-        print(
-            "Message:",
+            "NEW ROXX CONTACT MESSAGE:",
+            name,
+            email,
             message
         )
 
@@ -1117,9 +1826,22 @@ def contact():
     return render_template(
         "contact.html"
     )
+
+
 # ==================================================
-# ADMIN LOGIN
+# ADMIN CONFIGURATION
 # ==================================================
+
+ADMIN_USERNAME = os.environ.get(
+    "ROXX_ADMIN_USERNAME",
+    ""
+).strip()
+
+ADMIN_PASSWORD = os.environ.get(
+    "ROXX_ADMIN_PASSWORD",
+    ""
+)
+
 
 def admin_logged_in():
 
@@ -1128,6 +1850,10 @@ def admin_logged_in():
         False
     )
 
+
+# ==================================================
+# ADMIN LOGIN
+# ==================================================
 
 @app.route(
     "/admin/login",
@@ -1153,10 +1879,23 @@ def admin_login():
             ""
         )
 
+        if not ADMIN_USERNAME or not ADMIN_PASSWORD:
+
+            flash(
+                "Admin login is not configured.",
+                "error"
+            )
+
+            return redirect(
+                url_for("admin_login")
+            )
+
         if (
             username == ADMIN_USERNAME
             and password == ADMIN_PASSWORD
         ):
+
+            session.clear()
 
             session["admin_logged_in"] = True
 
@@ -1187,58 +1926,40 @@ def admin_dashboard():
             url_for("admin_login")
         )
 
-    # PRODUCTS
-
-    products = get_all_products()
-
-    # ORDERS
-
-    db = get_db()
-
-    orders_rows = db.execute(
-        """
-        SELECT *
-        FROM orders
-        ORDER BY id DESC
-        """
-    ).fetchall()
-
-    orders = []
-
-    for order_row in orders_rows:
-
-        order = dict(order_row)
-
-        items_rows = db.execute(
-            """
-            SELECT *
-            FROM order_items
-            WHERE order_id = ?
-            ORDER BY id ASC
-            """,
-            (
-                order["id"],
-            )
-        ).fetchall()
-
-        order["items"] = [
-            dict(item)
-            for item in items_rows
-        ]
-
-        orders.append(order)
-
-    db.close()
+    shopify_admin_url = (
+        "https://admin.shopify.com/store/"
+        + SHOPIFY_STORE_DOMAIN.replace(
+            ".myshopify.com",
+            ""
+        )
+    )
 
     return render_template(
-    "admin_dashboard.html",
-    products=products,
-    orders=orders
-)
+        "admin_dashboard.html",
+
+        products=[],
+
+        orders=[],
+
+        shopify_admin_url=shopify_admin_url,
+
+        shopify_products_url=(
+            shopify_admin_url + "/products"
+        ),
+
+        shopify_orders_url=(
+            shopify_admin_url + "/orders"
+        ),
+
+        shopify_analytics_url=(
+            shopify_admin_url + "/analytics"
+        )
+    )
 
 
 # ==================================================
-# ADMIN ADD PRODUCT
+# OLD ADMIN PRODUCT ROUTES
+# Redirect to Shopify Admin
 # ==================================================
 
 @app.route(
@@ -1248,332 +1969,20 @@ def admin_dashboard():
 def admin_add_product():
 
     if not admin_logged_in():
-        return redirect(url_for("admin_login"))
-
-    # BASIC INFORMATION
-
-    name = request.form.get("name", "").strip()
-    category = request.form.get("category", "").strip()
-    price_text = request.form.get("price", "").strip()
-
-    # PRODUCT DETAILS
-
-    description = request.form.get("description", "").strip()
-    material = request.form.get("material", "").strip()
-    fabric_weight = request.form.get("fabric_weight", "").strip()
-    fit = request.form.get("fit", "").strip()
-    care = request.form.get("care", "").strip()
-    shipping_returns = request.form.get("shipping_returns", "").strip()
-
-    # IMAGES
-
-    image = request.files.get("image")
-    back_image_file = request.files.get("back_image")
-
-    # VALIDATION
-
-    if not name or not category or not price_text:
-        flash("Please fill in all product fields.", "error")
-        return redirect(url_for("admin_dashboard"))
-
-    try:
-        price = float(price_text)
-
-        if price < 0:
-            raise ValueError
-
-    except ValueError:
-        flash("Please enter a valid price.", "error")
-        return redirect(url_for("admin_dashboard"))
-
-    if image is None or image.filename == "":
-        flash("Please choose a front product image.", "error")
-        return redirect(url_for("admin_dashboard"))
-
-    if not allowed_file(image.filename):
-        flash("Invalid front image format.", "error")
-        return redirect(url_for("admin_dashboard"))
-
-    if back_image_file and back_image_file.filename:
-        if not allowed_file(back_image_file.filename):
-            flash("Invalid back image format.", "error")
-            return redirect(url_for("admin_dashboard"))
-
-    # SAVE FRONT IMAGE
-
-    original_name = secure_filename(image.filename)
-    extension = original_name.rsplit(".", 1)[1].lower()
-
-    unique_name = uuid.uuid4().hex + "." + extension
-
-    save_path = os.path.join(UPLOAD_FOLDER, unique_name)
-    image.save(save_path)
-
-    image_path = "uploads/" + unique_name
-
-    # SAVE BACK IMAGE
-
-    back_image_path = ""
-
-    if back_image_file and back_image_file.filename:
-
-        back_original_name = secure_filename(back_image_file.filename)
-
-        back_extension = back_original_name.rsplit(".", 1)[1].lower()
-
-        back_unique_name = uuid.uuid4().hex + "." + back_extension
-
-        back_save_path = os.path.join(
-            UPLOAD_FOLDER,
-            back_unique_name
-        )
-
-        back_image_file.save(back_save_path)
-
-        back_image_path = "uploads/" + back_unique_name
-
-    # DATABASE
-
-    db = get_db()
-
-    db.execute(
-        """
-        INSERT INTO products
-        (
-            name,
-            price,
-            category,
-            image,
-            description,
-            material,
-            fabric_weight,
-            fit,
-            care,
-            shipping_returns,
-            back_image
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
-            name,
-            price,
-            category,
-            image_path,
-            description,
-            material,
-            fabric_weight,
-            fit,
-            care,
-            shipping_returns,
-            back_image_path
-        )
-    )
-
-    db.commit()
-    db.close()
-
-    flash("Product added successfully.", "success")
-
-    return redirect(url_for("admin_dashboard"))
-    # BASIC PRODUCT INFORMATION
-
-    name = request.form.get(
-        "name",
-        ""
-    ).strip()
-
-    category = request.form.get(
-        "category",
-        ""
-    ).strip()
-
-    price_text = request.form.get(
-        "price",
-        ""
-    ).strip()
-
-    # ADDITIONAL PRODUCT DETAILS
-
-    description = request.form.get(
-        "description",
-        ""
-    ).strip()
-
-    material = request.form.get(
-        "material",
-        ""
-    ).strip()
-
-    fabric_weight = request.form.get(
-        "fabric_weight",
-        ""
-    ).strip()
-
-    fit = request.form.get(
-        "fit",
-        ""
-    ).strip()
-
-    care = request.form.get(
-        "care",
-        ""
-    ).strip()
-
-    shipping_returns = request.form.get(
-        "shipping_returns",
-        ""
-    ).strip()
-
-    # PRODUCT IMAGE
-
-    image = request.files.get(
-        "image"
-    )
-
-    if (
-        not name
-        or not category
-        or not price_text
-    ):
-
-        flash(
-            "Please fill in all product fields.",
-            "error"
-        )
 
         return redirect(
-            url_for("admin_dashboard")
+            url_for("admin_login")
         )
-
-    # VALIDATE PRICE
-
-    try:
-
-        price = float(price_text)
-
-        if price < 0:
-
-            raise ValueError
-
-    except ValueError:
-
-        flash(
-            "Please enter a valid price.",
-            "error"
-        )
-
-        return redirect(
-            url_for("admin_dashboard")
-        )
-
-    # VALIDATE IMAGE
-
-    if (
-        image is None
-        or image.filename == ""
-    ):
-
-        flash(
-            "Please choose a product image.",
-            "error"
-        )
-
-        return redirect(
-            url_for("admin_dashboard")
-        )
-
-    if not allowed_file(image.filename):
-
-        flash(
-            "Only JPG, JPEG, PNG, WEBP and GIF images are allowed.",
-            "error"
-        )
-
-        return redirect(
-            url_for("admin_dashboard")
-        )
-
-    # SAVE IMAGE
-
-    original_name = secure_filename(
-        image.filename
-    )
-
-    extension = original_name.rsplit(
-        ".",
-        1
-    )[1].lower()
-
-    unique_name = (
-        uuid.uuid4().hex
-        + "."
-        + extension
-    )
-
-    save_path = os.path.join(
-        UPLOAD_FOLDER,
-        unique_name
-    )
-
-    image.save(save_path)
-
-    image_path = (
-        "uploads/"
-        + unique_name
-    )
-
-    # SAVE PRODUCT TO DATABASE
-
-    db = get_db()
-
-    db.execute(
-        """
-        INSERT INTO products
-        (
-            name,
-            price,
-            category,
-            image,
-            description,
-            material,
-            fabric_weight,
-            fit,
-            care,
-            shipping_returns
-        )
-
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-
-        (
-            name,
-            price,
-            category,
-            image_path,
-            description,
-            material,
-            fabric_weight,
-            fit,
-            care,
-            shipping_returns
-        )
-    )
-
-    db.commit()
-
-    db.close()
-
-    flash(
-        "Product added successfully.",
-        "success"
-    )
 
     return redirect(
-        url_for("admin_dashboard")
+        "https://admin.shopify.com/store/"
+        + SHOPIFY_STORE_DOMAIN.replace(
+            ".myshopify.com",
+            ""
+        )
+        + "/products"
     )
-# ==================================================
-# ADMIN DELETE PRODUCT
-# ==================================================
+
 
 @app.route(
     "/admin/delete-product/<int:product_id>",
@@ -1587,65 +1996,15 @@ def admin_delete_product(product_id):
             url_for("admin_login")
         )
 
-    product = get_product(product_id)
-
-    if product is None:
-
-        flash(
-            "Product not found.",
-            "error"
-        )
-
-        return redirect(
-            url_for("admin_dashboard")
-        )
-
-    db = get_db()
-
-    db.execute(
-        """
-        DELETE FROM products
-        WHERE id = ?
-        """,
-        (
-            product_id,
-        )
-    )
-
-    db.commit()
-
-    db.close()
-
-    if product["image"].startswith("uploads/"):
-
-        image_path = os.path.join(
-            UPLOAD_FOLDER,
-            os.path.basename(product["image"])
-        )
-
-        if os.path.exists(image_path):
-
-            try:
-
-                os.remove(image_path)
-
-            except OSError:
-
-                pass
-
-    flash(
-        "Product deleted successfully.",
-        "success"
-    )
-
     return redirect(
-        url_for("admin_dashboard")
+        "https://admin.shopify.com/store/"
+        + SHOPIFY_STORE_DOMAIN.replace(
+            ".myshopify.com",
+            ""
+        )
+        + "/products"
     )
 
-
-# ==================================================
-# ADMIN UPDATE ORDER
-# ==================================================
 
 @app.route(
     "/admin/update-order/<int:order_id>",
@@ -1659,71 +2018,23 @@ def admin_update_order(order_id):
             url_for("admin_login")
         )
 
-    status = request.form.get(
-        "status",
-        "New"
-    ).strip()
-
-    allowed_statuses = {
-        "New",
-        "Processing",
-        "Shipped",
-        "Completed",
-        "Cancelled"
-    }
-
-    if status not in allowed_statuses:
-
-        flash(
-            "Invalid order status.",
-            "error"
-        )
-
-        return redirect(
-            url_for("admin_dashboard")
-        )
-
-    db = get_db()
-
-    db.execute(
-        """
-        UPDATE orders
-        SET status = ?
-        WHERE id = ?
-        """,
-        (
-            status,
-            order_id
-        )
-    )
-
-    db.commit()
-
-    db.close()
-
-    flash(
-        "Order status updated.",
-        "success"
-    )
-
     return redirect(
-        url_for("admin_dashboard")
+        "https://admin.shopify.com/store/"
+        + SHOPIFY_STORE_DOMAIN.replace(
+            ".myshopify.com",
+            ""
+        )
+        + "/orders"
     )
 
 
 # ==================================================
 # ADMIN LOGOUT
 # ==================================================
-
-@app.route(
-    "/admin/logout"
-)
+@app.route("/admin/logout")
 def admin_logout():
 
-    session.pop(
-        "admin_logged_in",
-        None
-    )
+    session.pop("admin_logged_in", None)
 
     return redirect(
         url_for("admin_login")
@@ -1731,11 +2042,53 @@ def admin_logout():
 
 
 # ==================================================
-# RUN LOCAL
+# SHOPIFY CONNECTION TEST
+# ==================================================
+
+@app.route("/shopify-test")
+def shopify_test():
+
+    if not admin_logged_in():
+
+        return redirect(
+            url_for("admin_login")
+        )
+
+    try:
+
+        products = get_all_products()
+
+        return {
+
+            "connection": "successful",
+
+            "products_found": len(products),
+
+            "products": [
+                product["name"]
+                for product in products
+            ]
+
+        }
+
+    except Exception as error:
+
+        return {
+
+            "connection": "failed",
+
+            "error": str(error)
+
+        }, 500
+
+
+# ==================================================
+# LOCAL RUN
 # ==================================================
 
 if __name__ == "__main__":
 
-    init_db()
-
-    app.run(debug=True)
+    app.run(
+        debug=True,
+        port=5000
+    )

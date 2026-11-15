@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#000000">
-    <meta name="description" content="{{ product.name }} — ROXX original streetwear.">
+
+    <meta name="description"
+          content="{{ product.name }} — ROXX original streetwear.">
 
     <title>{{ product.name }} | ROXX</title>
 
@@ -15,13 +17,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@400;500;600;700;800&display=swap"
           rel="stylesheet">
 
-       <link rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}?v=2">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}?v=2">
 </head>
+
 
 <body class="roxx-product-page">
 
+
     <!-- HEADER -->
+
     <header class="roxx-header">
 
         <div class="roxx-header-left">
@@ -42,7 +47,8 @@
 
         <div class="roxx-header-center">
 
-            <a href="{{ url_for('home') }}" class="roxx-logo roxx-3d-logo">
+            <a href="{{ url_for('home') }}"
+               class="roxx-logo roxx-3d-logo">
 
                 <iframe
                     src="{{ url_for('static', filename='roxx-3d-logo.html') }}"
@@ -62,21 +68,34 @@
                 type="button"
                 aria-label="Search"
             >
+
                 <svg viewBox="0 0 24 24">
+
                     <circle cx="11" cy="11" r="7"></circle>
                     <path d="m16 16 5 5"></path>
+
                 </svg>
+
             </button>
+
 
             <a
                 href="{{ url_for('cart') }}"
                 class="roxx-cart-button"
                 aria-label="Shopping bag"
             >
+
                 <svg viewBox="0 0 24 24">
+
                     <path d="M5 8h14l1 13H4L5 8Z"></path>
                     <path d="M9 8V6a3 3 0 0 1 6 0v2"></path>
+
                 </svg>
+
+                {% if cart_count %}
+                    <span class="cart-count">{{ cart_count }}</span>
+                {% endif %}
+
             </a>
 
         </div>
@@ -84,7 +103,9 @@
     </header>
 
 
+
     <!-- MENU -->
+
     <div class="roxx-menu-panel" id="menuPanel">
 
         <a href="{{ url_for('home') }}">HOME</a>
@@ -98,7 +119,9 @@
     </div>
 
 
+
     <!-- BREADCRUMB -->
+
     <div class="roxx-product-breadcrumb">
 
         <a href="{{ url_for('home') }}">HOME</a>
@@ -114,59 +137,79 @@
     </div>
 
 
+
     <main>
 
+
         <!-- PRODUCT -->
+
         <section class="roxx-product-layout">
 
 
-        <!-- ROXX PRODUCT GALLERY -->
+            <!-- PRODUCT GALLERY -->
 
-<div
-    class="roxx-product-visual roxx-product-gallery"
-    data-front-src="{{ url_for('static', filename=product.image if product.image.startswith('uploads/') else 'images/' + product.image) }}"
-    data-back-src="{% if product.back_image %}{{ url_for('static', filename=product.back_image if product.back_image.startswith('uploads/') else 'images/' + product.back_image) }}{% endif %}"
->
+            <div
+                class="roxx-product-visual roxx-product-gallery"
 
-    <!-- MAIN IMAGE -->
+                data-front-src="{{ product.image or '' }}"
 
-    <div class="roxx-product-main-image">
-
-        <img
-            id="mainProductImage"
-            src="{{ url_for('static', filename=product.image if product.image.startswith('uploads/') else 'images/' + product.image) }}"
-            alt="{{ product.name }} Front"
-            fetchpriority="high"
-        >
-
-    </div>
+                data-back-src="{{ product.back_image or '' }}"
+            >
 
 
-    <!-- SMALL BACK THUMBNAIL -->
+                <!-- MAIN IMAGE -->
 
-   {% if true %}
+                <div class="roxx-product-main-image">
 
-    <button
-        type="button"
-        class="roxx-back-thumbnail"
-        id="backThumbnail"
-        aria-label="Show back image"
-    >
+                    {% if product.image %}
 
-        <img
-            id="backThumbnailImage"
-            src="{{ url_for('static', filename=product.back_image if product.back_image.startswith('uploads/') else 'images/' + product.back_image) }}"
-            alt="{{ product.name }} Back"
-        >
+                    <img
+                        id="mainProductImage"
+                        src="{{ product.image }}"
+                        alt="{{ product.name }} Front"
+                        fetchpriority="high"
+                    >
 
-    </button>
+                    {% else %}
 
-    {% endif %}
+                    <div class="roxx-image-placeholder">
+                        ROXX
+                    </div>
 
-</div>
+                    {% endif %}
 
-    
+                </div>
+
+
+
+                <!-- BACK THUMBNAIL -->
+
+                {% if product.back_image %}
+
+                <button
+                    type="button"
+                    class="roxx-back-thumbnail"
+                    id="backThumbnail"
+                    aria-label="Show back image"
+                >
+
+                    <img
+                        id="backThumbnailImage"
+                        src="{{ product.back_image }}"
+                        alt="{{ product.name }} Back"
+                    >
+
+                </button>
+
+                {% endif %}
+
+
+            </div>
+
+
+
             <!-- PRODUCT INFORMATION -->
+
             <div class="roxx-product-info-panel">
 
 
@@ -179,35 +222,43 @@
                 </div>
 
 
+
                 <span class="roxx-product-number">
+
                     PRODUCT / 001
+
                 </span>
+
 
 
                 <div class="roxx-product-heading">
 
-<h1>{{ product.name|upper|replace(' — ', ' ') }}</h1>
-    <div class="roxx-product-price">
+                    <h1>
+                        {{ product.name|upper|replace(' — ', ' ') }}
+                    </h1>
 
-        EGP {{ '%.0f'|format(product.price) }}
 
-        
+                    <div class="roxx-product-price">
 
-    </div>
+                        EGP {{ '%.0f'|format(product.price) }}
 
-</div>
+                    </div>
 
-              
+                </div>
+
+
 
                 <!-- ADD TO CART -->
+
                 <form
                     id="addToCartForm"
                     action="{{ url_for('add_to_cart', product_id=product.id) }}"
-                    method="get"
+                    method="POST"
                 >
 
 
                     <!-- SIZE -->
+
                     <div class="selector-heading">
 
                         <span>SELECT SIZE</span>
@@ -217,11 +268,16 @@
                             class="size-guide-trigger"
                             id="sizeGuideOpen"
                         >
+
                             SIZE GUIDE +
+
                         </button>
 
                     </div>
 
+
+
+                    <!-- SHOPIFY VARIANTS -->
 
                     <div
                         class="roxx-size-options"
@@ -229,21 +285,42 @@
                         aria-label="Choose a size"
                     >
 
-                        {% for size in ['S', 'M', 'L', 'XL'] %}
+                        {% for variant in product.variants %}
+
+                        {% set display_size = variant.size or variant.title %}
 
                         <button
                             type="button"
+
                             class="roxx-size-btn"
-                            data-size="{{ size }}"
+
+                            data-size="{{ display_size }}"
+
+                            data-variant-id="{{ variant.id }}"
+
                             aria-pressed="false"
+
+                            {% if not variant.available %}
+                                disabled
+                                aria-disabled="true"
+                            {% endif %}
                         >
-                            {{ size }}
+
+                            {{ display_size|upper }}
+
+                            {% if not variant.available %}
+                                <span class="size-unavailable">SOLD OUT</span>
+                            {% endif %}
+
                         </button>
 
                         {% endfor %}
 
                     </div>
 
+
+
+                    <!-- SELECTED SIZE -->
 
                     <input
                         type="hidden"
@@ -252,7 +329,18 @@
                     >
 
 
+                    <!-- SHOPIFY VARIANT ID -->
+
+                    <input
+                        type="hidden"
+                        name="variant_id"
+                        id="selectedVariant"
+                    >
+
+
+
                     <!-- QUANTITY -->
+
                     <div class="quantity-row">
 
                         <span>QUANTITY</span>
@@ -268,7 +356,9 @@
                                 −
                             </button>
 
+
                             <output id="quantityValue">1</output>
+
 
                             <button
                                 type="button"
@@ -283,6 +373,7 @@
                     </div>
 
 
+
                     <input
                         type="hidden"
                         name="quantity"
@@ -291,76 +382,132 @@
                     >
 
 
+
                     <!-- ADD TO BAG -->
-                    <button class="roxx-add-button" type="submit">
-    <span>ADD TO BAG</span>
-</button>
+
+                    <button
+                        class="roxx-add-button"
+                        type="submit"
+                        {% if not product.available %}
+                            disabled
+                        {% endif %}
+                    >
+
+                        <span>
+                            {% if product.available %}
+                                ADD TO BAG
+                            {% else %}
+                                SOLD OUT
+                            {% endif %}
+                        </span>
+
+                    </button>
+
+
+                </form>
+
+
 
                 <!-- PRODUCT ACCORDIONS -->
 
-<div class="roxx-product-accordions">
-
-    <!-- SHIPPING -->
-    <details class="roxx-accordion">
-
-        <summary>
-            <span>SHIPPING INFORMATION</span>
-            <b></b>
-        </summary>
-
-        <div class="roxx-accordion-content">
-            <p>
-                Delivery within 3–5 business days.
-            </p>
-        </div>
-
-    </details>
+                <div class="roxx-product-accordions">
 
 
-    <!-- RETURNS -->
-    <details class="roxx-accordion">
+                    <!-- SHIPPING -->
 
-        <summary>
-            <span>RETURNS & EXCHANGES</span>
-            <b></b>
-        </summary>
+                    <details class="roxx-accordion">
 
-        <div class="roxx-accordion-content">
-            <p>
-                Returns are accepted within 7 days of delivery.
-            </p>
-        </div>
+                        <summary>
 
-    </details>
+                            <span>SHIPPING INFORMATION</span>
+
+                            <b></b>
+
+                        </summary>
 
 
-    <!-- FULL DESCRIPTION -->
-    <details class="roxx-accordion">
+                        <div class="roxx-accordion-content">
 
-        <summary>
-            <span>FULL DESCRIPTION</span>
-            <b></b>
-        </summary>
+                            <p>
+                                Delivery within 3–5 business days.
+                            </p>
 
-        <div class="roxx-accordion-content">
+                        </div>
 
-            <p>
-                Meet the ROXXWORLD Cheetah Hoodie, where clean streetwear meets a wild side. The chest carries our signature arched ROXXWORLD lettering, filled with a full cheetah print, while the hood opens up to a matching cheetah lining that shows every time you pull it up. Inside the collar, a ROXXWORLD label finishes the look.
-            </p>
+                    </details>
 
-            <p>
-                Cut in a relaxed, boxy fit with a front kangaroo pocket and ribbed cuffs and hem, it layers easily and looks just as good on its own. Wear it as a set with the matching ROXXWORLD sweatpants, which feature the same cheetah waistband and a small arched logo on the thigh.
-            </p>
 
-        </div>
 
-    </details>
+                    <!-- RETURNS -->
 
-</div>
+                    <details class="roxx-accordion">
+
+                        <summary>
+
+                            <span>RETURNS & EXCHANGES</span>
+
+                            <b></b>
+
+                        </summary>
+
+
+                        <div class="roxx-accordion-content">
+
+                            <p>
+                                Returns are accepted within 7 days of delivery.
+                            </p>
+
+                        </div>
+
+                    </details>
+
+
+
+                    <!-- DESCRIPTION -->
+
+                    <details class="roxx-accordion">
+
+                        <summary>
+
+                            <span>FULL DESCRIPTION</span>
+
+                            <b></b>
+
+                        </summary>
+
+
+                        <div class="roxx-accordion-content">
+
+                            {% if product.description %}
+
+                                <p>
+                                    {{ product.description }}
+                                </p>
+
+                            {% else %}
+
+                                <p>
+                                    Discover the latest ROXX original streetwear.
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </details>
+
+
+                </div>
+
+
+            </div>
+
+        </section>
 
 
 
         <!-- RELATED PRODUCTS -->
+
         {% if related_products %}
 
         <section class="roxx-related">
@@ -371,7 +518,9 @@
                 <p>ROXX / FUTURE LAB</p>
 
                 <h2>
+
                     YOU MAY ALSO LIKE<span>.</span>
+
                 </h2>
 
             </div>
@@ -387,32 +536,47 @@
                     href="{{ url_for('product_page', product_id=item.id) }}"
                 >
 
+
                     <div class="roxx-related-image">
 
+                        {% if item.image %}
+
                         <img
-                            src="{{ url_for('static', filename='images/' + item.image) }}"
+                            src="{{ item.image }}"
                             alt="{{ item.name }}"
                             loading="lazy"
                         >
+
+                        {% endif %}
 
                         <span>VIEW PRODUCT ↗</span>
 
                     </div>
 
 
+
                     <div class="roxx-related-meta">
 
                         <small>
+
                             PRODUCT {{ '%03d'|format(loop.index) }}
+
                         </small>
 
-                        <strong>{{ item.name|upper }}</strong>
+
+                        <strong>
+                            {{ item.name|upper }}
+                        </strong>
+
 
                         <b>
+
                             EGP {{ '%.0f'|format(item.price) }}
+
                         </b>
 
                     </div>
+
 
                 </a>
 
@@ -428,65 +592,87 @@
 
     </main>
 
-<!-- ROXX FULLSCREEN IMAGE ZOOM -->
 
-<div class="roxx-zoom-overlay" id="roxxZoomOverlay">
 
-    <button
-        class="roxx-zoom-close"
-        id="roxxZoomClose"
-        type="button"
-        aria-label="Close image"
-    >
-        &times;
-    </button>
+    <!-- FULLSCREEN IMAGE ZOOM -->
 
-    <div class="roxx-zoom-scroll">
+    <div class="roxx-zoom-overlay" id="roxxZoomOverlay">
 
-        <!-- FRONT -->
 
-        <div class="roxx-zoom-item">
+        <button
+            class="roxx-zoom-close"
+            id="roxxZoomClose"
+            type="button"
+            aria-label="Close image"
+        >
 
-            <img
-                id="roxxZoomFront"
-                src=""
-                alt="ROXX Product Front"
+            &times;
+
+        </button>
+
+
+
+        <div class="roxx-zoom-scroll">
+
+
+            <!-- FRONT -->
+
+            <div class="roxx-zoom-item">
+
+                <img
+                    id="roxxZoomFront"
+                    src=""
+                    alt="ROXX Product Front"
+                >
+
+                <span>FRONT / 001</span>
+
+            </div>
+
+
+
+            <!-- BACK -->
+
+            <div
+                class="roxx-zoom-item"
+                id="roxxZoomBackContainer"
             >
 
-            <span>FRONT / 001</span>
+                <img
+                    id="roxxZoomBack"
+                    src=""
+                    alt="ROXX Product Back"
+                >
 
-        </div>
+                <span>BACK / 002</span>
 
+            </div>
 
-        <!-- BACK -->
-
-        <div class="roxx-zoom-item" id="roxxZoomBackContainer">
-
-            <img
-                id="roxxZoomBack"
-                src=""
-                alt="ROXX Product Back"
-            >
-
-            <span>BACK / 002</span>
 
         </div>
 
     </div>
 
-</div>
+
 
     <!-- FOOTER -->
+
     <footer class="roxx-product-footer">
 
         <a href="{{ url_for('home') }}" class="footer-logo">
+
             ROXX
+
         </a>
+
 
         <p>WEAR YOUR ATTITUDE.</p>
 
+
         <small>
+
             © 2026 ROXX. ALL RIGHTS RESERVED.
+
         </small>
 
     </footer>
@@ -494,146 +680,174 @@
 
 
     <!-- SIZE GUIDE -->
-<div
-    class="size-guide-modal"
-    id="sizeGuideModal"
-    aria-hidden="true"
->
 
     <div
-        class="size-guide-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="sizeGuideTitle"
+        class="size-guide-modal"
+        id="sizeGuideModal"
+        aria-hidden="true"
     >
 
-        <button
-            type="button"
-            class="size-guide-close"
-            id="sizeGuideClose"
-            aria-label="Close size guide"
+
+        <div
+            class="size-guide-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="sizeGuideTitle"
         >
-            ×
-        </button>
 
-        <p>ROXX / FIT HELP</p>
-
-        <h2 id="sizeGuideTitle">
-            SIZE GUIDE<span>.</span>
-        </h2>
-
-        <!-- SIZE CHART -->
-
-        <table>
-
-            <thead>
-                <tr>
-                    <th>SIZE</th>
-                    <th>CHEST</th>
-                    <th>LENGTH</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr>
-                    <td>S</td>
-                    <td>36–38 in</td>
-                    <td>26 in</td>
-                </tr>
-
-                <tr>
-                    <td>M</td>
-                    <td>38–40 in</td>
-                    <td>27 in</td>
-                </tr>
-
-                <tr>
-                    <td>L</td>
-                    <td>40–42 in</td>
-                    <td>28 in</td>
-                </tr>
-
-                <tr>
-                    <td>XL</td>
-                    <td>42–44 in</td>
-                    <td>29 in</td>
-                </tr>
-            </tbody>
-
-        </table>
-
-        <small>
-            Guide is approximate. Check the garment fit before ordering.
-        </small>
-
-        <!-- SIZE FINDER -->
-
-        <div class="roxx-size-finder">
-
-            <div class="roxx-size-finder-heading">
-                <span>01 / PERSONAL FIT</span>
-                <h3>FIND YOUR SIZE<span>.</span></h3>
-                <p>
-                    Enter your height and weight to get a size recommendation.
-                </p>
-            </div>
-
-            <div class="roxx-size-finder-fields">
-
-                <div class="roxx-size-finder-field">
-                    <label for="customerHeight">HEIGHT (CM)</label>
-                    <input
-                        type="number"
-                        id="customerHeight"
-                        placeholder="175"
-                        min="100"
-                        max="220"
-                    >
-                </div>
-
-                <div class="roxx-size-finder-field">
-                    <label for="customerWeight">WEIGHT (KG)</label>
-                    <input
-                        type="number"
-                        id="customerWeight"
-                        placeholder="70"
-                        min="25"
-                        max="200"
-                    >
-                </div>
-
-            </div>
 
             <button
                 type="button"
-                class="roxx-find-size-btn"
-                id="findMySize"
+                class="size-guide-close"
+                id="sizeGuideClose"
+                aria-label="Close size guide"
             >
-                FIND MY SIZE
-                <span>↗</span>
+
+                ×
+
             </button>
 
-            <div
-                class="roxx-size-result"
-                id="sizeResult"
-                aria-live="polite"
-            ></div>
+
+
+            <p>ROXX / FIT HELP</p>
+
+
+            <h2 id="sizeGuideTitle">
+
+                SIZE GUIDE<span>.</span>
+
+            </h2>
+
+
+
+            <!-- SIZE CHART -->
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>SIZE</th>
+
+                        <th>CHEST</th>
+
+                        <th>LENGTH</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr>
+
+                        <td>S</td>
+
+                        <td>36–38 in</td>
+
+                        <td>26 in</td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>M</td>
+
+                        <td>38–40 in</td>
+
+                        <td>27 in</td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>L</td>
+
+                        <td>40–42 in</td>
+
+                        <td>28 in</td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>XL</td>
+
+                        <td>42–44 in</td>
+
+                        <td>29 in</td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+
+
+            <small>
+
+                Measurements are approximate.
+                Please check the garment measurements before ordering.
+
+            </small>
+
+
+
+            <div class="roxx-size-finder">
+
+
+                <div class="roxx-size-finder-heading">
+
+                    <span>01 / PERSONAL FIT</span>
+
+
+                    <h3>
+
+                        FIND YOUR SIZE<span>.</span>
+
+                    </h3>
+
+
+                    <p>
+
+                        Compare the measurements with a garment you already own
+                        to choose your preferred fit.
+
+                    </p>
+
+                </div>
+
+
+            </div>
+
 
         </div>
 
     </div>
 
-</div>
 
 
     <!-- JAVASCRIPT -->
+
     <script>
 
+
+        // =========================================
         // MENU
+        // =========================================
 
-        const menuButton = document.getElementById('menuButton');
+        const menuButton =
+            document.getElementById('menuButton');
 
-        const menuPanel = document.getElementById('menuPanel');
+        const menuPanel =
+            document.getElementById('menuPanel');
+
 
         menuButton.addEventListener('click', () => {
 
@@ -642,34 +856,63 @@
         });
 
 
-        // SIZE SELECTION
 
-        const sizeButtons = document.querySelectorAll('.roxx-size-btn');
+        // =========================================
+        // SHOPIFY VARIANT SELECTION
+        // =========================================
 
-        const selectedSize = document.getElementById('selectedSize');
+        const sizeButtons =
+            document.querySelectorAll('.roxx-size-btn');
 
-        const sizeHeading = document.querySelector('.selector-heading span');
+        const selectedSize =
+            document.getElementById('selectedSize');
+
+        const selectedVariant =
+            document.getElementById('selectedVariant');
+
+        const sizeHeading =
+            document.querySelector('.selector-heading span');
 
 
         sizeButtons.forEach(button => {
 
             button.addEventListener('click', () => {
 
+                if (button.disabled) {
+                    return;
+                }
+
+
                 sizeButtons.forEach(item => {
 
                     item.classList.remove('selected');
 
-                    item.setAttribute('aria-pressed', 'false');
+                    item.setAttribute(
+                        'aria-pressed',
+                        'false'
+                    );
 
                 });
 
+
                 button.classList.add('selected');
 
-                button.setAttribute('aria-pressed', 'true');
+                button.setAttribute(
+                    'aria-pressed',
+                    'true'
+                );
 
-                selectedSize.value = button.dataset.size;
 
-                sizeHeading.textContent = 'SELECT SIZE';
+                selectedSize.value =
+                    button.dataset.size;
+
+
+                selectedVariant.value =
+                    button.dataset.variantId;
+
+
+                sizeHeading.textContent =
+                    'SELECT SIZE';
 
                 sizeHeading.style.color = '';
 
@@ -678,15 +921,23 @@
         });
 
 
+
+        // =========================================
         // QUANTITY
+        // =========================================
 
-        const qtyOutput = document.getElementById('quantityValue');
+        const qtyOutput =
+            document.getElementById('quantityValue');
 
-        const qtyInput = document.getElementById('quantityInput');
+        const qtyInput =
+            document.getElementById('quantityInput');
 
-        const qtyMinus = document.getElementById('qtyMinus');
+        const qtyMinus =
+            document.getElementById('qtyMinus');
 
-        const qtyPlus = document.getElementById('qtyPlus');
+        const qtyPlus =
+            document.getElementById('qtyPlus');
+
 
         let quantity = 1;
 
@@ -702,7 +953,10 @@
 
         qtyMinus.addEventListener('click', () => {
 
-            quantity = Math.max(1, quantity - 1);
+            quantity = Math.max(
+                1,
+                quantity - 1
+            );
 
             updateQuantity();
 
@@ -711,417 +965,373 @@
 
         qtyPlus.addEventListener('click', () => {
 
-            quantity = Math.min(20, quantity + 1);
+            quantity = Math.min(
+                20,
+                quantity + 1
+            );
 
             updateQuantity();
 
         });
 
 
+
+        // =========================================
         // ADD TO CART VALIDATION
+        // =========================================
 
-        document.getElementById('addToCartForm').addEventListener('submit', event => {
+        document
+            .getElementById('addToCartForm')
+            .addEventListener('submit', event => {
 
-            if (!selectedSize.value) {
 
-                event.preventDefault();
+                if (!selectedVariant.value) {
 
-                sizeHeading.textContent = 'PLEASE SELECT A SIZE';
+                    event.preventDefault();
 
-                sizeHeading.style.color = '#a36f61';
+                    sizeHeading.textContent =
+                        'PLEASE SELECT A SIZE';
 
-                document.querySelector('.roxx-size-options').scrollIntoView({
+                    sizeHeading.style.color =
+                        '#a36f61';
 
-                    behavior: 'smooth',
 
-                    block: 'center'
+                    document
+                        .querySelector('.roxx-size-options')
+                        .scrollIntoView({
 
-                });
+                            behavior: 'smooth',
 
-            }
+                            block: 'center'
 
-        });
+                        });
 
-
-        // SIZE GUIDE MODAL
-
-const modal = document.getElementById('sizeGuideModal');
-
-const openGuide = document.getElementById('sizeGuideOpen');
-
-const closeGuideButton = document.getElementById('sizeGuideClose');
-
-
-function closeGuide() {
-
-    modal.classList.remove('open');
-
-    modal.setAttribute('aria-hidden', 'true');
-
-    openGuide.focus();
-
-}
-
-
-openGuide.addEventListener('click', () => {
-
-    modal.classList.add('open');
-
-    modal.setAttribute('aria-hidden', 'false');
-
-    closeGuideButton.focus();
-
-});
-
-
-closeGuideButton.addEventListener('click', closeGuide);
-
-
-modal.addEventListener('click', event => {
-
-    if (event.target === modal) {
-
-        closeGuide();
-
-    }
-
-});
-
-
-document.addEventListener('keydown', event => {
-
-    if (event.key === 'Escape') {
-
-        menuPanel.classList.remove('active');
-
-        if (modal.classList.contains('open')) {
-
-            closeGuide();
-
-        }
-
-    }
-
-});
-
-
-// ROXX SIZE RECOMMENDATION
-
-const findMySizeButton = document.getElementById('findMySize');
-
-const heightInput = document.getElementById('customerHeight');
-
-const weightInput = document.getElementById('customerWeight');
-
-const sizeResult = document.getElementById('sizeResult');
-
-
-if (findMySizeButton) {
-
-    findMySizeButton.addEventListener('click', () => {
-
-        const height = Number(heightInput.value);
-
-        const weight = Number(weightInput.value);
-
-        if (!height || !weight) {
-
-            sizeResult.innerHTML = `
-                <p class="size-error">
-                    PLEASE ENTER YOUR HEIGHT AND WEIGHT.
-                </p>
-            `;
-
-            return;
-
-        }
-
-        if (
-            height < 100 ||
-            height > 220 ||
-            weight < 25 ||
-            weight > 200
-        ) {
-
-            sizeResult.innerHTML = `
-                <p class="size-error">
-                    PLEASE ENTER VALID VALUES.
-                </p>
-            `;
-
-            return;
-
-        }
-
-
-        // INITIAL ROXX SIZE CHART
-
-        let recommendedSize = '';
-
-        if (height <= 165 && weight <= 58) {
-
-            recommendedSize = 'S';
-
-        } else if (height <= 175 && weight <= 70) {
-
-            recommendedSize = 'M';
-
-        } else if (height <= 185 && weight <= 82) {
-
-            recommendedSize = 'L';
-
-        } else {
-
-            recommendedSize = 'XL';
-
-        }
-
-
-        sizeResult.innerHTML = `
-            <div class="size-result-content">
-
-                <span>YOUR RECOMMENDED SIZE</span>
-
-                <strong>${recommendedSize}</strong>
-
-                <p>
-                    This is an initial estimate.
-                    Your preferred fit may vary.
-                </p>
-
-                <button
-                    type="button"
-                    class="size-select-recommended"
-                    data-recommended-size="${recommendedSize}"
-                >
-                    SELECT SIZE
-                </button>
-
-            </div>
-        `;
-
-
-        // SELECT RECOMMENDED SIZE
-
-        const selectButton = sizeResult.querySelector(
-            '.size-select-recommended'
-        );
-
-        selectButton.addEventListener('click', () => {
-
-            const sizeButtons = document.querySelectorAll(
-                '.roxx-size-btn'
-            );
-
-            sizeButtons.forEach(button => {
-
-                const isSelected =
-                    button.dataset.size === recommendedSize;
-
-                button.classList.toggle('selected', isSelected);
-
-                button.setAttribute(
-                    'aria-pressed',
-                    isSelected ? 'true' : 'false'
-                );
+                }
 
             });
 
-            const selectedSizeInput =
-                document.getElementById('selectedSize');
 
-            if (selectedSizeInput) {
 
-                selectedSizeInput.value = recommendedSize;
+        // =========================================
+        // SIZE GUIDE MODAL
+        // =========================================
 
-            }
+        const modal =
+            document.getElementById('sizeGuideModal');
 
-            closeGuide();
+        const openGuide =
+            document.getElementById('sizeGuideOpen');
+
+        const closeGuideButton =
+            document.getElementById('sizeGuideClose');
+
+
+        function closeGuide() {
+
+            modal.classList.remove('open');
+
+            modal.setAttribute(
+                'aria-hidden',
+                'true'
+            );
+
+            openGuide.focus();
+
+        }
+
+
+        openGuide.addEventListener('click', () => {
+
+            modal.classList.add('open');
+
+            modal.setAttribute(
+                'aria-hidden',
+                'false'
+            );
+
+            closeGuideButton.focus();
 
         });
 
-    });
 
-}
-// =========================================
-// ROXX FRONT / BACK GALLERY
-// =========================================
+        closeGuideButton.addEventListener(
+            'click',
+            closeGuide
+        );
 
-const gallery = document.querySelector('.roxx-product-gallery');
 
-const mainProductImage = document.getElementById('mainProductImage');
+        modal.addEventListener('click', event => {
 
-const backThumbnail = document.getElementById('backThumbnail');
+            if (event.target === modal) {
 
-const backThumbnailImage = document.getElementById('backThumbnailImage');
+                closeGuide();
 
-const zoomOverlay = document.getElementById('roxxZoomOverlay');
+            }
 
-const zoomClose = document.getElementById('roxxZoomClose');
+        });
 
-const zoomFront = document.getElementById('roxxZoomFront');
 
-const zoomBack = document.getElementById('roxxZoomBack');
+        document.addEventListener('keydown', event => {
 
-const zoomBackContainer = document.getElementById('roxxZoomBackContainer');
+            if (event.key === 'Escape') {
 
-const zoomScroll = document.querySelector('.roxx-zoom-scroll');
+                menuPanel.classList.remove('active');
 
+                if (modal.classList.contains('open')) {
 
-const frontSrc = gallery.dataset.frontSrc;
+                    closeGuide();
 
-const backSrc = gallery.dataset.backSrc;
+                }
 
-let showingBack = false;
+            }
 
+        });
 
-// =========================================
-// SWITCH MAIN IMAGE
-// =========================================
 
-function switchProductImage(showBack) {
 
-    if (!backSrc || !backThumbnailImage) return;
+        // =========================================
+        // ROXX FRONT / BACK GALLERY
+        // =========================================
 
-    showingBack = showBack;
+        const gallery =
+            document.querySelector('.roxx-product-gallery');
 
-    if (showBack) {
+        const mainProductImage =
+            document.getElementById('mainProductImage');
 
-        mainProductImage.src = backSrc;
+        const backThumbnail =
+            document.getElementById('backThumbnail');
 
-        mainProductImage.alt = 'Product Back';
+        const backThumbnailImage =
+            document.getElementById('backThumbnailImage');
 
-        backThumbnailImage.src = frontSrc;
+        const zoomOverlay =
+            document.getElementById('roxxZoomOverlay');
 
-        backThumbnailImage.alt = 'Product Front';
+        const zoomClose =
+            document.getElementById('roxxZoomClose');
 
-        backThumbnail.setAttribute('aria-label', 'Show front image');
+        const zoomFront =
+            document.getElementById('roxxZoomFront');
 
-    } else {
+        const zoomBack =
+            document.getElementById('roxxZoomBack');
 
-        mainProductImage.src = frontSrc;
+        const zoomBackContainer =
+            document.getElementById('roxxZoomBackContainer');
 
-        mainProductImage.alt = 'Product Front';
+        const zoomScroll =
+            document.querySelector('.roxx-zoom-scroll');
 
-        backThumbnailImage.src = backSrc;
 
-        backThumbnailImage.alt = 'Product Back';
+        const frontSrc =
+            gallery.dataset.frontSrc;
 
-        backThumbnail.setAttribute('aria-label', 'Show back image');
+        const backSrc =
+            gallery.dataset.backSrc;
 
-    }
 
-}
+        let showingBack = false;
 
 
-// =========================================
-// THUMBNAIL CLICK
-// =========================================
 
-if (backThumbnail) {
+        // =========================================
+        // SWITCH MAIN IMAGE
+        // =========================================
 
-    backThumbnail.addEventListener('click', function() {
+        function switchProductImage(showBack) {
 
-        switchProductImage(!showingBack);
+            if (
+                !backSrc ||
+                !backThumbnailImage ||
+                !mainProductImage
+            ) {
 
-    });
+                return;
 
-}
+            }
 
 
-// =========================================
-// OPEN ZOOM
-// =========================================
+            showingBack = showBack;
 
-function openProductZoom() {
 
-    zoomFront.src = frontSrc;
+            if (showBack) {
 
-    if (backSrc) {
+                mainProductImage.src = backSrc;
 
-        zoomBack.src = backSrc;
+                mainProductImage.alt = 'Product Back';
 
-        zoomBackContainer.style.display = 'flex';
+                backThumbnailImage.src = frontSrc;
 
-    } else {
+                backThumbnailImage.alt = 'Product Front';
 
-        zoomBackContainer.style.display = 'none';
+                backThumbnail.setAttribute(
+                    'aria-label',
+                    'Show front image'
+                );
 
-    }
+            } else {
 
-    zoomOverlay.classList.add('active');
+                mainProductImage.src = frontSrc;
 
-    document.body.classList.add('roxx-zoom-open');
+                mainProductImage.alt = 'Product Front';
 
-    zoomScroll.scrollTop = 0;
+                backThumbnailImage.src = backSrc;
 
-    zoomClose.focus();
+                backThumbnailImage.alt = 'Product Back';
 
-}
+                backThumbnail.setAttribute(
+                    'aria-label',
+                    'Show back image'
+                );
 
+            }
 
-// =========================================
-// CLOSE ZOOM
-// =========================================
+        }
 
-function closeProductZoom() {
 
-    zoomOverlay.classList.remove('active');
 
-    document.body.classList.remove('roxx-zoom-open');
+        // =========================================
+        // THUMBNAIL CLICK
+        // =========================================
 
-    mainProductImage.focus();
+        if (backThumbnail) {
 
-}
+            backThumbnail.addEventListener(
+                'click',
+                function() {
 
+                    switchProductImage(!showingBack);
 
-// =========================================
-// MAIN IMAGE CLICK
-// =========================================
+                }
+            );
 
-mainProductImage.addEventListener('click', openProductZoom);
+        }
 
 
-// =========================================
-// CLOSE BUTTON
-// =========================================
 
-zoomClose.addEventListener('click', closeProductZoom);
+        // =========================================
+        // OPEN ZOOM
+        // =========================================
 
+        function openProductZoom() {
 
-// =========================================
-// CLICK OUTSIDE
-// =========================================
+            if (!mainProductImage) {
+                return;
+            }
 
-zoomOverlay.addEventListener('click', function(event) {
 
-    if (event.target === zoomOverlay) {
+            zoomFront.src = frontSrc;
 
-        closeProductZoom();
 
-    }
+            if (backSrc) {
 
-});
+                zoomBack.src = backSrc;
 
+                zoomBackContainer.style.display = 'flex';
 
-// =========================================
-// ESCAPE
-// =========================================
+            } else {
 
-document.addEventListener('keydown', function(event) {
+                zoomBackContainer.style.display = 'none';
 
-    if (
-        event.key === 'Escape' &&
-        zoomOverlay.classList.contains('active')
-    ) {
+            }
 
-        closeProductZoom();
 
-    }
+            zoomOverlay.classList.add('active');
 
-});
+            document.body.classList.add('roxx-zoom-open');
+
+            zoomScroll.scrollTop = 0;
+
+            zoomClose.focus();
+
+        }
+
+
+
+        // =========================================
+        // CLOSE ZOOM
+        // =========================================
+
+        function closeProductZoom() {
+
+            zoomOverlay.classList.remove('active');
+
+            document.body.classList.remove('roxx-zoom-open');
+
+            if (mainProductImage) {
+
+                mainProductImage.focus();
+
+            }
+
+        }
+
+
+
+        // =========================================
+        // MAIN IMAGE CLICK
+        // =========================================
+
+        if (mainProductImage) {
+
+            mainProductImage.addEventListener(
+                'click',
+                openProductZoom
+            );
+
+        }
+
+
+
+        // =========================================
+        // CLOSE BUTTON
+        // =========================================
+
+        zoomClose.addEventListener(
+            'click',
+            closeProductZoom
+        );
+
+
+
+        // =========================================
+        // CLICK OUTSIDE
+        // =========================================
+
+        zoomOverlay.addEventListener('click', function(event) {
+
+            if (event.target === zoomOverlay) {
+
+                closeProductZoom();
+
+            }
+
+        });
+
+
+
+        // =========================================
+        // ESCAPE
+        // =========================================
+
+        document.addEventListener('keydown', function(event) {
+
+            if (
+                event.key === 'Escape' &&
+                zoomOverlay.classList.contains('active')
+            ) {
+
+                closeProductZoom();
+
+            }
+
+        });
+
+
     </script>
 
 
 </body>
+
 </html>
